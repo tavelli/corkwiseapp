@@ -6,20 +6,76 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		379399B62FA3CC7400246506 /* PLAN.md in Resources */ = {isa = PBXBuildFile; fileRef = 379399AA2FA3CC7400246506 /* PLAN.md */; };
+		379399B72FA3CC7400246506 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 379399AC2FA3CC7400246506 /* README.md */; };
+		379399B82FA3CC7400246506 /* ScanFailureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399B22FA3CC7400246506 /* ScanFailureView.swift */; };
+		379399B92FA3CC7400246506 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399A62FA3CC7400246506 /* OnboardingView.swift */; };
+		379399BA2FA3CC7400246506 /* SelectedPhoto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399B42FA3CC7400246506 /* SelectedPhoto.swift */; };
+		379399BB2FA3CC7400246506 /* OnboardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399A72FA3CC7400246506 /* OnboardingViewModel.swift */; };
+		379399BC2FA3CC7400246506 /* ResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399B02FA3CC7400246506 /* ResultsView.swift */; };
+		379399BD2FA3CC7400246506 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399A92FA3CC7400246506 /* PaywallView.swift */; };
+		379399BE2FA3CC7400246506 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399A22FA3CC7400246506 /* MainView.swift */; };
+		379399BF2FA3CC7400246506 /* PurchaseMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399AB2FA3CC7400246506 /* PurchaseMode.swift */; };
+		379399C02FA3CC7400246506 /* ScanLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399B32FA3CC7400246506 /* ScanLoadingView.swift */; };
+		379399C12FA3CC7400246506 /* RecommendationCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399AE2FA3CC7400246506 /* RecommendationCardView.swift */; };
+		379399C22FA3CC7400246506 /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399A32FA3CC7400246506 /* MainViewModel.swift */; };
+		379399C32FA3CC7400246506 /* RecentScansView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399AD2FA3CC7400246506 /* RecentScansView.swift */; };
+		379399C82FA3CC9800246506 /* WineScanResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399C72FA3CC9800246506 /* WineScanResult.swift */; };
+		379399C92FA3CC9800246506 /* UserWinePreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399C42FA3CC9800246506 /* UserWinePreferences.swift */; };
+		379399CA2FA3CC9800246506 /* WineAnalysisService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399C52FA3CC9800246506 /* WineAnalysisService.swift */; };
+		379399CB2FA3CC9800246506 /* WineScan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399C62FA3CC9800246506 /* WineScan.swift */; };
+		379399D02FA3CD3F00246506 /* AppRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399CD2FA3CD3F00246506 /* AppRoute.swift */; };
+		379399D12FA3CD3F00246506 /* AppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399CC2FA3CD3F00246506 /* AppConfiguration.swift */; };
+		379399D22FA3CD3F00246506 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399CF2FA3CD3F00246506 /* AppState.swift */; };
+		379399D32FA3CD3F00246506 /* AppRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399CE2FA3CD3F00246506 /* AppRouter.swift */; };
+		379399DD2FA3CF1E00246506 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 379399DC2FA3CF1E00246506 /* Assets.xcassets */; };
+		379399E02FA3D9AE00246506 /* Color+Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399DF2FA3D9AE00246506 /* Color+Theme.swift */; };
+		37939A002FA3F10000246506 /* CorkWiseApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399F92FA3F10000246506 /* CorkWiseApp.swift */; };
+		37939A012FA3F10000246506 /* EntitlementManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399FA2FA3F10000246506 /* EntitlementManager.swift */; };
+		37939A022FA3F10000246506 /* ImagePreparationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399FB2FA3F10000246506 /* ImagePreparationService.swift */; };
+		37939A032FA3F10000246506 /* CameraPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399FC2FA3F10000246506 /* CameraPicker.swift */; };
+		37939A042FA3F10000246506 /* BestPickHeroView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399FD2FA3F10000246506 /* BestPickHeroView.swift */; };
+		37939A052FA3F10000246506 /* CategoryHighlightsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399FE2FA3F10000246506 /* CategoryHighlightsView.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
-		379634532FA3AEBC00E30EAA /* CorkWise.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CorkWise.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		379399A22FA3CC7400246506 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		379399A32FA3CC7400246506 /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
+		379399A62FA3CC7400246506 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		379399A72FA3CC7400246506 /* OnboardingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewModel.swift; sourceTree = "<group>"; };
+		379399A92FA3CC7400246506 /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
+		379399AA2FA3CC7400246506 /* PLAN.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = PLAN.md; sourceTree = "<group>"; };
+		379399AB2FA3CC7400246506 /* PurchaseMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseMode.swift; sourceTree = "<group>"; };
+		379399AC2FA3CC7400246506 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		379399AD2FA3CC7400246506 /* RecentScansView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentScansView.swift; sourceTree = "<group>"; };
+		379399AE2FA3CC7400246506 /* RecommendationCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendationCardView.swift; sourceTree = "<group>"; };
+		379399B02FA3CC7400246506 /* ResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsView.swift; sourceTree = "<group>"; };
+		379399B22FA3CC7400246506 /* ScanFailureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanFailureView.swift; sourceTree = "<group>"; };
+		379399B32FA3CC7400246506 /* ScanLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanLoadingView.swift; sourceTree = "<group>"; };
+		379399B42FA3CC7400246506 /* SelectedPhoto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedPhoto.swift; sourceTree = "<group>"; };
+		379399C42FA3CC9800246506 /* UserWinePreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserWinePreferences.swift; sourceTree = "<group>"; };
+		379399C52FA3CC9800246506 /* WineAnalysisService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WineAnalysisService.swift; sourceTree = "<group>"; };
+		379399C62FA3CC9800246506 /* WineScan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WineScan.swift; sourceTree = "<group>"; };
+		379399C72FA3CC9800246506 /* WineScanResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WineScanResult.swift; sourceTree = "<group>"; };
+		379399CC2FA3CD3F00246506 /* AppConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfiguration.swift; sourceTree = "<group>"; };
+		379399CD2FA3CD3F00246506 /* AppRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRoute.swift; sourceTree = "<group>"; };
+		379399CE2FA3CD3F00246506 /* AppRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRouter.swift; sourceTree = "<group>"; };
+		379399CF2FA3CD3F00246506 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		379399D42FA3CE5600246506 /* CorkWise.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CorkWise.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		379399DC2FA3CF1E00246506 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		379399DE2FA3D27500246506 /* CorkWise-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "CorkWise-Info.plist"; sourceTree = "<group>"; };
+		379399DF2FA3D9AE00246506 /* Color+Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Theme.swift"; sourceTree = "<group>"; };
+		379399F92FA3F10000246506 /* CorkWiseApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorkWiseApp.swift; sourceTree = "<group>"; };
+		379399FA2FA3F10000246506 /* EntitlementManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitlementManager.swift; sourceTree = "<group>"; };
+		379399FB2FA3F10000246506 /* ImagePreparationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreparationService.swift; sourceTree = "<group>"; };
+		379399FC2FA3F10000246506 /* CameraPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPicker.swift; sourceTree = "<group>"; };
+		379399FD2FA3F10000246506 /* BestPickHeroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BestPickHeroView.swift; sourceTree = "<group>"; };
+		379399FE2FA3F10000246506 /* CategoryHighlightsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryHighlightsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		379634552FA3AEBC00E30EAA /* CorkWise */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = CorkWise;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
-
 /* Begin PBXFrameworksBuildPhase section */
-		379634502FA3AEBC00E30EAA /* Frameworks */ = {
+		3793994F2FA3CB5A00246506 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -29,18 +85,120 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		379399A42FA3CC7400246506 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				379399AB2FA3CC7400246506 /* PurchaseMode.swift */,
+				379399C42FA3CC9800246506 /* UserWinePreferences.swift */,
+				379399C62FA3CC9800246506 /* WineScan.swift */,
+				379399C72FA3CC9800246506 /* WineScanResult.swift */,
+				379399DF2FA3D9AE00246506 /* Color+Theme.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		379399B52FA3CC7400246506 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				379399CC2FA3CD3F00246506 /* AppConfiguration.swift */,
+				379399FA2FA3F10000246506 /* EntitlementManager.swift */,
+				379399FB2FA3F10000246506 /* ImagePreparationService.swift */,
+				379399C52FA3CC9800246506 /* WineAnalysisService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		379399D52FA3CE9000246506 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				379399CD2FA3CD3F00246506 /* AppRoute.swift */,
+				379399CE2FA3CD3F00246506 /* AppRouter.swift */,
+				379399CF2FA3CD3F00246506 /* AppState.swift */,
+				379399F92FA3F10000246506 /* CorkWiseApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		379399D62FA3CE9000246506 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				379399D72FA3CE9000246506 /* Main */,
+				379399D82FA3CE9000246506 /* Onboarding */,
+				379399D92FA3CE9000246506 /* Paywall */,
+				379399DA2FA3CE9000246506 /* Results */,
+				379399DB2FA3CE9000246506 /* Scan */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		379399D72FA3CE9000246506 /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				379399A22FA3CC7400246506 /* MainView.swift */,
+				379399A32FA3CC7400246506 /* MainViewModel.swift */,
+				379399AD2FA3CC7400246506 /* RecentScansView.swift */,
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
+		379399D82FA3CE9000246506 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				379399A62FA3CC7400246506 /* OnboardingView.swift */,
+				379399A72FA3CC7400246506 /* OnboardingViewModel.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		379399D92FA3CE9000246506 /* Paywall */ = {
+			isa = PBXGroup;
+			children = (
+				379399A92FA3CC7400246506 /* PaywallView.swift */,
+			);
+			path = Paywall;
+			sourceTree = "<group>";
+		};
+		379399DA2FA3CE9000246506 /* Results */ = {
+			isa = PBXGroup;
+			children = (
+				379399B02FA3CC7400246506 /* ResultsView.swift */,
+				379399AE2FA3CC7400246506 /* RecommendationCardView.swift */,
+				379399FD2FA3F10000246506 /* BestPickHeroView.swift */,
+				379399FE2FA3F10000246506 /* CategoryHighlightsView.swift */,
+			);
+			path = Results;
+			sourceTree = "<group>";
+		};
+		379399DB2FA3CE9000246506 /* Scan */ = {
+			isa = PBXGroup;
+			children = (
+				379399B22FA3CC7400246506 /* ScanFailureView.swift */,
+				379399B32FA3CC7400246506 /* ScanLoadingView.swift */,
+				379399B42FA3CC7400246506 /* SelectedPhoto.swift */,
+				379399FC2FA3F10000246506 /* CameraPicker.swift */,
+			);
+			path = Scan;
+			sourceTree = "<group>";
+		};
 		3796344A2FA3AEBC00E30EAA = {
 			isa = PBXGroup;
 			children = (
-				379634552FA3AEBC00E30EAA /* CorkWise */,
+				379399DE2FA3D27500246506 /* CorkWise-Info.plist */,
+				379399A42FA3CC7400246506 /* Models */,
+				379399AA2FA3CC7400246506 /* PLAN.md */,
+				379399AC2FA3CC7400246506 /* README.md */,
+				379399B52FA3CC7400246506 /* Services */,
 				379634542FA3AEBC00E30EAA /* Products */,
+				379399D52FA3CE9000246506 /* App */,
+				379399D62FA3CE9000246506 /* Features */,
+				379399DC2FA3CF1E00246506 /* Assets.xcassets */,
 			);
 			sourceTree = "<group>";
 		};
 		379634542FA3AEBC00E30EAA /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				379634532FA3AEBC00E30EAA /* CorkWise.app */,
+				379399D42FA3CE5600246506 /* CorkWise.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -48,26 +206,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		379634522FA3AEBC00E30EAA /* CorkWise */ = {
+		379399512FA3CB5A00246506 /* CorkWise */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 379634602FA3AEBE00E30EAA /* Build configuration list for PBXNativeTarget "CorkWise" */;
+			buildConfigurationList = 3793995E2FA3CB5B00246506 /* Build configuration list for PBXNativeTarget "CorkWise" */;
 			buildPhases = (
-				3796344F2FA3AEBC00E30EAA /* Sources */,
-				379634502FA3AEBC00E30EAA /* Frameworks */,
-				379634512FA3AEBC00E30EAA /* Resources */,
+				3793994E2FA3CB5A00246506 /* Sources */,
+				3793994F2FA3CB5A00246506 /* Frameworks */,
+				379399502FA3CB5A00246506 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			fileSystemSynchronizedGroups = (
-				379634552FA3AEBC00E30EAA /* CorkWise */,
-			);
 			name = CorkWise;
 			packageProductDependencies = (
 			);
 			productName = CorkWise;
-			productReference = 379634532FA3AEBC00E30EAA /* CorkWise.app */;
+			productReference = 379399D42FA3CE5600246506 /* CorkWise.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -80,8 +235,9 @@
 				LastSwiftUpdateCheck = 2640;
 				LastUpgradeCheck = 2640;
 				TargetAttributes = {
-					379634522FA3AEBC00E30EAA = {
-						CreatedOnToolsVersion = 26.4;
+					379399512FA3CB5A00246506 = {
+						CreatedOnToolsVersion = 26.4.1;
+						LastSwiftMigration = 2640;
 					};
 				};
 			};
@@ -99,32 +255,135 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				379634522FA3AEBC00E30EAA /* CorkWise */,
+				379399512FA3CB5A00246506 /* CorkWise */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		379634512FA3AEBC00E30EAA /* Resources */ = {
+		379399502FA3CB5A00246506 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				379399B62FA3CC7400246506 /* PLAN.md in Resources */,
+				379399DD2FA3CF1E00246506 /* Assets.xcassets in Resources */,
+				379399B72FA3CC7400246506 /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		3796344F2FA3AEBC00E30EAA /* Sources */ = {
+		3793994E2FA3CB5A00246506 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				379399B82FA3CC7400246506 /* ScanFailureView.swift in Sources */,
+				379399B92FA3CC7400246506 /* OnboardingView.swift in Sources */,
+				379399BA2FA3CC7400246506 /* SelectedPhoto.swift in Sources */,
+				379399BB2FA3CC7400246506 /* OnboardingViewModel.swift in Sources */,
+				379399BC2FA3CC7400246506 /* ResultsView.swift in Sources */,
+				379399BD2FA3CC7400246506 /* PaywallView.swift in Sources */,
+				379399BE2FA3CC7400246506 /* MainView.swift in Sources */,
+				379399BF2FA3CC7400246506 /* PurchaseMode.swift in Sources */,
+				379399C82FA3CC9800246506 /* WineScanResult.swift in Sources */,
+				379399C92FA3CC9800246506 /* UserWinePreferences.swift in Sources */,
+				379399D02FA3CD3F00246506 /* AppRoute.swift in Sources */,
+				379399D12FA3CD3F00246506 /* AppConfiguration.swift in Sources */,
+				379399E02FA3D9AE00246506 /* Color+Theme.swift in Sources */,
+				379399D22FA3CD3F00246506 /* AppState.swift in Sources */,
+				379399D32FA3CD3F00246506 /* AppRouter.swift in Sources */,
+				37939A002FA3F10000246506 /* CorkWiseApp.swift in Sources */,
+				37939A012FA3F10000246506 /* EntitlementManager.swift in Sources */,
+				37939A022FA3F10000246506 /* ImagePreparationService.swift in Sources */,
+				37939A032FA3F10000246506 /* CameraPicker.swift in Sources */,
+				37939A042FA3F10000246506 /* BestPickHeroView.swift in Sources */,
+				37939A052FA3F10000246506 /* CategoryHighlightsView.swift in Sources */,
+				379399CA2FA3CC9800246506 /* WineAnalysisService.swift in Sources */,
+				379399CB2FA3CC9800246506 /* WineScan.swift in Sources */,
+				379399C02FA3CC7400246506 /* ScanLoadingView.swift in Sources */,
+				379399C12FA3CC7400246506 /* RecommendationCardView.swift in Sources */,
+				379399C22FA3CC7400246506 /* MainViewModel.swift in Sources */,
+				379399C32FA3CC7400246506 /* RecentScansView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		3793995C2FA3CB5B00246506 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6SZ57G9BS7;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "CorkWise-Info.plist";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Cork​Wise uses the camera to scan restaurant wine lists.";
+				INFOPLIST_KEY_NSMainCameraUsageDescription = "Cork​Wise uses the camera to scan restaurant wine lists.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.getcorkwise.CorkWise;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		3793995D2FA3CB5B00246506 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6SZ57G9BS7;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "CorkWise-Info.plist";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Cork​Wise uses the camera to scan restaurant wine lists.";
+				INFOPLIST_KEY_NSMainCameraUsageDescription = "Cork​Wise uses the camera to scan restaurant wine lists.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.getcorkwise.CorkWise;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		3796345E2FA3AEBE00E30EAA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -246,87 +505,23 @@
 			};
 			name = Release;
 		};
-		379634612FA3AEBE00E30EAA /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6SZ57G9BS7;
-				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.getcorkwise.CorkWise;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		379634622FA3AEBE00E30EAA /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6SZ57G9BS7;
-				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.getcorkwise.CorkWise;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		3793995E2FA3CB5B00246506 /* Build configuration list for PBXNativeTarget "CorkWise" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3793995C2FA3CB5B00246506 /* Debug */,
+				3793995D2FA3CB5B00246506 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		3796344E2FA3AEBC00E30EAA /* Build configuration list for PBXProject "CorkWise" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3796345E2FA3AEBE00E30EAA /* Debug */,
 				3796345F2FA3AEBE00E30EAA /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		379634602FA3AEBE00E30EAA /* Build configuration list for PBXNativeTarget "CorkWise" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				379634612FA3AEBE00E30EAA /* Debug */,
-				379634622FA3AEBE00E30EAA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
