@@ -8,18 +8,17 @@ struct CategoryHighlightsView: View {
             VStack(alignment: .leading, spacing: 10) {
                 ForEach(displaySections, id: \.key) { section in
                     VStack(alignment: .leading, spacing: 12) {
-                        HStack {
-                            Image(systemName: "sparkles")
-                                .foregroundStyle(.secondary)
-                            Text(section.displayTitle)
-                                .font(.title3)
-                                .bold()
-                        }
+                        ResultSectionHeader(
+                            title: section.displayTitle,
+                            systemImage: section.systemImage,
+                            style: .ribbon
+                        )
 
                         ForEach(section.recommendations) { recommendation in
                             RecommendationCardView(recommendation: recommendation)
                         }
                     }
+                    .padding(.top, 14)
                 }
             }
         }
@@ -37,6 +36,7 @@ struct CategoryHighlightsView: View {
             DisplayCategorySection(
                 key: section.key,
                 displayTitle: Self.displayTitle(for: section),
+                systemImage: Self.systemImage(for: section.key),
                 recommendations: Array(section.recommendations.prefix(2))
             )
         }
@@ -66,10 +66,26 @@ struct CategoryHighlightsView: View {
             return section.title
         }
     }
+
+    private static func systemImage(for key: String) -> String {
+        switch key {
+        case "best_value":
+            return "tag.fill"
+        case "best_splurge":
+            return "crown.fill"
+        case "safest_choice":
+            return "checkmark.shield.fill"
+        case "most_interesting_pick":
+            return "sparkles"
+        default:
+            return "star.circle.fill"
+        }
+    }
 }
 
 private struct DisplayCategorySection: Hashable {
     let key: String
     let displayTitle: String
+    let systemImage: String
     let recommendations: [WineRecommendation]
 }

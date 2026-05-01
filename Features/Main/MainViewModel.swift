@@ -13,6 +13,7 @@ struct ScanFailureState: Identifiable, Hashable {
 @Observable
 final class MainViewModel {
     var purchaseMode: PurchaseMode = .bottle
+    var bottleContext: BottleContext = .forMe
     var isScanning = false
     var loadingMessage = "Reading the wine list…"
     var failure: ScanFailureState?
@@ -40,6 +41,7 @@ final class MainViewModel {
                 let result = try await analysisService.analyzeMenu(
                     imageData: preparedImageData,
                     purchaseMode: purchaseMode,
+                    bottleContext: effectiveBottleContext,
                     preferences: preferences
                 )
 
@@ -78,6 +80,7 @@ final class MainViewModel {
             createdAt: .now,
             restaurantName: result.restaurantName,
             purchaseMode: purchaseMode.rawValue,
+            bottleContext: purchaseMode == .bottle ? bottleContext.rawValue : nil,
             summaryHeadline: result.summary.headline,
             bestPickName: result.summary.bestPickName,
             bestPickScore: result.summary.bestPickScore,
@@ -169,5 +172,9 @@ final class MainViewModel {
         default:
             return "Scan failed."
         }
+    }
+
+    private var effectiveBottleContext: BottleContext? {
+        purchaseMode == .bottle ? bottleContext : nil
     }
 }

@@ -5,56 +5,102 @@ struct BestPickHeroView: View {
     let restaurantName: String?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 18) {
+        VStack(alignment: .leading, spacing: 22) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Best Pick")
-                        .font(.headline)
-                        .foregroundStyle(.white.opacity(0.8))
+                    HStack(spacing: 8) {
+                        Image(systemName: "star.fill")
+                            .font(.caption.weight(.bold))
+                            .foregroundStyle(Color.resultHeroIvory)
+                            .frame(width: 22, height: 22)
+                            .background(Color.white.opacity(0.12))
+                            .clipShape(.rect(cornerRadius: 7))
+
+                        Text("TOP PICK")
+                            .font(.caption.weight(.bold))
+                            .tracking(0.8)
+                            .foregroundStyle(Color.white.opacity(0.9))
+                    }
 
                     Text(summary.bestPickName)
-                        .font(.title2)
-                        .bold()
-                        .foregroundStyle(.white)
+                        .font(.system(size: 25, weight: .bold, design: .serif))
+                        .foregroundStyle(Color.white.opacity(0.9))
                 }
 
                 Spacer()
 
                 VStack(alignment: .trailing, spacing: 4) {
                     Text("Score")
-                        .font(.caption)
-                        .foregroundStyle(.white.opacity(0.75))
+                        .font(.subheadline)
+                        .foregroundStyle(Color.white.opacity(0.9))
                     Text(summary.bestPickScore.formatted(.number.precision(.fractionLength(1))))
-                        .font(.largeTitle)
+                        .font(.system(size: 31, weight: .bold, design: .serif))
                         .bold()
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color.resultHeroIvory)
                 }
             }
 
             Text(summary.bestPickWhy)
-                .foregroundStyle(.white.opacity(0.88))
+                .font(.body)
+                .lineSpacing(2)
+                .foregroundStyle(Color.white.opacity(0.9))
 
             if let restaurantName {
                 Label(restaurantName, systemImage: "fork.knife")
                     .font(.footnote)
-                    .foregroundStyle(.white.opacity(0.78))
+                    .foregroundStyle(Color.white.opacity(0.9))
             }
         }
         .padding(24)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            LinearGradient(
-                colors: [.heroBackgroundTop, .heroBackgroundBottom],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
+            ZStack {
+                LinearGradient(
+                    colors: [.resultHeroTop, .resultHeroBottom],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+
+                LinearGradient(
+                    colors: [
+                        Color.black.opacity(0.10),
+                        Color.clear,
+                        Color.black.opacity(0.18),
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .blendMode(.multiply)
+            }
         )
+        .overlay {
+            Rectangle()
+                .fill(
+                    RadialGradient(
+                        colors: [
+                            Color.white.opacity(0.10),
+                            Color.clear,
+                        ],
+                        center: .topTrailing,
+                        startRadius: 8,
+                        endRadius: 220
+                    )
+                )
+                .blendMode(.screen)
+        }
         .overlay(alignment: .bottomTrailing) {
             Circle()
-                .fill(.white.opacity(0.08))
-                .frame(width: 120, height: 120)
-                .offset(x: 36, y: 36)
+                .fill(Color.resultHeroIvory.opacity(0.10))
+                .frame(width: 132, height: 132)
+                .offset(x: 40, y: 40)
+        }
+        .overlay(alignment: .topLeading) {
+            Circle()
+                .fill(Color.white.opacity(0.05))
+                .frame(width: 180, height: 180)
+                .offset(x: -50, y: -70)
         }
         .clipShape(.rect(cornerRadius: 28))
+        .shadow(color: Color.black.opacity(0.08), radius: 18, y: 10)
     }
 }

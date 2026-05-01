@@ -6,6 +6,7 @@ export type AnalyzeWineMenuRequest = {
   userPreferences: {
     experienceLevel: string;
     preferredStyles: string[];
+    favoriteVarietals: string[];
     choiceStyle: string;
   };
 };

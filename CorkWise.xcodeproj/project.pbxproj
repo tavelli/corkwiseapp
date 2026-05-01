@@ -31,6 +31,8 @@
 		379399D32FA3CD3F00246506 /* AppRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399CE2FA3CD3F00246506 /* AppRouter.swift */; };
 		379399DD2FA3CF1E00246506 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 379399DC2FA3CF1E00246506 /* Assets.xcassets */; };
 		379399E02FA3D9AE00246506 /* Color+Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399DF2FA3D9AE00246506 /* Color+Theme.swift */; };
+		379399E22FA4EFFE00246506 /* AllScansView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399E12FA4EFFE00246506 /* AllScansView.swift */; };
+		379399E42FA4F01300246506 /* PreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399E32FA4F01300246506 /* PreferencesView.swift */; };
 		37939A002FA3F10000246506 /* CorkWiseApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399F92FA3F10000246506 /* CorkWiseApp.swift */; };
 		37939A012FA3F10000246506 /* EntitlementManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399FA2FA3F10000246506 /* EntitlementManager.swift */; };
 		37939A022FA3F10000246506 /* ImagePreparationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399FB2FA3F10000246506 /* ImagePreparationService.swift */; };
@@ -66,6 +68,8 @@
 		379399DC2FA3CF1E00246506 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		379399DE2FA3D27500246506 /* CorkWise-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "CorkWise-Info.plist"; sourceTree = "<group>"; };
 		379399DF2FA3D9AE00246506 /* Color+Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Theme.swift"; sourceTree = "<group>"; };
+		379399E12FA4EFFE00246506 /* AllScansView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllScansView.swift; sourceTree = "<group>"; };
+		379399E32FA4F01300246506 /* PreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesView.swift; sourceTree = "<group>"; };
 		379399F92FA3F10000246506 /* CorkWiseApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorkWiseApp.swift; sourceTree = "<group>"; };
 		379399FA2FA3F10000246506 /* EntitlementManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitlementManager.swift; sourceTree = "<group>"; };
 		379399FB2FA3F10000246506 /* ImagePreparationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreparationService.swift; sourceTree = "<group>"; };
@@ -137,6 +141,8 @@
 				379399A22FA3CC7400246506 /* MainView.swift */,
 				379399A32FA3CC7400246506 /* MainViewModel.swift */,
 				379399AD2FA3CC7400246506 /* RecentScansView.swift */,
+				379399E12FA4EFFE00246506 /* AllScansView.swift */,
+				379399E32FA4F01300246506 /* PreferencesView.swift */,
 			);
 			path = Main;
 			sourceTree = "<group>";
@@ -291,6 +297,7 @@
 				379399D02FA3CD3F00246506 /* AppRoute.swift in Sources */,
 				379399D12FA3CD3F00246506 /* AppConfiguration.swift in Sources */,
 				379399E02FA3D9AE00246506 /* Color+Theme.swift in Sources */,
+				379399E22FA4EFFE00246506 /* AllScansView.swift in Sources */,
 				379399D22FA3CD3F00246506 /* AppState.swift in Sources */,
 				379399D32FA3CD3F00246506 /* AppRouter.swift in Sources */,
 				37939A002FA3F10000246506 /* CorkWiseApp.swift in Sources */,
@@ -300,6 +307,7 @@
 				37939A042FA3F10000246506 /* BestPickHeroView.swift in Sources */,
 				37939A052FA3F10000246506 /* CategoryHighlightsView.swift in Sources */,
 				379399CA2FA3CC9800246506 /* WineAnalysisService.swift in Sources */,
+				379399E42FA4F01300246506 /* PreferencesView.swift in Sources */,
 				379399CB2FA3CC9800246506 /* WineScan.swift in Sources */,
 				379399C02FA3CC7400246506 /* ScanLoadingView.swift in Sources */,
 				379399C12FA3CC7400246506 /* RecommendationCardView.swift in Sources */,

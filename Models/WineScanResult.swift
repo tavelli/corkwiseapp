@@ -3,12 +3,14 @@ import Foundation
 struct AnalyzeWineMenuRequest: Codable {
     let imageBase64: String
     let purchaseMode: PurchaseMode
+    let bottleContext: BottleContext?
     let userPreferences: UserPreferencesPayload
 }
 
 struct UserPreferencesPayload: Codable {
     let experienceLevel: String
     let preferredStyles: [String]
+    let favoriteVarietals: [String]
     let choiceStyle: String
 }
 

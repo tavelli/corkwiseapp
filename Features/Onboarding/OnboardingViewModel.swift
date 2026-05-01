@@ -7,11 +7,13 @@ final class OnboardingViewModel {
     var currentStep = 0
     var selectedExperienceLevel: ExperienceLevel
     var selectedStyles: Set<WineStylePreference>
+    var selectedVarietals: Set<WineVarietal>
     var selectedChoiceStyle: ChoiceStyle
 
     init(existingPreferences: UserWinePreferences?) {
         selectedExperienceLevel = existingPreferences?.experienceLevelValue ?? .casual
         selectedStyles = Set(existingPreferences?.preferredStyleValues ?? [])
+        selectedVarietals = Set(existingPreferences?.favoriteVarietalValues ?? [])
         selectedChoiceStyle = existingPreferences?.choiceStyleValue ?? .bestValue
     }
 
@@ -25,7 +27,7 @@ final class OnboardingViewModel {
     }
 
     var isLastStep: Bool {
-        currentStep == 2
+        currentStep == 3
     }
 
     func goBack() {
@@ -33,7 +35,7 @@ final class OnboardingViewModel {
     }
 
     func goForward() {
-        guard currentStep < 2 else { return }
+        guard currentStep < 3 else { return }
         currentStep += 1
     }
 
@@ -42,6 +44,14 @@ final class OnboardingViewModel {
             selectedStyles.remove(style)
         } else {
             selectedStyles.insert(style)
+        }
+    }
+
+    func toggleVarietal(_ varietal: WineVarietal) {
+        if selectedVarietals.contains(varietal) {
+            selectedVarietals.remove(varietal)
+        } else {
+            selectedVarietals.insert(varietal)
         }
     }
 }

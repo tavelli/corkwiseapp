@@ -6,6 +6,7 @@ final class WineScan {
     var createdAt: Date
     var restaurantName: String?
     var purchaseMode: String
+    var bottleContext: String?
     var summaryHeadline: String?
     var bestPickName: String?
     var bestPickScore: Double?
@@ -15,6 +16,7 @@ final class WineScan {
         createdAt: Date = .now,
         restaurantName: String? = nil,
         purchaseMode: String,
+        bottleContext: String? = nil,
         summaryHeadline: String? = nil,
         bestPickName: String? = nil,
         bestPickScore: Double? = nil,
@@ -23,6 +25,7 @@ final class WineScan {
         self.createdAt = createdAt
         self.restaurantName = restaurantName
         self.purchaseMode = purchaseMode
+        self.bottleContext = bottleContext
         self.summaryHeadline = summaryHeadline
         self.bestPickName = bestPickName
         self.bestPickScore = bestPickScore
@@ -33,5 +36,10 @@ final class WineScan {
 extension WineScan {
     var purchaseModeValue: PurchaseMode {
         PurchaseMode(rawValue: purchaseMode) ?? .bottle
+    }
+
+    var bottleContextValue: BottleContext? {
+        guard let bottleContext else { return nil }
+        return BottleContext(rawValue: bottleContext)
     }
 }

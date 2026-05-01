@@ -3,22 +3,31 @@ import SwiftUI
 struct ResultsView: View {
     let result: WineScanResult
     let purchaseMode: PurchaseMode
+    let viewedAt: Date
+
+    private var pageTitle: String {
+        let restaurantName = result.restaurantName?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let displayName = if let restaurantName, restaurantName.isEmpty == false {
+            restaurantName
+        } else {
+            "Wine List"
+        }
+        let formattedDate = viewedAt.formatted(date: .abbreviated, time: .omitted)
+
+        return "\(displayName) - \(formattedDate) "
+    }
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-                ResultsHeaderView(
-                    restaurantName: result.restaurantName,
-                    purchaseMode: purchaseMode,
-                    recommendationCount: result.recommendations.count
-                )
-
                 BestPickHeroView(summary: result.summary, restaurantName: result.restaurantName)
 
                 VStack(alignment: .leading, spacing: 16) {
-                    Text("Best Overall Picks")
-                        .font(.title2)
-                        .bold()
+                    ResultSectionHeader(
+                        title: "Best Overall Picks",
+                        systemImage: "star.circle.fill",
+                        style: .ribbon
+                    )
 
                     ForEach(result.recommendations) { recommendation in
                         RecommendationCardView(recommendation: recommendation)
@@ -32,22 +41,26 @@ struct ResultsView: View {
                 if result.notes.isEmpty == false {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Notes")
-                            .font(.title3)
-                            .bold()
+                            .font(.system(size: 20, weight: .bold, design: .serif))
+                            .foregroundStyle(Color.wineText)
 
                         ForEach(result.notes, id: \.self) { note in
                             Label {
                                 Text(note)
-                                    .foregroundStyle(.secondary)
+                                    .foregroundStyle(Color.wineMutedText)
                             } icon: {
                                 Image(systemName: "info.circle.fill")
-                                    .foregroundStyle(.secondary)
+                                    .foregroundStyle(Color.resultScoreTint)
                             }
                         }
                     }
-                    .padding()
-                    .background(.thinMaterial)
-                    .clipShape(.rect(cornerRadius: 24))
+                    .padding(20)
+                    .background(Color.resultCardBackground)
+                    .clipShape(.rect(cornerRadius: 22))
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 22)
+                            .stroke(Color.wineBorder.opacity(0.8), lineWidth: 1)
+                    }
                 }
 
                 #if DEBUG
@@ -56,13 +69,28 @@ struct ResultsView: View {
                 }
                 #endif
             }
-            .padding()
+            .padding(20)
         }
-        .navigationTitle(result.restaurantName ?? "Results")
+        .navigationTitle(pageTitle)
         .navigationBarTitleDisplayMode(.inline)
-        .background(Color(.systemGroupedBackground))
+        .background(mainScreenBackground.ignoresSafeArea())
     }
+}
 
+#Preview {
+    ResultsView(
+        result: WineScanResult.sample(
+            for: .glass,
+            preferences: UserWinePreferences(
+                experienceLevel: ExperienceLevel.casual.rawValue,
+                preferredStyles: [WineStylePreference.crispRefreshing.rawValue],
+                choiceStyle: ChoiceStyle.bestValue.rawValue,
+                hasCompletedOnboarding: true
+            )
+        ),
+        purchaseMode: .glass,
+        viewedAt: .now
+    )
 }
 
 #if DEBUG
@@ -83,43 +111,96 @@ private struct DebugScanInfoView: View {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.thinMaterial)
-        .clipShape(.rect(cornerRadius: 24))
+        .background(Color.resultCardBackground)
+        .clipShape(.rect(cornerRadius: 22))
     }
 }
 #endif
 
-private struct ResultsHeaderView: View {
-    let restaurantName: String?
-    let purchaseMode: PurchaseMode
-    let recommendationCount: Int
+struct ResultSectionHeader: View {
+    enum Style {
+        case plain
+        case ribbon
+    }
+
+    let title: String
+    let systemImage: String
+    var style: Style = .plain
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("CorkWise Ranking")
-                .font(.headline)
-                .foregroundStyle(.secondary)
+        switch style {
+        case .plain:
+            HStack(spacing: 10) {
+                Image(systemName: systemImage)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(Color.resultScoreTint)
+                    .frame(width: 28, height: 28)
+                    .background(Color.resultScoreTint.opacity(0.12))
+                    .clipShape(.rect(cornerRadius: 10))
 
-            HStack {
-                ResultPill(title: purchaseMode.title)
-                ResultPill(title: "\(recommendationCount) Picks")
-                if restaurantName != nil {
-                    ResultPill(title: "Analyzed")
+                Text(title)
+                    .font(.system(size: 20, weight: .bold, design: .serif))
+                    .foregroundStyle(Color.wineText)
+            }
+        case .ribbon:
+            HStack(spacing: 0) {
+                ZStack {
+                    Circle()
+                        .fill(Color.resultCardBackground)
+                    Circle()
+                        .stroke(Color.wineAccent.opacity(0.75), lineWidth: 1.2)
+
+                    Image(systemName: systemImage)
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(Color.wineAccent)
                 }
+                .frame(width: 38, height: 38)
+                .zIndex(1)
+
+                HStack(spacing: 0) {
+                    Text(title.uppercased())
+                        .font(.caption.weight(.bold))
+                        .tracking(0.9)
+                        .foregroundStyle(.white)
+                        .lineLimit(1)
+                        .fixedSize(horizontal: true, vertical: false)
+                        .padding(.leading, 18)
+                        .padding(.trailing, 22)
+                        .frame(height: 26)
+                        .background(Color.wineAccent)
+                        .overlay(alignment: .trailing) {
+                            RibbonNotch()
+                                .fill(Color.wineAccent)
+                                .frame(width: 16, height: 26)
+                                .offset(x: 14)
+                        }
+
+                    ZStack(alignment: .trailing) {
+                        Rectangle()
+                            .fill(Color.wineAccent.opacity(0.55))
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 1.2)
+
+                        Circle()
+                            .fill(Color.wineAccent)
+                            .frame(width: 6, height: 6)
+                            .offset(x: 3)
+                    }
+                }
+                .offset(x: -8)
             }
         }
     }
 }
 
-private struct ResultPill: View {
-    let title: String
-
-    var body: some View {
-        Text(title)
-            .font(.footnote)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-            .background(.thinMaterial)
-            .clipShape(.capsule)
+private struct RibbonNotch: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.move(to: CGPoint(x: 0, y: 0))
+        path.addLine(to: CGPoint(x: rect.width, y: 0))
+        path.addLine(to: CGPoint(x: rect.width * 0.45, y: rect.height))
+        path.addLine(to: CGPoint(x: 0, y: rect.height))
+        path.closeSubpath()
+        return path
     }
 }

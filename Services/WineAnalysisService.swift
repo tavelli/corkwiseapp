@@ -12,6 +12,7 @@ struct WineAnalysisService {
     func analyzeMenu(
         imageData: Data,
         purchaseMode: PurchaseMode,
+        bottleContext: BottleContext?,
         preferences: UserWinePreferences
     ) async throws -> WineScanResult {
         guard let endpoint = AppConfiguration.shared.analysisEndpoint else {
@@ -25,6 +26,7 @@ struct WineAnalysisService {
         let requestBody = AnalyzeWineMenuRequest(
             imageBase64: imageData.base64EncodedString(),
             purchaseMode: purchaseMode,
+            bottleContext: purchaseMode == .bottle ? bottleContext : nil,
             userPreferences: preferences.payload
         )
 

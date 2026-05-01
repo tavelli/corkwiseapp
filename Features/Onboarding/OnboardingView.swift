@@ -20,7 +20,7 @@ struct OnboardingView: View {
             Text("Build a quick taste profile so each scan can rank smarter picks for you.")
                 .foregroundStyle(.secondary)
 
-            ProgressView(value: Double(viewModel.currentStep + 1), total: 3)
+            ProgressView(value: Double(viewModel.currentStep + 1), total: 4)
 
             TabView(selection: $bindableViewModel.currentStep) {
                 ExperienceQuestionView(selection: $bindableViewModel.selectedExperienceLevel)
@@ -32,8 +32,14 @@ struct OnboardingView: View {
                 )
                 .tag(1)
 
+                VarietalQuestionView(
+                    selectedVarietals: bindableViewModel.selectedVarietals,
+                    toggleVarietal: viewModel.toggleVarietal
+                )
+                .tag(2)
+
                 ChoiceStyleQuestionView(selection: $bindableViewModel.selectedChoiceStyle)
-                    .tag(2)
+                    .tag(3)
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
             .animation(.default, value: viewModel.currentStep)
@@ -78,6 +84,7 @@ struct OnboardingView: View {
         if let existing {
             existing.experienceLevel = viewModel.selectedExperienceLevel.rawValue
             existing.preferredStyles = viewModel.selectedStyles.map(\.rawValue).sorted()
+            existing.favoriteVarietals = viewModel.selectedVarietals.map(\.rawValue).sorted()
             existing.choiceStyle = viewModel.selectedChoiceStyle.rawValue
             existing.hasCompletedOnboarding = true
             existing.updatedAt = now
@@ -85,6 +92,7 @@ struct OnboardingView: View {
             let preferences = UserWinePreferences(
                 experienceLevel: viewModel.selectedExperienceLevel.rawValue,
                 preferredStyles: viewModel.selectedStyles.map(\.rawValue).sorted(),
+                favoriteVarietals: viewModel.selectedVarietals.map(\.rawValue).sorted(),
                 choiceStyle: viewModel.selectedChoiceStyle.rawValue,
                 hasCompletedOnboarding: true,
                 createdAt: now,
@@ -94,6 +102,38 @@ struct OnboardingView: View {
         }
 
         try? modelContext.save()
+    }
+}
+
+private struct VarietalQuestionView: View {
+    let selectedVarietals: Set<WineVarietal>
+    let toggleVarietal: (WineVarietal) -> Void
+
+    var body: some View {
+        QuestionCard(title: "What wine varietals do you usually reach for?") {
+            Text("Choose as many as you want.")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+
+            ForEach(WineVarietalCategory.allCases) { category in
+                VStack(alignment: .leading, spacing: 10) {
+                    Text(category.title)
+                        .font(.headline)
+                        .foregroundStyle(Color.wineText)
+
+                    ForEach(category.varietals) { varietal in
+                        SelectableOptionButton(
+                            title: varietal.title,
+                            subtitle: varietal.description,
+                            isSelected: selectedVarietals.contains(varietal)
+                        ) {
+                            toggleVarietal(varietal)
+                        }
+                    }
+                }
+                .padding(.top, 4)
+            }
+        }
     }
 }
 
