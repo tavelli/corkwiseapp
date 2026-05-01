@@ -10,7 +10,7 @@ struct RecommendationCardView: View {
                     Circle()
                         .fill(scoreTint.opacity(0.14))
                         .frame(width: 44, height: 44)
-                    Text("\(recommendation.rank)")
+                    Text(recommendation.valueScore.formatted(.number.precision(.fractionLength(1))))
                         .bold()
                         .foregroundStyle(scoreTint)
                 }
@@ -19,36 +19,24 @@ struct RecommendationCardView: View {
                     Text(recommendation.wineName)
                         .font(.title3)
                         .bold()
-
-                    Text("Value Score \(recommendation.valueScore.formatted(.number.precision(.fractionLength(1))))")
-                        .font(.headline)
-                        .foregroundStyle(scoreTint)
                 }
             }
 
             RecommendationMetricRow(
-                menuPriceDisplay: recommendation.menuPriceDisplay,
-                estimatedRetailDisplay: recommendation.estimatedRetailDisplay,
+                menuPrice: recommendation.menuPrice,
+                estimatedRetailLow: recommendation.estimatedRetailLow,
+                estimatedRetailHigh: recommendation.estimatedRetailHigh,
                 estimatedMarkupDisplay: recommendation.estimatedMarkupDisplay,
                 estimatedMarkupLow: recommendation.estimatedMarkupLow,
                 estimatedMarkupHigh: recommendation.estimatedMarkupHigh
             )
 
             VStack(alignment: .leading, spacing: 8) {
-                Text("Why It Stands Out")
+                Text("Why I like it")
                     .font(.headline)
                 Text(recommendation.why)
                     .foregroundStyle(.primary)
             }
-
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Fit For You")
-                    .font(.headline)
-                Text(recommendation.fitForUser)
-                    .foregroundStyle(.secondary)
-            }
-
-            WineTagStrip(tags: recommendation.styleTags + recommendation.categoryTags)
         }
         .padding(20)
         .background(.regularMaterial)
@@ -68,23 +56,45 @@ struct RecommendationCardView: View {
 }
 
 private struct RecommendationMetricRow: View {
-    let menuPriceDisplay: String?
-    let estimatedRetailDisplay: String?
+    let menuPrice: Double?
+    let estimatedRetailLow: Double?
+    let estimatedRetailHigh: Double?
     let estimatedMarkupDisplay: String?
     let estimatedMarkupLow: Double?
     let estimatedMarkupHigh: Double?
 
     var body: some View {
         LazyVGrid(columns: [.init(.flexible()), .init(.flexible())], alignment: .leading, spacing: 12) {
-            if let menuPriceDisplay {
-                MetricBlock(title: "Menu", value: normalizedCurrencyDisplay(menuPriceDisplay))
+            if let menuPriceValue = formattedMenuPrice {
+                MetricBlock(title: "Menu", value: menuPriceValue)
             }
-            if let estimatedRetailDisplay {
-                MetricBlock(title: "Est. Retail", value: normalizedCurrencyDisplay(estimatedRetailDisplay))
+            if let estimatedRetailValue = formattedRetailBottle {
+                MetricBlock(title: "Retail Bottle", value: estimatedRetailValue)
             }
             if let estimatedMarkupValue = normalizedMarkupDisplay {
                 MetricBlock(title: "Est. Markup", value: estimatedMarkupValue)
             }
+        }
+    }
+
+    private var formattedMenuPrice: String? {
+        guard let menuPrice else { return nil }
+        return currency(menuPrice)
+    }
+
+    private var formattedRetailBottle: String? {
+        switch (estimatedRetailLow, estimatedRetailHigh) {
+        case let (low?, high?):
+            if abs(low - high) < 0.05 {
+                return currency(low)
+            }
+            return "~\(currency(low))-\(currency(high))"
+        case let (low?, nil):
+            return currency(low)
+        case let (nil, high?):
+            return currency(high)
+        default:
+            return nil
         }
     }
 
@@ -109,19 +119,11 @@ private struct RecommendationMetricRow: View {
             .replacingOccurrences(of: "%", with: "x")
     }
 
-    private func normalizedCurrencyDisplay(_ value: String) -> String {
-        let trimmedValue = value.trimmingCharacters(in: .whitespacesAndNewlines)
-
-        if trimmedValue.hasPrefix("$") || trimmedValue.hasPrefix("~$") {
-            return trimmedValue
-        }
-
-        if trimmedValue.hasPrefix("~") {
-            let remainder = trimmedValue.dropFirst().trimmingCharacters(in: .whitespacesAndNewlines)
-            return "~$\(remainder)"
-        }
-
-        return "$\(trimmedValue)"
+    private func currency(_ value: Double) -> String {
+        let roundedValue = value.rounded()
+        let isWholeNumber = abs(value - roundedValue) < 0.05
+        let precision = isWholeNumber ? 0 : 1
+        return value.formatted(.currency(code: "USD").precision(.fractionLength(precision)))
     }
 }
 
@@ -141,29 +143,5 @@ private struct MetricBlock: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.primary.opacity(0.04))
         .clipShape(.rect(cornerRadius: 16))
-    }
-}
-
-private struct WineTagStrip: View {
-    let tags: [String]
-
-    var body: some View {
-        if tags.isEmpty {
-            EmptyView()
-        } else {
-            ScrollView(.horizontal) {
-                HStack(spacing: 8) {
-                    ForEach(tags, id: \.self) { tag in
-                        Text(tag)
-                            .font(.caption)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 6)
-                            .background(.tint.opacity(0.14))
-                            .clipShape(.capsule)
-                    }
-                }
-            }
-            .scrollIndicators(.hidden)
-        }
     }
 }

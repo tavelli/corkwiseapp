@@ -34,8 +34,8 @@ struct AppRouter: View {
             }
             .navigationDestination(for: AppDestination.self) { destination in
                 switch destination {
-                case .results(let result):
-                    ResultsView(result: result)
+                case .results(let result, let purchaseMode):
+                    ResultsView(result: result, purchaseMode: purchaseMode)
                 }
             }
         }

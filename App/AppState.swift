@@ -6,8 +6,8 @@ import Observation
 final class AppState {
     var navigationPath: [AppDestination] = []
 
-    func showResults(_ result: WineScanResult) {
-        navigationPath.append(.results(result))
+    func showResults(_ result: WineScanResult, purchaseMode: PurchaseMode) {
+        navigationPath.append(.results(result, purchaseMode))
     }
 
     func resetMainNavigation() {

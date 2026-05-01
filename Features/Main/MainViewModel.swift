@@ -77,7 +77,7 @@ final class MainViewModel {
         let scan = WineScan(
             createdAt: .now,
             restaurantName: result.restaurantName,
-            purchaseMode: result.purchaseMode,
+            purchaseMode: purchaseMode.rawValue,
             summaryHeadline: result.summary.headline,
             bestPickName: result.summary.bestPickName,
             bestPickScore: result.summary.bestPickScore,

@@ -7,5 +7,5 @@ enum AppRoute {
 }
 
 enum AppDestination: Hashable {
-    case results(WineScanResult)
+    case results(WineScanResult, PurchaseMode)
 }

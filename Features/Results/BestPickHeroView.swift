@@ -12,7 +12,7 @@ struct BestPickHeroView: View {
                         .font(.headline)
                         .foregroundStyle(.white.opacity(0.8))
 
-                    Text(summary.headline)
+                    Text(summary.bestPickName)
                         .font(.title2)
                         .bold()
                         .foregroundStyle(.white)
@@ -30,11 +30,6 @@ struct BestPickHeroView: View {
                         .foregroundStyle(.white)
                 }
             }
-
-            Text(summary.bestPickName)
-                .font(.title3)
-                .bold()
-                .foregroundStyle(.white)
 
             Text(summary.bestPickWhy)
                 .foregroundStyle(.white.opacity(0.88))

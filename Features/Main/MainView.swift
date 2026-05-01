@@ -112,7 +112,7 @@ struct MainView: View {
         guard let preferences else { return }
 
         viewModel.startScan(image: image, preferences: preferences, modelContext: modelContext) { result in
-            appState.showResults(result)
+            appState.showResults(result, purchaseMode: viewModel.purchaseMode)
         }
     }
 
@@ -120,7 +120,7 @@ struct MainView: View {
         guard let preferences else { return }
 
         viewModel.retryLastScan(preferences: preferences, modelContext: modelContext) { result in
-            appState.showResults(result)
+            appState.showResults(result, purchaseMode: viewModel.purchaseMode)
         }
     }
 
@@ -140,7 +140,7 @@ struct MainView: View {
         let decoder = JSONDecoder()
 
         guard let result = try? decoder.decode(WineScanResult.self, from: data) else { return }
-        appState.showResults(result)
+        appState.showResults(result, purchaseMode: scan.purchaseModeValue)
     }
 }
 

@@ -13,6 +13,8 @@ This app expects a public Supabase Edge Function at:
 4. Fill in:
    - `OPENAI_API_KEY`
    - `OPENAI_MODEL` (optional, defaults to `gpt-4o`)
+   - `OPENAI_REASONING_EFFORT` (optional, set to `off` to disable)
+   - `OPENAI_TEXT_VERBOSITY` (optional, set to `off` to disable)
 5. Run the function locally:
    `supabase functions serve analyze-wine-menu --env-file supabase/functions/.env`
 

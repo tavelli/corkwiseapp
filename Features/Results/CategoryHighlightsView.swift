@@ -1,39 +1,31 @@
 import SwiftUI
 
 struct CategoryHighlightsView: View {
-    let highlights: [CategoryHighlight]
+    let sections: [RecommendationCategorySection]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("Other Categories")
-                .font(.title3)
-                .bold()
-
             VStack(alignment: .leading, spacing: 10) {
-                ForEach(displayHighlights, id: \.key) { highlight in
-                    HStack(spacing: 12) {
-                        Image(systemName: "sparkles")
-                            .foregroundStyle(.secondary)
-
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(highlight.displayTitle)
-                                .font(.headline)
-                            Text("Recommendation #\(highlight.wineRank)")
-                                .font(.footnote)
+                ForEach(displaySections, id: \.key) { section in
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack {
+                            Image(systemName: "sparkles")
                                 .foregroundStyle(.secondary)
+                            Text(section.displayTitle)
+                                .font(.title3)
+                                .bold()
                         }
 
-                        Spacer()
+                        ForEach(section.recommendations) { recommendation in
+                            RecommendationCardView(recommendation: recommendation)
+                        }
                     }
-                    .padding()
-                    .background(.thinMaterial)
-                    .clipShape(.rect(cornerRadius: 20))
                 }
             }
         }
     }
 
-    private var displayHighlights: [DisplayHighlight] {
+    private var displaySections: [DisplayCategorySection] {
         let canonicalKeys = [
             "best_value",
             "best_splurge",
@@ -41,29 +33,27 @@ struct CategoryHighlightsView: View {
             "most_interesting_pick",
         ]
 
-        let mappedHighlights = highlights.map { highlight in
-            DisplayHighlight(
-                key: highlight.key,
-                displayTitle: Self.displayTitle(for: highlight),
-                wineRank: highlight.wineRank
+        let mappedSections = sections.map { section in
+            DisplayCategorySection(
+                key: section.key,
+                displayTitle: Self.displayTitle(for: section),
+                recommendations: Array(section.recommendations.prefix(2))
             )
         }
 
         let canonicalMatches = canonicalKeys.compactMap { key in
-            mappedHighlights.first { $0.key == key }
+            mappedSections.first { $0.key == key }
         }
 
-        let fallbackHighlights = mappedHighlights.filter { highlight in
-            canonicalKeys.contains(highlight.key) == false
+        let fallbackSections = mappedSections.filter { section in
+            canonicalKeys.contains(section.key) == false
         }
 
-        return canonicalMatches + fallbackHighlights
+        return canonicalMatches + fallbackSections
     }
 
-    private static func displayTitle(for highlight: CategoryHighlight) -> String {
-        switch highlight.key {
-        case "best_overall":
-            return "Best Overall"
+    private static func displayTitle(for section: RecommendationCategorySection) -> String {
+        switch section.key {
         case "best_value":
             return "Best Value"
         case "best_splurge":
@@ -73,13 +63,13 @@ struct CategoryHighlightsView: View {
         case "most_interesting_pick":
             return "Most Interesting Pick"
         default:
-            return highlight.title
+            return section.title
         }
     }
 }
 
-private struct DisplayHighlight: Hashable {
+private struct DisplayCategorySection: Hashable {
     let key: String
     let displayTitle: String
-    let wineRank: Int
+    let recommendations: [WineRecommendation]
 }
