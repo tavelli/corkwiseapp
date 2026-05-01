@@ -11,10 +11,13 @@ This app expects a public Supabase Edge Function at:
    `supabase init`
 3. Copy `supabase/functions/.env.example` to `supabase/functions/.env`
 4. Fill in:
-   - `OPENAI_API_KEY`
+   - `MODEL_PROVIDER` as `openai` or `gemini`
+   - `OPENAI_API_KEY` when using OpenAI
    - `OPENAI_MODEL` (optional, defaults to `gpt-4o`)
    - `OPENAI_REASONING_EFFORT` (optional, set to `off` to disable)
    - `OPENAI_TEXT_VERBOSITY` (optional, set to `off` to disable)
+   - `GEMINI_API_KEY` when using Gemini
+   - `GEMINI_MODEL` (optional, defaults to `gemini-2.5-flash`)
 5. Run the function locally:
    `supabase functions serve analyze-wine-menu --env-file supabase/functions/.env`
 
@@ -36,3 +39,11 @@ Local URL:
 Set `CorkWiseSupabaseBaseURL` in the iOS target to your base project URL, for example:
 
 `https://YOUR_PROJECT_REF.supabase.co`
+
+## Provider design
+
+The Edge Function keeps one stable app-facing endpoint and swaps model providers behind the function boundary.
+
+- `MODEL_PROVIDER=openai` uses `providers/openai.ts`
+- `MODEL_PROVIDER=gemini` uses `providers/gemini.ts`
+- Both providers normalize into the same `WineScanResult` response shape before returning to iOS
