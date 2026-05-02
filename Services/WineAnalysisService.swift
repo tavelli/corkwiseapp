@@ -2,7 +2,7 @@ import Foundation
 
 enum WineAnalysisServiceError: Error {
     case backendNotConfigured
-    case invalidImage
+    case invalidInput
     case invalidResponse(String?)
     case requestFailed
     case serverError(WineAnalysisErrorResponse)
@@ -10,7 +10,7 @@ enum WineAnalysisServiceError: Error {
 
 struct WineAnalysisService {
     func analyzeMenu(
-        imageData: Data,
+        attachment: AnalyzeWineMenuAttachment,
         purchaseMode: PurchaseMode,
         bottleContext: BottleContext?,
         preferences: UserWinePreferences
@@ -19,12 +19,12 @@ struct WineAnalysisService {
             throw WineAnalysisServiceError.backendNotConfigured
         }
 
-        guard imageData.isEmpty == false else {
-            throw WineAnalysisServiceError.invalidImage
+        guard attachment.base64Data.isEmpty == false else {
+            throw WineAnalysisServiceError.invalidInput
         }
 
         let requestBody = AnalyzeWineMenuRequest(
-            imageBase64: imageData.base64EncodedString(),
+            attachment: attachment,
             purchaseMode: purchaseMode,
             bottleContext: purchaseMode == .bottle ? bottleContext : nil,
             userPreferences: preferences.payload

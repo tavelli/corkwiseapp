@@ -1,7 +1,11 @@
-import {RequestError, type AnalyzeWineMenuRequest} from "./types.ts";
+import {
+  RequestError,
+  type AnalyzeWineMenuAttachment,
+  type AnalyzeWineMenuRequest,
+} from "./types.ts";
 
 export const MAX_REQUEST_BYTES = 8_000_000;
-const MAX_IMAGE_BASE64_LENGTH = 7_000_000;
+const MAX_ATTACHMENT_BASE64_LENGTH = 7_000_000;
 
 export function validateAnalyzeRequest(input: unknown): AnalyzeWineMenuRequest {
   if (input == null || typeof input !== "object") {
@@ -14,24 +18,25 @@ export function validateAnalyzeRequest(input: unknown): AnalyzeWineMenuRequest {
   }
 
   const candidate = input as Record<string, unknown>;
-  const imageBase64 = stringOrNull(candidate.imageBase64);
+  const attachment = attachmentOrNull(candidate.attachment) ??
+    legacyImageAttachment(candidate.imageBase64);
   const purchaseMode = stringOrNull(candidate.purchaseMode);
   const userPreferences = candidate.userPreferences;
 
-  if (imageBase64 == null || imageBase64.length === 0) {
+  if (attachment == null || attachment.base64Data.length === 0) {
     throw new RequestError(
       400,
       "invalid_request",
-      "An image is required.",
+      "An image or PDF file is required.",
       false,
     );
   }
 
-  if (imageBase64.length > MAX_IMAGE_BASE64_LENGTH) {
+  if (attachment.base64Data.length > MAX_ATTACHMENT_BASE64_LENGTH) {
     throw new RequestError(
       413,
       "image_too_large",
-      "The selected image is too large. Please try again with a smaller image.",
+      "The selected file is too large. Please try again with a smaller image or PDF.",
       true,
     );
   }
@@ -74,7 +79,7 @@ export function validateAnalyzeRequest(input: unknown): AnalyzeWineMenuRequest {
   }
 
   return {
-    imageBase64,
+    attachment,
     purchaseMode,
     userPreferences: {
       experienceLevel,
@@ -104,4 +109,60 @@ function stringArrayOrNull(value: unknown): string[] | null {
     .map((entry) => entry.trim())
     .filter(Boolean);
   return strings.length === value.length ? strings : null;
+}
+
+function attachmentOrNull(value: unknown): AnalyzeWineMenuAttachment | null {
+  if (value == null || typeof value !== "object") {
+    return null;
+  }
+
+  const candidate = value as Record<string, unknown>;
+  const base64Data = stringOrNull(candidate.base64Data);
+  const mimeType = stringOrNull(candidate.mimeType);
+  const filename = optionalStringOrNull(candidate.filename);
+
+  if (base64Data == null || mimeType == null) {
+    return null;
+  }
+
+  if (mimeType !== "image/jpeg" && mimeType !== "application/pdf") {
+    throw new RequestError(
+      400,
+      "invalid_request",
+      "attachment.mimeType must be either 'image/jpeg' or 'application/pdf'.",
+      false,
+    );
+  }
+
+  return {
+    base64Data,
+    mimeType,
+    filename,
+  };
+}
+
+function legacyImageAttachment(value: unknown): AnalyzeWineMenuAttachment | null {
+  const imageBase64 = stringOrNull(value);
+  if (imageBase64 == null) {
+    return null;
+  }
+
+  return {
+    base64Data: imageBase64,
+    mimeType: "image/jpeg",
+    filename: null,
+  };
+}
+
+function optionalStringOrNull(value: unknown): string | null {
+  if (value == null) {
+    return null;
+  }
+
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : null;
 }

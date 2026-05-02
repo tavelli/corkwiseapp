@@ -1,10 +1,16 @@
 import Foundation
 
 struct AnalyzeWineMenuRequest: Codable {
-    let imageBase64: String
+    let attachment: AnalyzeWineMenuAttachment
     let purchaseMode: PurchaseMode
     let bottleContext: BottleContext?
     let userPreferences: UserPreferencesPayload
+}
+
+struct AnalyzeWineMenuAttachment: Codable {
+    let base64Data: String
+    let mimeType: String
+    let filename: String?
 }
 
 struct UserPreferencesPayload: Codable {

@@ -1,7 +1,13 @@
 export type PurchaseMode = "glass" | "bottle";
 
+export type AnalyzeWineMenuAttachment = {
+  base64Data: string;
+  mimeType: "image/jpeg" | "application/pdf";
+  filename?: string | null;
+};
+
 export type AnalyzeWineMenuRequest = {
-  imageBase64: string;
+  attachment: AnalyzeWineMenuAttachment;
   purchaseMode: PurchaseMode;
   userPreferences: {
     experienceLevel: string;

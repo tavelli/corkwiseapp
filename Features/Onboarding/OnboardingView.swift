@@ -21,33 +21,23 @@ struct OnboardingView: View {
                 .foregroundStyle(.secondary)
 
             ProgressView(value: Double(viewModel.currentStep + 1), total: 4)
+                .tint(Color.wineAccent)
+                .scaleEffect(x: 1, y: 1.2, anchor: .center)
+                .padding(.bottom, 18)
 
-            TabView(selection: $bindableViewModel.currentStep) {
-                ExperienceQuestionView(selection: $bindableViewModel.selectedExperienceLevel)
-                    .tag(0)
-
-                StyleQuestionView(
-                    selectedStyles: bindableViewModel.selectedStyles,
-                    toggleStyle: viewModel.toggleStyle
-                )
-                .tag(1)
-
-                VarietalQuestionView(
-                    selectedVarietals: bindableViewModel.selectedVarietals,
-                    toggleVarietal: viewModel.toggleVarietal
-                )
-                .tag(2)
-
-                ChoiceStyleQuestionView(selection: $bindableViewModel.selectedChoiceStyle)
-                    .tag(3)
-            }
-            .tabViewStyle(.page(indexDisplayMode: .never))
+            stepContent(
+                experienceSelection: $bindableViewModel.selectedExperienceLevel,
+                selectedStyles: bindableViewModel.selectedStyles,
+                selectedVarietals: bindableViewModel.selectedVarietals,
+                choiceSelection: $bindableViewModel.selectedChoiceStyle
+            )
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .animation(.default, value: viewModel.currentStep)
 
             HStack {
                 if viewModel.currentStep > 0 {
                     Button("Back", action: viewModel.goBack)
-                        .buttonStyle(.bordered)
+                        .buttonStyle(OnboardingSecondaryButtonStyle())
                 }
 
                 Spacer()
@@ -59,18 +49,37 @@ struct OnboardingView: View {
                         viewModel.goForward()
                     }
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(OnboardingPrimaryButtonStyle())
                 .disabled(viewModel.canContinue == false)
             }
         }
         .padding()
-        .background(
-            LinearGradient(
-                colors: [.wineBackgroundTop, .wineBackgroundBottom],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
+        .background(mainScreenBackground.ignoresSafeArea())
+    }
+
+    @ViewBuilder
+    private func stepContent(
+        experienceSelection: Binding<ExperienceLevel>,
+        selectedStyles: Set<WineStylePreference>,
+        selectedVarietals: Set<WineVarietal>,
+        choiceSelection: Binding<ChoiceStyle>
+    ) -> some View {
+        switch viewModel.currentStep {
+        case 0:
+            ExperienceQuestionView(selection: experienceSelection)
+        case 1:
+            StyleQuestionView(
+                selectedStyles: selectedStyles,
+                toggleStyle: viewModel.toggleStyle
             )
-        )
+        case 2:
+            VarietalQuestionView(
+                selectedVarietals: selectedVarietals,
+                toggleVarietal: viewModel.toggleVarietal
+            )
+        default:
+            ChoiceStyleQuestionView(selection: choiceSelection)
+        }
     }
 
     private func persistPreferences() {
@@ -110,30 +119,34 @@ private struct VarietalQuestionView: View {
     let toggleVarietal: (WineVarietal) -> Void
 
     var body: some View {
-        QuestionCard(title: "What wine varietals do you usually reach for?") {
-            Text("Choose as many as you want.")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+        ScrollView {
+            QuestionCard(title: "What wine varietals do you usually reach for?") {
+                Text("Choose as many as you want.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
 
-            ForEach(WineVarietalCategory.allCases) { category in
-                VStack(alignment: .leading, spacing: 10) {
-                    Text(category.title)
-                        .font(.headline)
-                        .foregroundStyle(Color.wineText)
+                ForEach(WineVarietalCategory.allCases) { category in
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text(category.title)
+                            .font(.headline)
+                            .foregroundStyle(Color.wineText)
 
-                    ForEach(category.varietals) { varietal in
-                        SelectableOptionButton(
-                            title: varietal.title,
-                            subtitle: varietal.description,
-                            isSelected: selectedVarietals.contains(varietal)
-                        ) {
-                            toggleVarietal(varietal)
+                        ForEach(category.varietals) { varietal in
+                            SelectableOptionButton(
+                                title: varietal.title,
+                                subtitle: varietal.description,
+                                isSelected: selectedVarietals.contains(varietal),
+                                indicatorStyle: .checkbox
+                            ) {
+                                toggleVarietal(varietal)
+                            }
                         }
                     }
+                    .padding(.top, 4)
                 }
-                .padding(.top, 4)
             }
         }
+        .scrollIndicators(.hidden)
     }
 }
 
@@ -160,11 +173,15 @@ private struct StyleQuestionView: View {
 
     var body: some View {
         QuestionCard(title: "What kind of wines do you usually like?") {
+            Text("Choose one or more.")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+
             ForEach(WineStylePreference.allCases) { style in
                 SelectableOptionButton(
                     title: style.title,
-                    subtitle: "Choose one or more",
-                    isSelected: selectedStyles.contains(style)
+                    isSelected: selectedStyles.contains(style),
+                    indicatorStyle: .checkbox
                 ) {
                     toggleStyle(style)
                 }
@@ -199,21 +216,32 @@ private struct QuestionCard<Content: View>: View {
             Text(title)
                 .font(.title2)
                 .bold()
+                .foregroundStyle(Color.wineText)
 
             VStack(alignment: .leading) {
                 content
             }
         }
         .padding()
-        .background(.ultraThinMaterial)
+        .background(Color.wineCardBackground.opacity(0.9))
         .clipShape(.rect(cornerRadius: 24))
+        .overlay {
+            RoundedRectangle(cornerRadius: 24)
+                .stroke(Color.wineBorder, lineWidth: 1)
+        }
     }
 }
 
 private struct SelectableOptionButton: View {
+    enum IndicatorStyle {
+        case circle
+        case checkbox
+    }
+
     let title: String
     var subtitle: String? = nil
     let isSelected: Bool
+    var indicatorStyle: IndicatorStyle = .circle
     let action: () -> Void
 
     var body: some View {
@@ -222,30 +250,67 @@ private struct SelectableOptionButton: View {
                 VStack(alignment: .leading) {
                     Text(title)
                         .bold()
+                        .foregroundStyle(Color.wineText)
                     if let subtitle {
                         Text(subtitle)
                             .font(.footnote)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(Color.wineMutedText)
                     }
                 }
 
                 Spacer()
 
-                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                Image(systemName: indicatorSystemName)
                     .imageScale(.large)
+                    .foregroundStyle(isSelected ? Color.wineAccent : Color.wineMutedText)
             }
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background {
-                if isSelected {
-                    Color.accentColor.opacity(0.16)
-                } else {
-                    Color.clear
-                }
-            }
+            .background(isSelected ? Color.wineSoftPeach.opacity(0.22) : Color.wineOptionBackground.opacity(0.72))
             .clipShape(.rect(cornerRadius: 18))
+            .overlay {
+                RoundedRectangle(cornerRadius: 18)
+                    .stroke(isSelected ? Color.wineAccent.opacity(0.18) : Color.wineBorder, lineWidth: 1)
+            }
         }
         .buttonStyle(.plain)
+    }
+
+    private var indicatorSystemName: String {
+        switch indicatorStyle {
+        case .circle:
+            isSelected ? "checkmark.circle.fill" : "circle"
+        case .checkbox:
+            isSelected ? "checkmark.square.fill" : "square"
+        }
+    }
+}
+
+private struct OnboardingPrimaryButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.subheadline.weight(.semibold))
+            .foregroundStyle(.white)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 12)
+            .background(Color.wineAccent.opacity(configuration.isPressed ? 0.88 : 1))
+            .clipShape(.rect(cornerRadius: 14))
+    }
+}
+
+private struct OnboardingSecondaryButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.subheadline.weight(.semibold))
+            .foregroundStyle(Color.wineText)
+            .padding(.horizontal, 18)
+            .padding(.vertical, 12)
+            .background(Color.wineOptionBackground.opacity(configuration.isPressed ? 0.92 : 1))
+            .clipShape(.rect(cornerRadius: 14))
+            .overlay {
+                RoundedRectangle(cornerRadius: 14)
+                    .stroke(Color.wineBorder, lineWidth: 1)
+            }
     }
 }
 

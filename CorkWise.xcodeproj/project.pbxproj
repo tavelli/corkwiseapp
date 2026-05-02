@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		375DE4FF2FA675A7008D4574 /* winebottle1.svg in Resources */ = {isa = PBXBuildFile; fileRef = 375DE4FE2FA675A7008D4574 /* winebottle1.svg */; };
+		375DE5232FA68901008D4574 /* CorkWise-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 379399DE2FA3D27500246506 /* CorkWise-Info.plist */; };
 		379399B62FA3CC7400246506 /* PLAN.md in Resources */ = {isa = PBXBuildFile; fileRef = 379399AA2FA3CC7400246506 /* PLAN.md */; };
 		379399B72FA3CC7400246506 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 379399AC2FA3CC7400246506 /* README.md */; };
 		379399B82FA3CC7400246506 /* ScanFailureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399B22FA3CC7400246506 /* ScanFailureView.swift */; };
@@ -42,6 +44,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		375DE4FE2FA675A7008D4574 /* winebottle1.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = winebottle1.svg; sourceTree = "<group>"; };
 		379399A22FA3CC7400246506 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		379399A32FA3CC7400246506 /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
 		379399A62FA3CC7400246506 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
@@ -198,6 +201,7 @@
 				379399D52FA3CE9000246506 /* App */,
 				379399D62FA3CE9000246506 /* Features */,
 				379399DC2FA3CF1E00246506 /* Assets.xcassets */,
+				375DE4FE2FA675A7008D4574 /* winebottle1.svg */,
 			);
 			sourceTree = "<group>";
 		};
@@ -274,6 +278,8 @@
 				379399B62FA3CC7400246506 /* PLAN.md in Resources */,
 				379399DD2FA3CF1E00246506 /* Assets.xcassets in Resources */,
 				379399B72FA3CC7400246506 /* README.md in Resources */,
+				375DE5232FA68901008D4574 /* CorkWise-Info.plist in Resources */,
+				375DE4FF2FA675A7008D4574 /* winebottle1.svg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

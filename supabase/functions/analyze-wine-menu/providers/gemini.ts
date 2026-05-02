@@ -52,14 +52,9 @@ export class GeminiProvider implements WineModelProvider {
                     text: buildSystemPrompt(requestBody),
                   },
                   {
-                    text: "Analyze this restaurant wine list image and return only the requested JSON.",
+                    text: "Analyze this restaurant wine list attachment and return only the requested JSON.",
                   },
-                  {
-                    inline_data: {
-                      mime_type: "image/jpeg",
-                      data: requestBody.imageBase64,
-                    },
-                  },
+                  attachmentPart(requestBody),
                 ],
               },
             ],
@@ -130,6 +125,17 @@ export class GeminiProvider implements WineModelProvider {
       clearTimeout(timeout);
     }
   }
+}
+
+function attachmentPart(
+  requestBody: AnalyzeWineMenuRequest,
+): Record<string, unknown> {
+  return {
+    inline_data: {
+      mime_type: requestBody.attachment.mimeType,
+      data: requestBody.attachment.base64Data,
+    },
+  };
 }
 
 function extractOutputText(payload: Record<string, unknown>): string | null {

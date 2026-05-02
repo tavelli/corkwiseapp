@@ -9,7 +9,7 @@ struct SelectedPhoto: Transferable {
     static var transferRepresentation: some TransferRepresentation {
         DataRepresentation(importedContentType: .image) { data in
             guard let image = UIImage(data: data) else {
-                throw WineAnalysisServiceError.invalidImage
+                throw WineAnalysisServiceError.invalidInput
             }
 
             return SelectedPhoto(image: image)

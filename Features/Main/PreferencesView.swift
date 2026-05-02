@@ -3,6 +3,7 @@ import SwiftUI
 
 struct PreferencesView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(AppState.self) private var appState
     @Query(sort: \UserWinePreferences.createdAt) private var preferenceRecords: [UserWinePreferences]
 
     var body: some View {
@@ -31,7 +32,7 @@ struct PreferencesView: View {
 
                                         Spacer()
 
-                                        Image(systemName: preferences.preferredStyleValues.contains(style) ? "checkmark.circle.fill" : "circle")
+                                        Image(systemName: preferences.preferredStyleValues.contains(style) ? "checkmark.square.fill" : "square")
                                             .foregroundStyle(preferences.preferredStyleValues.contains(style) ? Color.wineAccent : .secondary)
                                     }
                                     .padding(16)
@@ -92,6 +93,24 @@ struct PreferencesView: View {
                         }
                         .pickerStyle(.menu)
                     }
+
+                    #if DEBUG
+                    PreferenceSection(title: "Debug") {
+                        Button(role: .destructive) {
+                            resetPreferences()
+                        } label: {
+                            Text("Reset Onboarding")
+                                .font(.subheadline.weight(.semibold))
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(Color.wineAccent)
+
+                        Text("Deletes the saved taste profile so the app returns to onboarding on next render.")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
+                    #endif
                 } else {
                     Text("No preferences found. Complete onboarding to create your taste profile.")
                         .font(.subheadline)
@@ -153,6 +172,15 @@ struct PreferencesView: View {
         preferences.updatedAt = .now
         try? modelContext.save()
     }
+
+    private func resetPreferences() {
+        for preferences in preferenceRecords {
+            modelContext.delete(preferences)
+        }
+
+        try? modelContext.save()
+        appState.resetMainNavigation()
+    }
 }
 
 private struct PreferenceSection<Content: View>: View {
@@ -207,5 +235,6 @@ private struct PreferenceSection<Content: View>: View {
     try! context.save()
 
     return PreferencesView()
+        .environment(AppState())
         .modelContainer(container)
 }

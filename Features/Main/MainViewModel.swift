@@ -22,7 +22,7 @@ final class MainViewModel {
     private let analysisService = WineAnalysisService()
     private let imagePreparationService = ImagePreparationService()
     private var loadingTask: Task<Void, Never>?
-    private var pendingImage: UIImage?
+    private var pendingAttachment: AnalyzeWineMenuAttachment?
 
     func startScan(
         image: UIImage,
@@ -30,16 +30,34 @@ final class MainViewModel {
         modelContext: ModelContext,
         onResult: @escaping (WineScanResult) -> Void
     ) {
+        do {
+            let attachment = try imagePreparationService.prepareAttachment(for: image)
+            selectedPreviewImage = image
+            startScan(
+                attachment: attachment,
+                preferences: preferences,
+                modelContext: modelContext,
+                onResult: onResult
+            )
+        } catch {
+            failure = failureState(for: error)
+        }
+    }
+
+    func startScan(
+        attachment: AnalyzeWineMenuAttachment,
+        preferences: UserWinePreferences,
+        modelContext: ModelContext,
+        onResult: @escaping (WineScanResult) -> Void
+    ) {
         Task {
             do {
-                pendingImage = image
-                selectedPreviewImage = image
+                pendingAttachment = attachment
                 isScanning = true
                 startLoadingMessages()
 
-                let preparedImageData = try imagePreparationService.prepareForUpload(image)
                 let result = try await analysisService.analyzeMenu(
-                    imageData: preparedImageData,
+                    attachment: attachment,
                     purchaseMode: purchaseMode,
                     bottleContext: effectiveBottleContext,
                     preferences: preferences
@@ -60,9 +78,14 @@ final class MainViewModel {
         modelContext: ModelContext,
         onResult: @escaping (WineScanResult) -> Void
     ) {
-        guard let pendingImage else { return }
+        guard let pendingAttachment else { return }
         clearFailure()
-        startScan(image: pendingImage, preferences: preferences, modelContext: modelContext, onResult: onResult)
+        startScan(
+            attachment: pendingAttachment,
+            preferences: preferences,
+            modelContext: modelContext,
+            onResult: onResult
+        )
     }
 
     func clearFailure() {
@@ -125,10 +148,10 @@ final class MainViewModel {
                     title: "Backend not configured.",
                     message: "Add the Supabase base URL to the app configuration before running live scans."
                 )
-            case .invalidImage:
+            case .invalidInput:
                 return ScanFailureState(
-                    title: "Couldn't prepare that image.",
-                    message: "Try taking the photo again or upload a clearer image."
+                    title: "Couldn't prepare that file.",
+                    message: "Try another image or PDF with a readable wine list."
                 )
             case .serverError(let response):
                 return ScanFailureState(

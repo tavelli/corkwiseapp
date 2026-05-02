@@ -67,7 +67,8 @@ Deno.serve(async (req) => {
     const requestBody = validateAnalyzeRequest(parsedBody);
     console.log("request validated", {
       purchaseMode: requestBody.purchaseMode,
-      imageBase64Length: requestBody.imageBase64.length,
+      attachmentMimeType: requestBody.attachment.mimeType,
+      attachmentBase64Length: requestBody.attachment.base64Data.length,
       preferredStylesCount: requestBody.userPreferences.preferredStyles.length,
     });
 

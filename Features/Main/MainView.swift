@@ -1,6 +1,7 @@
 import PhotosUI
 import SwiftData
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct MainView: View {
     @Environment(\.modelContext) private var modelContext
@@ -10,6 +11,8 @@ struct MainView: View {
     @State private var viewModel = MainViewModel()
     @State private var isShowingCamera = false
     @State private var isShowingPhotoPicker = false
+    @State private var isShowingFileImporter = false
+    @State private var isShowingUploadOptions = false
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var isShowingPasteURLMessage = false
 
@@ -21,14 +24,19 @@ struct MainView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 26) {
                 header
+                    .padding(.horizontal, 20)
+
                 actionPanel
-                RecentScansView(
-                    scans: recentScans,
-                    openScan: openScan,
-                    showAllScans: appState.showAllScans
-                )
+
+                if recentScans.isEmpty == false {
+                    RecentScansView(
+                        scans: recentScans,
+                        openScan: openScan,
+                        showAllScans: appState.showAllScans
+                    )
+                    .padding(.horizontal, 20)
+                }
             }
-            .padding(.horizontal, 20)
             .padding(.top, 14)
             .padding(.bottom, 24)
         }
@@ -45,6 +53,19 @@ struct MainView: View {
         } message: {
             Text("URL import isn't wired up yet. Use Scan Wine List or Upload Photo for now.")
         }
+        .confirmationDialog("Upload Wine List", isPresented: $isShowingUploadOptions, titleVisibility: .visible) {
+            Button("Photo Library") {
+                isShowingPhotoPicker = true
+            }
+
+            Button("Browse Files") {
+                isShowingFileImporter = true
+            }
+
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Choose a photo from your library or browse image and PDF files.")
+        }
         .sheet(item: $bindableViewModel.failure) { failure in
             ScanFailureView(
                 title: failure.title,
@@ -54,7 +75,7 @@ struct MainView: View {
                 },
                 uploadAction: {
                     viewModel.clearFailure()
-                    isShowingPhotoPicker = true
+                    isShowingUploadOptions = true
                 }
             )
             .presentationDetents([.medium])
@@ -87,6 +108,13 @@ struct MainView: View {
             matching: .images,
             preferredItemEncoding: .current
         )
+        .fileImporter(
+            isPresented: $isShowingFileImporter,
+            allowedContentTypes: [.image, .pdf],
+            allowsMultipleSelection: false
+        ) { result in
+            handleImportedFile(result)
+        }
     }
 
     private func processSelectedImage(_ image: UIImage) {
@@ -112,6 +140,26 @@ struct MainView: View {
             viewModel.failure = ScanFailureState(
                 title: "Camera unavailable.",
                 message: "This device doesn't currently expose a camera. Upload a photo instead."
+            )
+        }
+    }
+
+    private func handleImportedFile(_ result: Result<[URL], Error>) {
+        do {
+            guard let fileURL = try result.get().first else {
+                return
+            }
+
+            guard let preferences else { return }
+
+            let attachment = try ImagePreparationService().prepareAttachment(from: fileURL)
+            viewModel.startScan(attachment: attachment, preferences: preferences, modelContext: modelContext) { result in
+                appState.showResults(result, purchaseMode: viewModel.purchaseMode, viewedAt: .now)
+            }
+        } catch {
+            viewModel.failure = ScanFailureState(
+                title: "Couldn't import that file.",
+                message: "Choose a photo or a PDF with a readable wine list and try again."
             )
         }
     }
@@ -148,15 +196,19 @@ struct MainView: View {
             heroScanCard
             sourceOptions
         }
-        .padding(.horizontal, 14)
+        .padding(.horizontal, 20)
         .padding(.vertical, 16)
         .background(Color.wineCardBackground)
-        .clipShape(.rect(cornerRadius: 28))
-        .overlay {
-            RoundedRectangle(cornerRadius: 28)
-                .stroke(Color.wineBorder.opacity(0.75), lineWidth: 1)
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(Color.wineBorder.opacity(0.9))
+                .frame(height: 1)
         }
-        .shadow(color: Color(red: 0.35, green: 0.18, blue: 0.12).opacity(0.07), radius: 24, y: 10)
+        .overlay(alignment: .bottom) {
+            Rectangle()
+                .fill(Color.wineBorder.opacity(0.9))
+                .frame(height: 1)
+        }
     }
 
     private var controlPanel: some View {
@@ -167,9 +219,20 @@ struct MainView: View {
                     get: { viewModel.purchaseMode },
                     set: { viewModel.purchaseMode = $0 }
                 ),
-                title: \.title,
-                icon: { $0 == .glass ? "wineglass" : "waterbottle" }
-            )
+                title: \.title
+            ) { purchaseMode in
+                if purchaseMode == .glass {
+                    Image(systemName: "wineglass")
+                        .font(.system(size: 15, weight: .semibold))
+                        .frame(width: 17, height: 20)
+                } else {
+                    Image("WineBottle")
+                        .renderingMode(.template)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 24, height: 30)
+                }
+            }
 
 //            if viewModel.purchaseMode == .bottle {
 //                slidingSegmentedControl(
@@ -254,7 +317,7 @@ struct MainView: View {
                     subtitle: "PDF or photo",
                     systemImage: "square.and.arrow.up"
                 ) {
-                    isShowingPhotoPicker = true
+                    isShowingUploadOptions = true
                 }
 
                 optionButton(
@@ -275,7 +338,7 @@ struct MainView: View {
         action: @escaping () -> Void
     ) -> some View {
         Button(action: action) {
-            HStack(spacing: 12) {
+            HStack(spacing: 14) {
                 Image(systemName: systemImage)
                     .font(.title3.weight(.semibold))
                     .foregroundStyle(Color.wineAccent)
@@ -293,7 +356,7 @@ struct MainView: View {
 
                 Spacer()
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, 14)
             .padding(.vertical, 14)
             .frame(maxWidth: .infinity)
             .background(Color.wineOptionBackground)
@@ -306,11 +369,11 @@ struct MainView: View {
         .buttonStyle(.plain)
     }
 
-    private func slidingSegmentedControl<Item: Hashable>(
+    private func slidingSegmentedControl<Item: Hashable, Icon: View>(
         items: [Item],
         selection: Binding<Item>,
         title: KeyPath<Item, String>,
-        icon: @escaping (Item) -> String
+        @ViewBuilder icon: @escaping (Item) -> Icon
     ) -> some View {
         HStack(spacing: 8) {
             ForEach(items, id: \.self) { item in
@@ -321,9 +384,8 @@ struct MainView: View {
                         selection.wrappedValue = item
                     }
                 } label: {
-                    VStack(spacing: 6) {
-                        Image(systemName: icon(item))
-                            .font(.system(size: 15, weight: .semibold))
+                    HStack(spacing: 8) {
+                        icon(item)
 
                         Text(item[keyPath: title].uppercased())
                             .font(.caption.weight(.bold))
@@ -331,14 +393,15 @@ struct MainView: View {
                             .lineLimit(1)
                             .minimumScaleFactor(0.85)
                     }
-                    .foregroundStyle(isSelected ? Color.white : Color.wineMutedText)
+                    .foregroundStyle(isSelected ? Color.wineAccent : Color.wineMutedText)
                     .frame(maxWidth: .infinity)
-                    .frame(height: 52)
+                    .frame(height: 50)
                     .background {
                         if isSelected {
                             RoundedRectangle(cornerRadius: 14)
-                                .fill(Color.wineAccent)
+                                .fill(Color.white.opacity(0.96))
                                 .matchedGeometryEffect(id: "segmentBackground", in: segmentedControlNamespace)
+                                .shadow(color: Color.black.opacity(0.04), radius: 8, y: 2)
                         }
                     }
                     .contentShape(.rect)
@@ -346,12 +409,13 @@ struct MainView: View {
                 .buttonStyle(.plain)
             }
         }
-        .padding(6)
+        .padding(.horizontal, 5)
+        .padding(.vertical, 7)
         .background(Color.wineSegmentTrack)
         .clipShape(.rect(cornerRadius: 18))
         .overlay {
             RoundedRectangle(cornerRadius: 18)
-                .stroke(Color.wineBorder.opacity(0.7), lineWidth: 1)
+                .stroke(Color.wineBorder.opacity(0.9), lineWidth: 1)
         }
     }
 }

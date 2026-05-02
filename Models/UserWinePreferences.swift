@@ -26,7 +26,6 @@ enum WineStylePreference: String, Codable, CaseIterable, Identifiable {
     case richFull = "rich_full"
     case earthySavory = "earthy_savory"
     case boldStructured = "bold_structured"
-    case unsure
 
     var id: String { rawValue }
 
@@ -42,8 +41,6 @@ enum WineStylePreference: String, Codable, CaseIterable, Identifiable {
             return "Earthy and savory"
         case .boldStructured:
             return "Bold and structured"
-        case .unsure:
-            return "I'm not sure"
         }
     }
 }

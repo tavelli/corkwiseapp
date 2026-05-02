@@ -11,7 +11,7 @@ extension Color {
     static let wineCanvasBottom = Color(red: 0.978, green: 0.968, blue: 0.956)
     static let wineCardBackground = Color(red: 0.975, green: 0.955, blue: 0.936)
     static let wineOptionBackground = Color(red: 0.992, green: 0.986, blue: 0.978)
-    static let wineSegmentTrack = Color(red: 0.988, green: 0.978, blue: 0.968)
+    static let wineSegmentTrack = Color(red: 0.962, green: 0.938, blue: 0.914)
     static let wineAccent = Color(red: 0.45, green: 0.07, blue: 0.09)
     static let wineDeep = Color(red: 0.34, green: 0.04, blue: 0.08)
     static let wineSoftGold = Color(red: 0.88, green: 0.58, blue: 0.48)

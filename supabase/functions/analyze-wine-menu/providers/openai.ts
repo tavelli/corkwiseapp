@@ -55,13 +55,9 @@ export class OpenAIProvider implements WineModelProvider {
             content: [
               {
                 type: "input_text",
-                text: "Analyze this restaurant wine list image and return only the requested JSON.",
+                text: "Analyze this restaurant wine list attachment and return only the requested JSON.",
               },
-              {
-                type: "input_image",
-                image_url: `data:image/jpeg;base64,${requestBody.imageBase64}`,
-                detail: "high",
-              },
+              userAttachmentPart(requestBody),
             ],
           },
         ],
@@ -148,6 +144,25 @@ export class OpenAIProvider implements WineModelProvider {
       clearTimeout(timeout);
     }
   }
+}
+
+function userAttachmentPart(
+  requestBody: AnalyzeWineMenuRequest,
+): Record<string, unknown> {
+  if (requestBody.attachment.mimeType === "application/pdf") {
+    return {
+      type: "input_file",
+      filename: requestBody.attachment.filename ?? "wine-list.pdf",
+      file_data: requestBody.attachment.base64Data,
+    };
+  }
+
+  return {
+    type: "input_image",
+    image_url:
+      `data:${requestBody.attachment.mimeType};base64,${requestBody.attachment.base64Data}`,
+    detail: "high",
+  };
 }
 
 function extractOutputText(payload: Record<string, unknown>): string | null {

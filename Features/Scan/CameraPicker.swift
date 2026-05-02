@@ -6,12 +6,14 @@ struct CameraPicker: UIViewControllerRepresentable {
         UIImagePickerController.isSourceTypeAvailable(.camera)
     }
 
-    let onImagePicked: @MainActor (UIImage) -> Void
+    let onImagePicked: @MainActor @Sendable (UIImage) -> Void
 
+    @MainActor
     func makeCoordinator() -> Coordinator {
         Coordinator(onImagePicked: onImagePicked)
     }
 
+    @MainActor
     func makeUIViewController(context: Context) -> UIImagePickerController {
         let picker = UIImagePickerController()
         picker.sourceType = .camera
@@ -20,13 +22,14 @@ struct CameraPicker: UIViewControllerRepresentable {
         return picker
     }
 
+    @MainActor
     func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
 
     @MainActor
     final class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-        let onImagePicked: @MainActor (UIImage) -> Void
+        let onImagePicked: @MainActor @Sendable (UIImage) -> Void
 
-        init(onImagePicked: @escaping @MainActor (UIImage) -> Void) {
+        init(onImagePicked: @escaping @MainActor @Sendable (UIImage) -> Void) {
             self.onImagePicked = onImagePicked
         }
 
