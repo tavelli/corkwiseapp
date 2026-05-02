@@ -164,7 +164,7 @@ function deriveMarkupRange(input: {
   return {
     low,
     high,
-    display: `~${lowText}x-${highText}x`,
+    display: `${lowText}x-${highText}x`,
   };
 }
 

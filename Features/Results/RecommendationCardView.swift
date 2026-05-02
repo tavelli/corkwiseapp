@@ -98,7 +98,7 @@ private struct RecommendationMetricRow: View {
             if abs(low - high) < 0.05 {
                 return currency(low)
             }
-            return "~\(currency(low))–\(currency(high))"
+            return "\(currency(low))–\(currency(high))"
         case let (low?, nil):
             return currency(low)
         case let (nil, high?):
@@ -117,7 +117,7 @@ private struct RecommendationMetricRow: View {
                 return "\(low)x"
             }
 
-            return "~\(low)x–\(high)x"
+            return "\(low)x–\(high)x"
         }
 
         if let estimatedMarkupLow {
