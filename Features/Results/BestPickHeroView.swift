@@ -19,12 +19,12 @@ struct BestPickHeroView: View {
                         Text("TOP PICK")
                             .font(.caption.weight(.bold))
                             .tracking(0.8)
-                            .foregroundStyle(Color.white.opacity(0.9))
+                            .foregroundStyle(Color.white.opacity(0.95))
                     }
 
                     Text(summary.bestPickName)
                         .font(.system(size: 25, weight: .bold, design: .serif))
-                        .foregroundStyle(Color.white.opacity(0.9))
+                        .foregroundStyle(Color.white.opacity(0.95))
                 }
 
                 Spacer()
@@ -32,7 +32,7 @@ struct BestPickHeroView: View {
                 VStack(alignment: .trailing, spacing: 4) {
                     Text("Score")
                         .font(.subheadline)
-                        .foregroundStyle(Color.white.opacity(0.9))
+                        .foregroundStyle(Color.white.opacity(0.95))
                     Text(summary.bestPickScore.formatted(.number.precision(.fractionLength(1))))
                         .font(.system(size: 31, weight: .bold, design: .serif))
                         .bold()
@@ -43,13 +43,13 @@ struct BestPickHeroView: View {
             Text(summary.bestPickWhy)
                 .font(.body)
                 .lineSpacing(2)
-                .foregroundStyle(Color.white.opacity(0.9))
+                .foregroundStyle(Color.white.opacity(0.95))
 
-            if let restaurantName {
-                Label(restaurantName, systemImage: "fork.knife")
-                    .font(.footnote)
-                    .foregroundStyle(Color.white.opacity(0.9))
-            }
+//            if let restaurantName {
+//                Label(restaurantName, systemImage: "fork.knife")
+//                    .font(.footnote)
+//                    .foregroundStyle(Color.white.opacity(0.9))
+//            }
         }
         .padding(24)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -63,9 +63,9 @@ struct BestPickHeroView: View {
 
                 LinearGradient(
                     colors: [
-                        Color.black.opacity(0.10),
+                        Color.black.opacity(0.14),
                         Color.clear,
-                        Color.black.opacity(0.18),
+                        Color.black.opacity(0.22),
                     ],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
@@ -90,7 +90,7 @@ struct BestPickHeroView: View {
         }
         .overlay(alignment: .bottomTrailing) {
             Circle()
-                .fill(Color.resultHeroIvory.opacity(0.10))
+                .fill(Color.resultHeroIvory.opacity(0.06))
                 .frame(width: 132, height: 132)
                 .offset(x: 40, y: 40)
         }

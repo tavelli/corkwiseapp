@@ -4,7 +4,7 @@ struct RecommendationCardView: View {
     let recommendation: WineRecommendation
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 18) {
+        VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .center, spacing: 14) {
                 Text(recommendation.valueScore.formatted(.number.precision(.fractionLength(1))))
                     .font(.headline.weight(.bold))
@@ -74,17 +74,21 @@ private struct RecommendationMetricRow: View {
     let estimatedMarkupHigh: Double?
 
     var body: some View {
-        HStack(spacing: 10) {
-            if let menuPriceValue = formattedMenuPrice {
-                MetricBlock(title: "Menu", value: menuPriceValue)
-            }
-            if let estimatedRetailValue = formattedRetailBottle {
-                MetricBlock(title: "Retail Bottle", value: estimatedRetailValue)
-            }
-            if let estimatedMarkupValue = normalizedMarkupDisplay {
-                MetricBlock(title: "Markup", value: estimatedMarkupValue)
+        HStack(spacing: 0) {
+            ForEach(metrics, id: \.title) { metric in
+                MetricItem(title: metric.title, value: metric.value)
             }
         }
+        .padding(.vertical, 4)
+        .frame(maxWidth: .infinity)
+    }
+
+    private var metrics: [Metric] {
+        [
+            formattedMenuPrice.map { Metric(title: "Menu", value: $0) },
+            formattedRetailBottle.map { Metric(title: "Retail Bottle", value: $0) },
+            normalizedMarkupDisplay.map { Metric(title: "Markup", value: $0) },
+        ].compactMap { $0 }
     }
 
     private var formattedMenuPrice: String? {
@@ -138,14 +142,19 @@ private struct RecommendationMetricRow: View {
     }
 }
 
-private struct MetricBlock: View {
+private struct Metric: Hashable {
+    let title: String
+    let value: String
+}
+
+private struct MetricItem: View {
     let title: String
     let value: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 5) {
             Text(value)
-                .font(.subheadline.weight(.semibold))
+                .font(.system(size: 18, weight: .semibold))
                 .foregroundStyle(Color.wineText)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
@@ -153,10 +162,8 @@ private struct MetricBlock: View {
                 .font(.system(size: 9, weight: .medium))
                 .foregroundStyle(.secondary)
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 10)
-        .frame(maxWidth: .infinity, minHeight: 58, alignment: .leading)
-        .background(Color.resultMetricBackground)
-        .clipShape(.rect(cornerRadius: 12))
+        .padding(.horizontal, 10)
+        .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+        .layoutPriority(1)
     }
 }
