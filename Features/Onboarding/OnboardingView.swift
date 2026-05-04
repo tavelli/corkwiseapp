@@ -257,7 +257,7 @@ private struct VarietalQuestionView: View {
                     .padding(.top, 14)
                 }
             }
-            .padding(.bottom, 72)
+            .padding(.bottom, 100)
         }
         .scrollIndicators(.hidden)
         .overlay(alignment: .bottom) {
@@ -269,7 +269,7 @@ private struct VarietalQuestionView: View {
                 startPoint: .top,
                 endPoint: .bottom
             )
-            .frame(height: 72)
+            .frame(height: 100)
             .allowsHitTesting(false)
         }
     }

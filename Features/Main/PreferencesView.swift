@@ -48,16 +48,10 @@ struct PreferencesView: View {
                                         Button {
                                             toggleVarietal(varietal, preferences: preferences)
                                         } label: {
-                                            HStack(alignment: .top, spacing: 12) {
-                                                VStack(alignment: .leading, spacing: 4) {
-                                                    Text(varietal.title)
-                                                        .font(.subheadline.weight(.semibold))
-                                                        .foregroundStyle(Color.wineText)
-
-                                                    Text(varietal.description)
-                                                        .font(.footnote)
-                                                        .foregroundStyle(.secondary)
-                                                }
+                                            HStack(spacing: 12) {
+                                                Text(varietal.title)
+                                                    .font(.subheadline.weight(.semibold))
+                                                    .foregroundStyle(Color.wineText)
 
                                                 Spacer()
 
@@ -122,6 +116,16 @@ struct PreferencesView: View {
 
                     #if DEBUG
                     PreferenceSection(title: "Debug") {
+                        Button(role: .destructive) {
+                            clearAllScans()
+                        } label: {
+                            Text("Clear All Scans")
+                                .font(.subheadline.weight(.semibold))
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(Color.wineAccent)
+
                         Button(role: .destructive) {
                             resetPreferences()
                         } label: {
@@ -202,6 +206,18 @@ struct PreferencesView: View {
     private func resetPreferences() {
         for preferences in preferenceRecords {
             modelContext.delete(preferences)
+        }
+
+        try? modelContext.save()
+        appState.resetMainNavigation()
+    }
+
+    private func clearAllScans() {
+        let fetchDescriptor = FetchDescriptor<WineScan>()
+        let scans = (try? modelContext.fetch(fetchDescriptor)) ?? []
+
+        for scan in scans {
+            modelContext.delete(scan)
         }
 
         try? modelContext.save()

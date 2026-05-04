@@ -88,7 +88,7 @@ struct ScanHistoryCard: View {
 
                 Image(systemName: "chevron.right")
                     .font(.headline.weight(.semibold))
-                    .foregroundStyle(Color.wineSoftGold)
+                    .foregroundStyle(Color.wineAccent.opacity(0.55))
             }
             .padding(18)
             .frame(maxWidth: .infinity, alignment: .leading)
