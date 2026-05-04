@@ -10,7 +10,6 @@ export type AnalyzeWineMenuRequest = {
   attachment: AnalyzeWineMenuAttachment;
   purchaseMode: PurchaseMode;
   userPreferences: {
-    experienceLevel: string;
     preferredStyles: string[];
     favoriteVarietals: string[];
     choiceStyle: string;

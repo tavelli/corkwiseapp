@@ -22,7 +22,6 @@ export function buildSystemPrompt(requestBody: AnalyzeWineMenuRequest): string {
     "Do not calculate or return markup fields yourself. The system will derive markup from menu price and retail bottle estimates.",
     "",
     "User preferences:",
-    `- Experience level: ${requestBody.userPreferences.experienceLevel}`,
     `- Preferred styles: ${requestBody.userPreferences.preferredStyles.join(", ") || "none"}`,
     `- Favorite varietals: ${requestBody.userPreferences.favoriteVarietals.join(", ") || "none"}`,
     // `- Choice style: ${requestBody.userPreferences.choiceStyle}`,

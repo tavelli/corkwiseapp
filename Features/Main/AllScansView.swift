@@ -45,13 +45,13 @@ struct AllScansView: View {
     let container = try! ModelContainer(for: UserWinePreferences.self, WineScan.self, configurations: configuration)
     let context = ModelContext(container)
     let preferences = UserWinePreferences(
-        experienceLevel: ExperienceLevel.casual.rawValue,
         preferredStyles: [WineStylePreference.crispRefreshing.rawValue],
         favoriteVarietals: [
             WineVarietal.prosecco.rawValue,
             WineVarietal.pinotNoir.rawValue,
         ],
         choiceStyle: ChoiceStyle.bestValue.rawValue,
+        usualPurchasePreference: UsualPurchasePreference.bottle.rawValue,
         hasCompletedOnboarding: true
     )
     context.insert(preferences)

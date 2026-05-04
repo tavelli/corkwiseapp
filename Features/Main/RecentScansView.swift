@@ -110,9 +110,10 @@ struct ScanHistoryCard: View {
     private var metadataText: String {
         var parts = [scan.purchaseModeValue.title]
 
-        if scan.purchaseModeValue == .bottle, let bottleContext = scan.bottleContextValue {
-            parts.append(bottleContext.shortTitle)
-        }
+        // this was for me / for a group thing we can probably delete
+//        if scan.purchaseModeValue == .bottle, let bottleContext = scan.bottleContextValue {
+//            parts.append(bottleContext.shortTitle)
+//        }
 
         parts.append(scan.createdAt.formatted(date: .abbreviated, time: .omitted))
         return parts.joined(separator: " • ")

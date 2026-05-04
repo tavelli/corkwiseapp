@@ -82,9 +82,9 @@ struct ResultsView: View {
         result: WineScanResult.sample(
             for: .glass,
             preferences: UserWinePreferences(
-                experienceLevel: ExperienceLevel.casual.rawValue,
                 preferredStyles: [WineStylePreference.crispRefreshing.rawValue],
                 choiceStyle: ChoiceStyle.bestValue.rawValue,
+                usualPurchasePreference: UsualPurchasePreference.glass.rawValue,
                 hasCompletedOnboarding: true
             )
         ),

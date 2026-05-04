@@ -60,14 +60,12 @@ export function validateAnalyzeRequest(input: unknown): AnalyzeWineMenuRequest {
   }
 
   const preferences = userPreferences as Record<string, unknown>;
-  const experienceLevel = stringOrNull(preferences.experienceLevel);
   const choiceStyle = stringOrNull(preferences.choiceStyle);
   const tone = stringOrNull(preferences.tone) ?? "standard";
   const preferredStyles = stringArrayOrNull(preferences.preferredStyles);
   const favoriteVarietals = stringArrayOrNull(preferences.favoriteVarietals) ?? [];
 
   if (
-    experienceLevel == null ||
     choiceStyle == null ||
     preferredStyles == null
   ) {
@@ -83,7 +81,6 @@ export function validateAnalyzeRequest(input: unknown): AnalyzeWineMenuRequest {
     attachment,
     purchaseMode,
     userPreferences: {
-      experienceLevel,
       preferredStyles,
       favoriteVarietals,
       choiceStyle,

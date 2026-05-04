@@ -10,16 +10,6 @@ struct PreferencesView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 if let preferences = preferenceRecords.first {
-                    PreferenceSection(title: "Wine Experience") {
-                        Picker("Wine Experience", selection: binding(for: preferences, keyPath: \.experienceLevel, defaultValue: ExperienceLevel.casual.rawValue)) {
-                            ForEach(ExperienceLevel.allCases) { level in
-                                Text(level.title).tag(level.rawValue)
-                            }
-                        }
-                        .pickerStyle(.menu)
-                        .tint(Color.wineAccent)
-                    }
-
                     PreferenceSection(title: "Preferred Styles") {
                         VStack(spacing: 12) {
                             ForEach(WineStylePreference.allCases) { style in
@@ -253,7 +243,6 @@ private struct PreferenceSection<Content: View>: View {
 
     context.insert(
         UserWinePreferences(
-            experienceLevel: ExperienceLevel.casual.rawValue,
             preferredStyles: [
                 WineStylePreference.crispRefreshing.rawValue,
                 WineStylePreference.earthySavory.rawValue,
@@ -265,6 +254,7 @@ private struct PreferenceSection<Content: View>: View {
                 WineVarietal.tempranillo.rawValue,
             ],
             choiceStyle: ChoiceStyle.interesting.rawValue,
+            usualPurchasePreference: UsualPurchasePreference.bottle.rawValue,
             tone: TonePreference.sommelier.rawValue,
             hasCompletedOnboarding: true
         )

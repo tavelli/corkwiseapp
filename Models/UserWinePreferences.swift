@@ -1,25 +1,6 @@
 import Foundation
 import SwiftData
 
-enum ExperienceLevel: String, Codable, CaseIterable, Identifiable {
-    case beginner
-    case casual
-    case enthusiast
-
-    var id: String { rawValue }
-
-    var title: String {
-        switch self {
-        case .beginner:
-            return "Beginner"
-        case .casual:
-            return "Casual wine drinker"
-        case .enthusiast:
-            return "Enthusiast"
-        }
-    }
-}
-
 enum WineStylePreference: String, Codable, CaseIterable, Identifiable {
     case crispRefreshing = "crisp_refreshing"
     case fruitySmooth = "fruity_smooth"
@@ -34,13 +15,13 @@ enum WineStylePreference: String, Codable, CaseIterable, Identifiable {
         case .crispRefreshing:
             return "Crisp and refreshing"
         case .fruitySmooth:
-            return "Fruity and smooth"
+            return "Fruity and easy-drinking"
         case .richFull:
             return "Rich and full-bodied"
         case .earthySavory:
             return "Earthy and savory"
         case .boldStructured:
-            return "Bold and structured"
+            return "Bold and tannic"
         }
     }
 }
@@ -50,7 +31,6 @@ enum ChoiceStyle: String, Codable, CaseIterable, Identifiable {
     case safeChoice = "safe_choice"
     case interesting
     case premium
-    case needsHelp = "needs_help"
 
     var id: String { rawValue }
 
@@ -59,13 +39,65 @@ enum ChoiceStyle: String, Codable, CaseIterable, Identifiable {
         case .bestValue:
             return "Best value"
         case .safeChoice:
-            return "Safest crowd-pleaser"
+            return "Safe pick"
         case .interesting:
-            return "Something interesting"
+            return "Try something new"
         case .premium:
-            return "Premium pick"
-        case .needsHelp:
-            return "I usually need help"
+            return "Go premium"
+        }
+    }
+
+    var description: String {
+        switch self {
+        case .bestValue:
+            return "Find the smartest pick for the price."
+        case .safeChoice:
+            return "Stick with something reliable and easy to like."
+        case .interesting:
+            return "Explore interesting or less obvious wines."
+        case .premium:
+            return "Willing to spend more for a standout bottle."
+        }
+    }
+}
+
+enum UsualPurchasePreference: String, Codable, CaseIterable, Identifiable {
+    case glass
+    case bottle
+    case mix
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .glass:
+            return "By the glass"
+        case .bottle:
+            return "By the bottle"
+        case .mix:
+            return "A mix"
+        }
+    }
+
+    var description: String {
+        switch self {
+        case .glass:
+            return "Ordering for yourself. Looking for a solid pick, fast."
+        case .bottle:
+            return "Choosing for the table. Want to get it right for everyone."
+        case .mix:
+            return "Depends on the situation."
+        }
+    }
+
+    var defaultPurchaseMode: PurchaseMode? {
+        switch self {
+        case .glass:
+            return .glass
+        case .bottle:
+            return .bottle
+        case .mix:
+            return nil
         }
     }
 }
@@ -229,23 +261,23 @@ enum WineVarietal: String, Codable, CaseIterable, Identifiable {
 }
 
 enum WineVarietalCategory: String, CaseIterable, Identifiable {
+    case redWines
     case whiteWines
     case blush
-    case redWines
     case sparklingWines
 
     var id: String { rawValue }
 
     var title: String {
         switch self {
-        case .whiteWines:
-            return "Whites (Light to Full)"
-        case .blush:
-            return "Blush (Dry to sweet)"
         case .redWines:
-            return "Reds (Light to Full)"
+            return "Reds"
+        case .whiteWines:
+            return "Whites"
+        case .blush:
+            return "Rose"
         case .sparklingWines:
-            return "Sparkling (Least to most fizzy)"
+            return "Sparkling"
         }
     }
 
@@ -256,20 +288,23 @@ enum WineVarietalCategory: String, CaseIterable, Identifiable {
 
 @Model
 final class UserWinePreferences {
-    var experienceLevel: String
+    // Kept for compatibility with older on-device SwiftData stores.
+    var experienceLevel: String?
     var preferredStyles: [String]
     var favoriteVarietals: [String]?
     var choiceStyle: String
+    var usualPurchasePreference: String?
     var tone: String?
     var hasCompletedOnboarding: Bool
     var createdAt: Date
     var updatedAt: Date
 
     init(
-        experienceLevel: String,
+        experienceLevel: String? = nil,
         preferredStyles: [String],
         favoriteVarietals: [String] = [],
         choiceStyle: String,
+        usualPurchasePreference: String? = nil,
         tone: String = TonePreference.standard.rawValue,
         hasCompletedOnboarding: Bool = false,
         createdAt: Date = .now,
@@ -279,6 +314,7 @@ final class UserWinePreferences {
         self.preferredStyles = preferredStyles
         self.favoriteVarietals = favoriteVarietals
         self.choiceStyle = choiceStyle
+        self.usualPurchasePreference = usualPurchasePreference
         self.tone = tone
         self.hasCompletedOnboarding = hasCompletedOnboarding
         self.createdAt = createdAt
@@ -287,10 +323,6 @@ final class UserWinePreferences {
 }
 
 extension UserWinePreferences {
-    var experienceLevelValue: ExperienceLevel {
-        ExperienceLevel(rawValue: experienceLevel) ?? .casual
-    }
-
     var preferredStyleValues: [WineStylePreference] {
         preferredStyles.compactMap(WineStylePreference.init(rawValue:))
     }
@@ -303,6 +335,14 @@ extension UserWinePreferences {
         ChoiceStyle(rawValue: choiceStyle) ?? .bestValue
     }
 
+    var usualPurchasePreferenceValue: UsualPurchasePreference {
+        guard let usualPurchasePreference else {
+            return .mix
+        }
+
+        return UsualPurchasePreference(rawValue: usualPurchasePreference) ?? .mix
+    }
+
     var toneValue: TonePreference {
         guard let tone, let value = TonePreference(rawValue: tone) else {
             return .standard
@@ -313,7 +353,6 @@ extension UserWinePreferences {
 
     var payload: UserPreferencesPayload {
         UserPreferencesPayload(
-            experienceLevel: experienceLevel,
             preferredStyles: preferredStyles,
             favoriteVarietals: favoriteVarietals ?? [],
             choiceStyle: choiceStyle,

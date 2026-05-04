@@ -5,13 +5,13 @@ import Observation
 @Observable
 final class OnboardingViewModel {
     var currentStep = 0
-    var selectedExperienceLevel: ExperienceLevel
+    var selectedUsualPurchasePreference: UsualPurchasePreference?
     var selectedStyles: Set<WineStylePreference>
     var selectedVarietals: Set<WineVarietal>
     var selectedChoiceStyle: ChoiceStyle
 
     init(existingPreferences: UserWinePreferences?) {
-        selectedExperienceLevel = existingPreferences?.experienceLevelValue ?? .casual
+        selectedUsualPurchasePreference = existingPreferences?.usualPurchasePreferenceValue
         selectedStyles = Set(existingPreferences?.preferredStyleValues ?? [])
         selectedVarietals = Set(existingPreferences?.favoriteVarietalValues ?? [])
         selectedChoiceStyle = existingPreferences?.choiceStyleValue ?? .bestValue
@@ -20,6 +20,8 @@ final class OnboardingViewModel {
     var canContinue: Bool {
         switch currentStep {
         case 1:
+            return selectedUsualPurchasePreference != nil
+        case 2:
             return selectedStyles.isEmpty == false
         default:
             return true

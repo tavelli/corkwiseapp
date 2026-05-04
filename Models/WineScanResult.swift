@@ -14,7 +14,6 @@ struct AnalyzeWineMenuAttachment: Codable {
 }
 
 struct UserPreferencesPayload: Codable {
-    let experienceLevel: String
     let preferredStyles: [String]
     let favoriteVarietals: [String]
     let choiceStyle: String

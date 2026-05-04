@@ -13,9 +13,10 @@ struct OnboardingView: View {
         @Bindable var bindableViewModel = viewModel
 
         VStack(alignment: .leading) {
-            Text("CorkWise")
-                .font(.largeTitle)
-                .bold()
+            Image("headerlogo3")
+                .resizable()
+                .scaledToFit()
+                .frame(height: 76)
 
             Text("Build a quick taste profile so each scan can rank smarter picks for you.")
                 .foregroundStyle(.secondary)
@@ -26,7 +27,7 @@ struct OnboardingView: View {
                 .padding(.bottom, 18)
 
             stepContent(
-                experienceSelection: $bindableViewModel.selectedExperienceLevel,
+                purchaseSelection: $bindableViewModel.selectedUsualPurchasePreference,
                 selectedStyles: bindableViewModel.selectedStyles,
                 selectedVarietals: bindableViewModel.selectedVarietals,
                 choiceSelection: $bindableViewModel.selectedChoiceStyle
@@ -59,26 +60,26 @@ struct OnboardingView: View {
 
     @ViewBuilder
     private func stepContent(
-        experienceSelection: Binding<ExperienceLevel>,
+        purchaseSelection: Binding<UsualPurchasePreference?>,
         selectedStyles: Set<WineStylePreference>,
         selectedVarietals: Set<WineVarietal>,
         choiceSelection: Binding<ChoiceStyle>
     ) -> some View {
         switch viewModel.currentStep {
         case 0:
-            ExperienceQuestionView(selection: experienceSelection)
+            ChoiceStyleQuestionView(selection: choiceSelection)
         case 1:
+            PurchasePreferenceQuestionView(selection: purchaseSelection)
+        case 2:
             StyleQuestionView(
                 selectedStyles: selectedStyles,
                 toggleStyle: viewModel.toggleStyle
             )
-        case 2:
+        default:
             VarietalQuestionView(
                 selectedVarietals: selectedVarietals,
                 toggleVarietal: viewModel.toggleVarietal
             )
-        default:
-            ChoiceStyleQuestionView(selection: choiceSelection)
         }
     }
 
@@ -91,18 +92,18 @@ struct OnboardingView: View {
         let now = Date.now
 
         if let existing {
-            existing.experienceLevel = viewModel.selectedExperienceLevel.rawValue
             existing.preferredStyles = viewModel.selectedStyles.map(\.rawValue).sorted()
             existing.favoriteVarietals = viewModel.selectedVarietals.map(\.rawValue).sorted()
             existing.choiceStyle = viewModel.selectedChoiceStyle.rawValue
+            existing.usualPurchasePreference = viewModel.selectedUsualPurchasePreference?.rawValue
             existing.hasCompletedOnboarding = true
             existing.updatedAt = now
         } else {
             let preferences = UserWinePreferences(
-                experienceLevel: viewModel.selectedExperienceLevel.rawValue,
                 preferredStyles: viewModel.selectedStyles.map(\.rawValue).sorted(),
                 favoriteVarietals: viewModel.selectedVarietals.map(\.rawValue).sorted(),
                 choiceStyle: viewModel.selectedChoiceStyle.rawValue,
+                usualPurchasePreference: viewModel.selectedUsualPurchasePreference?.rawValue,
                 hasCompletedOnboarding: true,
                 createdAt: now,
                 updatedAt: now
@@ -114,66 +115,13 @@ struct OnboardingView: View {
     }
 }
 
-private struct VarietalQuestionView: View {
-    let selectedVarietals: Set<WineVarietal>
-    let toggleVarietal: (WineVarietal) -> Void
-
-    var body: some View {
-        ScrollView {
-            QuestionCard(title: "What wine varietals do you usually reach for?") {
-                Text("Choose as many as you want.")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-
-                ForEach(WineVarietalCategory.allCases) { category in
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text(category.title)
-                            .font(.headline)
-                            .foregroundStyle(Color.wineText)
-
-                        ForEach(category.varietals) { varietal in
-                            SelectableOptionButton(
-                                title: varietal.title,
-                                subtitle: varietal.description,
-                                isSelected: selectedVarietals.contains(varietal),
-                                indicatorStyle: .checkbox
-                            ) {
-                                toggleVarietal(varietal)
-                            }
-                        }
-                    }
-                    .padding(.top, 4)
-                }
-            }
-        }
-        .scrollIndicators(.hidden)
-    }
-}
-
-private struct ExperienceQuestionView: View {
-    @Binding var selection: ExperienceLevel
-
-    var body: some View {
-        QuestionCard(title: "How would you describe your wine experience?") {
-            ForEach(ExperienceLevel.allCases) { level in
-                SelectableOptionButton(
-                    title: level.title,
-                    isSelected: selection == level
-                ) {
-                    selection = level
-                }
-            }
-        }
-    }
-}
-
 private struct StyleQuestionView: View {
     let selectedStyles: Set<WineStylePreference>
     let toggleStyle: (WineStylePreference) -> Void
 
     var body: some View {
         QuestionCard(title: "What kind of wines do you usually like?") {
-            Text("Choose one or more.")
+            Text("Choose 1–2 that sound most like you")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
 
@@ -194,16 +142,70 @@ private struct ChoiceStyleQuestionView: View {
     @Binding var selection: ChoiceStyle
 
     var body: some View {
-        QuestionCard(title: "How do you usually choose wine at a restaurant?") {
+        QuestionCard(title: "How do you usually choose wine?") {
             ForEach(ChoiceStyle.allCases) { style in
                 SelectableOptionButton(
                     title: style.title,
+                    subtitle: style.description,
                     isSelected: selection == style
                 ) {
                     selection = style
                 }
             }
         }
+    }
+}
+
+private struct PurchasePreferenceQuestionView: View {
+    @Binding var selection: UsualPurchasePreference?
+
+    var body: some View {
+        QuestionCard(title: "Are you usually picking a glass or a bottle?") {
+            ForEach(UsualPurchasePreference.allCases) { preference in
+                SelectableOptionButton(
+                    title: preference.title,
+                    subtitle: preference.description,
+                    isSelected: selection == preference
+                ) {
+                    selection = preference
+                }
+            }
+        }
+    }
+}
+
+private struct VarietalQuestionView: View {
+    let selectedVarietals: Set<WineVarietal>
+    let toggleVarietal: (WineVarietal) -> Void
+
+    var body: some View {
+        ScrollView {
+            QuestionCard(title: "What wine varietals do you usually reach for?") {
+                Text("Select any you like — or skip for now")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+
+                ForEach(WineVarietalCategory.allCases) { category in
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text(category.title)
+                            .font(.headline)
+                            .foregroundStyle(Color.wineText)
+
+                        ForEach(category.varietals) { varietal in
+                            SelectableOptionButton(
+                                title: varietal.title,
+                                isSelected: selectedVarietals.contains(varietal),
+                                indicatorStyle: .checkbox
+                            ) {
+                                toggleVarietal(varietal)
+                            }
+                        }
+                    }
+                    .padding(.top, 14)
+                }
+            }
+        }
+        .scrollIndicators(.hidden)
     }
 }
 

@@ -127,6 +127,13 @@ struct MainView: View {
         ) { result in
             handleImportedFile(result)
         }
+        .task(id: preferences?.usualPurchasePreference) {
+            guard let preferredPurchaseMode = preferences?.usualPurchasePreferenceValue.defaultPurchaseMode else {
+                return
+            }
+
+            viewModel.purchaseMode = preferredPurchaseMode
+        }
     }
 
     private func processSelectedImage(_ image: UIImage) {
@@ -440,13 +447,13 @@ struct MainView: View {
     let container = try! ModelContainer(for: UserWinePreferences.self, WineScan.self, configurations: configuration)
     let context = ModelContext(container)
     let preferences = UserWinePreferences(
-        experienceLevel: ExperienceLevel.casual.rawValue,
         preferredStyles: [WineStylePreference.crispRefreshing.rawValue],
         favoriteVarietals: [
             WineVarietal.prosecco.rawValue,
             WineVarietal.chardonnay.rawValue,
         ],
         choiceStyle: ChoiceStyle.bestValue.rawValue,
+        usualPurchasePreference: UsualPurchasePreference.glass.rawValue,
         hasCompletedOnboarding: true
     )
     context.insert(
