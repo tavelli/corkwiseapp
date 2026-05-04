@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CorkWiseSupabaseBaseURL</key>
-	<string>https://kvpsihkqhznapwcwnsgt.supabase.co</string>
+	<string>http://127.0.0.1:54321</string>
 	<key>CorkWiseLocalSupabaseBaseURL</key>
 	<string>http://127.0.0.1:54321</string>
 </dict>

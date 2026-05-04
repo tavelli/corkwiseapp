@@ -18,6 +18,7 @@ struct UserPreferencesPayload: Codable {
     let preferredStyles: [String]
     let favoriteVarietals: [String]
     let choiceStyle: String
+    let tone: String
 }
 
 struct WineScanResult: Codable, Hashable {

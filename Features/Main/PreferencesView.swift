@@ -17,6 +17,7 @@ struct PreferencesView: View {
                             }
                         }
                         .pickerStyle(.menu)
+                        .tint(Color.wineAccent)
                     }
 
                     PreferenceSection(title: "Preferred Styles") {
@@ -92,6 +93,41 @@ struct PreferencesView: View {
                             }
                         }
                         .pickerStyle(.menu)
+                        .tint(Color.wineAccent)
+                    }
+
+                    PreferenceSection(title: "Tone") {
+                        VStack(spacing: 12) {
+                            ForEach(TonePreference.allCases) { tone in
+                                Button {
+                                    preferences.tone = tone.rawValue
+                                    preferences.updatedAt = .now
+                                    try? modelContext.save()
+                                } label: {
+                                    HStack(alignment: .top, spacing: 12) {
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text(tone.title)
+                                                .font(.subheadline.weight(.semibold))
+                                                .foregroundStyle(Color.wineText)
+
+                                            Text(tone.userDescription)
+                                                .font(.footnote)
+                                                .foregroundStyle(.secondary)
+                                        }
+
+                                        Spacer()
+
+                                        Image(systemName: preferences.toneValue == tone ? "checkmark.circle.fill" : "circle")
+                                            .foregroundStyle(preferences.toneValue == tone ? Color.wineAccent : .secondary)
+                                    }
+                                    .padding(16)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .background(Color.white.opacity(0.7))
+                                    .clipShape(.rect(cornerRadius: 18))
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
                     }
 
                     #if DEBUG
@@ -229,6 +265,7 @@ private struct PreferenceSection<Content: View>: View {
                 WineVarietal.tempranillo.rawValue,
             ],
             choiceStyle: ChoiceStyle.interesting.rawValue,
+            tone: TonePreference.sommelier.rawValue,
             hasCompletedOnboarding: true
         )
     )

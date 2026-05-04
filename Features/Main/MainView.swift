@@ -23,9 +23,6 @@ struct MainView: View {
 
         ScrollView {
             VStack(alignment: .leading, spacing: 26) {
-                header
-                    .padding(.horizontal, 20)
-
                 actionPanel
 
                 if recentScans.isEmpty == false {
@@ -37,11 +34,26 @@ struct MainView: View {
                     .padding(.horizontal, 20)
                 }
             }
-            .padding(.top, 14)
             .padding(.bottom, 24)
         }
         .scrollIndicators(.hidden)
         .background(mainScreenBackground.ignoresSafeArea())
+        .safeAreaInset(edge: .top, spacing: 0) {
+            header
+                .padding(.horizontal, 20)
+                .padding(.top, 10)
+                .padding(.bottom, 12)
+                .background {
+                    Rectangle()
+                        .fill(Color.wineCanvasTop)
+                        .ignoresSafeArea(edges: .top)
+                }
+                .overlay(alignment: .bottom) {
+                    Rectangle()
+                        .fill(Color.wineBorder.opacity(0.4))
+                        .frame(height: 1)
+                }
+        }
         .navigationBarBackButtonHidden()
         .overlay {
             if viewModel.isScanning {
@@ -174,16 +186,17 @@ struct MainView: View {
 
     private var header: some View {
         HStack {
-            Text("CorkWise")
-                .font(.system(size: 25, weight: .bold, design: .serif))
-                .foregroundStyle(Color.wineAccent)
+            Image("headerlogo3")
+                .resizable()
+                .scaledToFit()
+                .frame(height: 46)
 
             Spacer()
 
             Button(action: appState.showPreferences) {
-                Image(systemName: "person.circle")
-                    .font(.system(size: 34, weight: .regular))
-                    .foregroundStyle(Color.black.opacity(0.88))
+                Image(systemName: "person.crop.circle")
+                    .font(.system(size: 31, weight: .regular))
+                    .foregroundStyle(Color.wineText)
                     .frame(width: 42, height: 42)
             }
             .buttonStyle(.plain)
@@ -246,6 +259,8 @@ struct MainView: View {
 //                )
 //            }
         }
+        .padding(.top, 6)
+        .padding(.bottom, 6)
     }
 
     private var heroScanCard: some View {
@@ -283,7 +298,7 @@ struct MainView: View {
                         .tracking(1.2)
                         .foregroundStyle(Color.wineSoftPeach)
 
-                    Text("Tap to scan a wine list")
+                    Text("tap to start your scan")
                         .font(.subheadline)
                         .foregroundStyle(Color.wineSoftPeach.opacity(0.74))
                 }
@@ -300,8 +315,8 @@ struct MainView: View {
                     .fill(Color.wineDivider)
                     .frame(height: 1)
 
-                Text("OR CHOOSE AN OPTION")
-                    .font(.caption.weight(.bold))
+                Text("OR CHOOSE ANOTHER METHOD")
+                    .font(.caption.weight(.semibold))
                     .tracking(1.2)
                     .foregroundStyle(.secondary)
                     .fixedSize()

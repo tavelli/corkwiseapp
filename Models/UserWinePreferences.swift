@@ -70,6 +70,36 @@ enum ChoiceStyle: String, Codable, CaseIterable, Identifiable {
     }
 }
 
+enum TonePreference: String, Codable, CaseIterable, Identifiable {
+    case standard
+    case sommelier
+    case sassy
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .standard:
+            return "Standard"
+        case .sommelier:
+            return "Sommelier"
+        case .sassy:
+            return "Sassy"
+        }
+    }
+
+    var userDescription: String {
+        switch self {
+        case .standard:
+            return "Clear and straightforward; quick, easy-to-understand picks"
+        case .sommelier:
+            return "More refined and wine-focused; adds insight on style, structure, and producer quality"
+        case .sassy:
+            return "Sharp and opinionated; calls out overpriced bottles and hype with a bit of attitude"
+        }
+    }
+}
+
 enum WineVarietal: String, Codable, CaseIterable, Identifiable {
     case pinotGrigio = "pinot_grigio"
     case sauvignonBlanc = "sauvignon_blanc"
@@ -230,6 +260,7 @@ final class UserWinePreferences {
     var preferredStyles: [String]
     var favoriteVarietals: [String]?
     var choiceStyle: String
+    var tone: String?
     var hasCompletedOnboarding: Bool
     var createdAt: Date
     var updatedAt: Date
@@ -239,6 +270,7 @@ final class UserWinePreferences {
         preferredStyles: [String],
         favoriteVarietals: [String] = [],
         choiceStyle: String,
+        tone: String = TonePreference.standard.rawValue,
         hasCompletedOnboarding: Bool = false,
         createdAt: Date = .now,
         updatedAt: Date = .now
@@ -247,6 +279,7 @@ final class UserWinePreferences {
         self.preferredStyles = preferredStyles
         self.favoriteVarietals = favoriteVarietals
         self.choiceStyle = choiceStyle
+        self.tone = tone
         self.hasCompletedOnboarding = hasCompletedOnboarding
         self.createdAt = createdAt
         self.updatedAt = updatedAt
@@ -270,12 +303,21 @@ extension UserWinePreferences {
         ChoiceStyle(rawValue: choiceStyle) ?? .bestValue
     }
 
+    var toneValue: TonePreference {
+        guard let tone, let value = TonePreference(rawValue: tone) else {
+            return .standard
+        }
+
+        return value
+    }
+
     var payload: UserPreferencesPayload {
         UserPreferencesPayload(
             experienceLevel: experienceLevel,
             preferredStyles: preferredStyles,
             favoriteVarietals: favoriteVarietals ?? [],
-            choiceStyle: choiceStyle
+            choiceStyle: choiceStyle,
+            tone: toneValue.rawValue
         )
     }
 }

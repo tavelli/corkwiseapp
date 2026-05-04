@@ -14,6 +14,7 @@ export type AnalyzeWineMenuRequest = {
     preferredStyles: string[];
     favoriteVarietals: string[];
     choiceStyle: string;
+    tone: string;
   };
 };
 
