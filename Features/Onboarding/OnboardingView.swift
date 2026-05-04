@@ -36,43 +36,51 @@ struct OnboardingView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Image("headerlogo3")
+            HStack(spacing: 12) {
+                if viewModel.currentStep > 0 {
+                    Button(action: viewModel.goBack) {
+                        Image(systemName: "chevron.left")
+                            .font(.headline.weight(.semibold))
+                            .foregroundStyle(Color.wineText)
+                            .frame(width: 32, height: 32)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .frame(width: 32, height: 32)
+                }
+
+                ProgressView(value: Double(viewModel.currentStep + 1), total: 4)
+                    .tint(Color.wineAccent)
+                    .scaleEffect(x: 1, y: 1.35, anchor: .center)
+                    .frame(maxWidth: .infinity)
+            }
+            .frame(height: 32)
+            .padding(.bottom, 20)
+
+            Image("headerlogo4")
                 .resizable()
                 .scaledToFit()
-                .frame(height: 72)
+                .frame(height: 55)
 
             Text("Build your taste profile for smarter picks.")
                 .font(.subheadline)
-                .foregroundStyle(Color.wineMutedText.opacity(0.82))
-                .padding(.top, 12)
-
-            ProgressView(value: Double(viewModel.currentStep + 1), total: 4)
-                .tint(Color.wineAccent)
-                .scaleEffect(x: 1, y: 1.12, anchor: .center)
-                .padding(.top, 20)
-                .padding(.bottom, 34)
+                .foregroundStyle(Color.wineText.opacity(0.6))
+                .padding(.top, 6)
+                .padding(.bottom, 38)
         }
     }
 
     private var footer: some View {
-        HStack {
-            if viewModel.currentStep > 0 {
-                Button("Back", action: viewModel.goBack)
-                    .buttonStyle(OnboardingSecondaryButtonStyle())
+        Button(viewModel.isLastStep ? "Finish" : "Continue") {
+            if viewModel.isLastStep {
+                persistPreferences()
+            } else {
+                viewModel.goForward()
             }
-
-            Spacer()
-
-            Button(viewModel.isLastStep ? "Finish" : "Continue") {
-                if viewModel.isLastStep {
-                    persistPreferences()
-                } else {
-                    viewModel.goForward()
-                }
-            }
-            .buttonStyle(OnboardingPrimaryButtonStyle())
-            .disabled(viewModel.canContinue == false)
         }
+        .buttonStyle(OnboardingPrimaryButtonStyle())
+        .disabled(viewModel.canContinue == false)
+        .frame(maxWidth: .infinity)
         .padding(.top, 24)
     }
 
@@ -122,7 +130,7 @@ struct OnboardingView: View {
 
         Task { @MainActor in
             try? await Task.sleep(for: .milliseconds(180))
-            guard viewModel.currentStep == step, viewModel.showsFooterCTA == false else { return }
+            guard viewModel.currentStep == step, viewModel.shouldAutoAdvanceCurrentStep else { return }
             viewModel.goForward()
         }
     }
@@ -173,8 +181,7 @@ private struct StyleQuestionView: View {
             ForEach(WineStylePreference.allCases) { style in
                 SelectableOptionButton(
                     title: style.title,
-                    isSelected: selectedStyles.contains(style),
-                    indicatorStyle: .checkbox
+                    isSelected: selectedStyles.contains(style)
                 ) {
                     toggleStyle(style)
                 }
@@ -234,21 +241,14 @@ private struct VarietalQuestionView: View {
 
                 ForEach(WineVarietalCategory.allCases) { category in
                     VStack(alignment: .leading, spacing: 10) {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text(category.title)
-                                .font(.headline.weight(.semibold))
-                                .foregroundStyle(Color.wineDeep)
-
-                            Rectangle()
-                                .fill(Color.wineDivider.opacity(0.9))
-                                .frame(height: 0.5)
-                        }
+                        Text(category.title)
+                            .font(.headline.weight(.semibold))
+                            .foregroundStyle(Color.wineDeep)
 
                         ForEach(category.varietals) { varietal in
                             SelectableOptionButton(
                                 title: varietal.title,
-                                isSelected: selectedVarietals.contains(varietal),
-                                indicatorStyle: .checkbox
+                                isSelected: selectedVarietals.contains(varietal)
                             ) {
                                 toggleVarietal(varietal)
                             }
@@ -257,8 +257,21 @@ private struct VarietalQuestionView: View {
                     .padding(.top, 14)
                 }
             }
+            .padding(.bottom, 72)
         }
         .scrollIndicators(.hidden)
+        .overlay(alignment: .bottom) {
+            LinearGradient(
+                colors: [
+                    Color.white.opacity(0),
+                    Color.wineCanvasBottom.opacity(0.92)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: 72)
+            .allowsHitTesting(false)
+        }
     }
 }
 
@@ -281,67 +294,69 @@ private struct QuestionSection<Content: View>: View {
 }
 
 private struct SelectableOptionButton: View {
-    enum IndicatorStyle {
-        case circle
-        case checkbox
-    }
-
     let title: String
     var subtitle: String? = nil
     let isSelected: Bool
-    var indicatorStyle: IndicatorStyle = .circle
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
-            HStack(alignment: .center, spacing: 14) {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(title)
-                        .bold()
-                        .foregroundStyle(Color.wineText)
-                    if let subtitle {
-                        Text(subtitle)
-                            .font(.caption)
-                            .foregroundStyle(Color.wineMutedText.opacity(isSelected ? 0.86 : 0.72))
-                    }
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .bold()
+                    .foregroundStyle(isSelected ? Color.wineDeep : Color.wineText)
+
+                if let subtitle {
+                    Text(subtitle)
+                        .font(.caption)
+                        .foregroundStyle(isSelected ? Color.wineDeep.opacity(0.78) : Color.wineMutedText.opacity(0.9))
                 }
-
-                Spacer()
-
-                Image(systemName: indicatorSystemName)
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundStyle(isSelected ? Color.wineAccent : Color.wineMutedText)
             }
             .padding(.horizontal, 18)
             .padding(.vertical, 16)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(isSelected ? Color.wineSoftPeach.opacity(0.34) : Color.wineOptionBackground.opacity(0.56))
+            .background(isSelected ? Color.wineSoftPeach.opacity(0.42) : Color.white.opacity(0.94))
             .clipShape(.rect(cornerRadius: 18))
+            .overlay {
+                RoundedRectangle(cornerRadius: 18)
+                    .stroke(isSelected ? Color.wineAccent.opacity(0.55) : Color.wineBorder.opacity(0.9), lineWidth: 1)
+            }
             .scaleEffect(isSelected ? 1 : 0.985)
             .animation(.spring(response: 0.24, dampingFraction: 0.72), value: isSelected)
         }
         .buttonStyle(.plain)
     }
-
-    private var indicatorSystemName: String {
-        switch indicatorStyle {
-        case .circle:
-            isSelected ? "checkmark.circle.fill" : "circle"
-        case .checkbox:
-            isSelected ? "checkmark.square.fill" : "square"
-        }
-    }
 }
 
 private struct OnboardingPrimaryButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .font(.subheadline.weight(.semibold))
-            .foregroundStyle(.white)
-            .padding(.horizontal, 20)
-            .padding(.vertical, 12)
-            .background(Color.wineAccent.opacity(configuration.isPressed ? 0.88 : 1))
-            .clipShape(.rect(cornerRadius: 14))
+        PrimaryButton(configuration: configuration)
+    }
+
+    private struct PrimaryButton: View {
+        @Environment(\.isEnabled) private var isEnabled
+        let configuration: Configuration
+
+        var body: some View {
+            configuration.label
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(isEnabled ? Color.white : Color.wineMutedText.opacity(0.85))
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 12)
+                .background(backgroundColor)
+                .clipShape(.rect(cornerRadius: 14))
+                .scaleEffect(isEnabled ? 1 : 0.985)
+                .animation(.easeOut(duration: 0.18), value: isEnabled)
+        }
+
+        private var backgroundColor: Color {
+            guard isEnabled else {
+                return Color.wineBorder.opacity(0.75)
+            }
+
+            return Color.wineAccent.opacity(configuration.isPressed ? 0.88 : 1)
+        }
     }
 }
 

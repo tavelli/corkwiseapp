@@ -5,6 +5,7 @@ import Observation
 @Observable
 final class OnboardingViewModel {
     var currentStep = 0
+    private(set) var furthestStepReached = 0
     var selectedUsualPurchasePreference: UsualPurchasePreference?
     var selectedStyles: Set<WineStylePreference>
     var selectedVarietals: Set<WineVarietal>
@@ -35,7 +36,11 @@ final class OnboardingViewModel {
     }
 
     var showsFooterCTA: Bool {
-        currentStep >= 2
+        currentStep >= 2 || hasRevisitedCurrentStep
+    }
+
+    var shouldAutoAdvanceCurrentStep: Bool {
+        currentStep < 2 && hasRevisitedCurrentStep == false
     }
 
     func goBack() {
@@ -45,6 +50,7 @@ final class OnboardingViewModel {
     func goForward() {
         guard currentStep < 3 else { return }
         currentStep += 1
+        furthestStepReached = max(furthestStepReached, currentStep)
     }
 
     func toggleStyle(_ style: WineStylePreference) {
@@ -61,5 +67,9 @@ final class OnboardingViewModel {
         } else {
             selectedVarietals.insert(varietal)
         }
+    }
+
+    private var hasRevisitedCurrentStep: Bool {
+        furthestStepReached > currentStep
     }
 }
