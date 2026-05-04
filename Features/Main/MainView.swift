@@ -7,7 +7,6 @@ struct MainView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(AppState.self) private var appState
     @Query(sort: \WineScan.createdAt, order: .reverse) private var recentScans: [WineScan]
-    @Namespace private var segmentedControlNamespace
     @State private var viewModel = MainViewModel()
     @State private var isShowingCamera = false
     @State private var isShowingPhotoPicker = false
@@ -473,29 +472,22 @@ struct MainView: View {
                             .lineLimit(1)
                             .minimumScaleFactor(0.85)
                     }
-                    .foregroundStyle(isSelected ? Color.wineAccent : Color.wineMutedText)
+                    .foregroundStyle(isSelected ? Color.white : Color.wineText)
                     .frame(maxWidth: .infinity)
                     .frame(height: 38)
-                    .background {
-                        if isSelected {
-                            RoundedRectangle(cornerRadius: 11)
-                                .fill(Color.white.opacity(0.96))
-                                .matchedGeometryEffect(id: "segmentBackground", in: segmentedControlNamespace)
-                                .shadow(color: Color.black.opacity(0.04), radius: 8, y: 2)
-                        }
+                    .background(isSelected ? Color.wineAccent : Color.wineOptionBackground)
+                    .clipShape(.capsule)
+                    .overlay {
+                        Capsule()
+                            .stroke(
+                                isSelected ? Color.wineAccent : Color.wineBorder.opacity(0.9),
+                                lineWidth: 1
+                            )
                     }
                     .contentShape(.rect)
                 }
                 .buttonStyle(.plain)
             }
-        }
-        .padding(.horizontal, 4)
-        .padding(.vertical, 5)
-        .background(Color.wineSegmentTrack)
-        .clipShape(.rect(cornerRadius: 14))
-        .overlay {
-            RoundedRectangle(cornerRadius: 14)
-                .stroke(Color.wineBorder.opacity(0.9), lineWidth: 1)
         }
     }
 }
