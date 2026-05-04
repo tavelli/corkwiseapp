@@ -8,17 +8,19 @@ final class OnboardingViewModel {
     var selectedUsualPurchasePreference: UsualPurchasePreference?
     var selectedStyles: Set<WineStylePreference>
     var selectedVarietals: Set<WineVarietal>
-    var selectedChoiceStyle: ChoiceStyle
+    var selectedChoiceStyle: ChoiceStyle?
 
     init(existingPreferences: UserWinePreferences?) {
         selectedUsualPurchasePreference = existingPreferences?.usualPurchasePreferenceValue
         selectedStyles = Set(existingPreferences?.preferredStyleValues ?? [])
         selectedVarietals = Set(existingPreferences?.favoriteVarietalValues ?? [])
-        selectedChoiceStyle = existingPreferences?.choiceStyleValue ?? .bestValue
+        selectedChoiceStyle = existingPreferences?.choiceStyleValue
     }
 
     var canContinue: Bool {
         switch currentStep {
+        case 0:
+            return selectedChoiceStyle != nil
         case 1:
             return selectedUsualPurchasePreference != nil
         case 2:
@@ -30,6 +32,10 @@ final class OnboardingViewModel {
 
     var isLastStep: Bool {
         currentStep == 3
+    }
+
+    var showsFooterCTA: Bool {
+        currentStep >= 2
     }
 
     func goBack() {
