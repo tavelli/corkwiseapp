@@ -5,7 +5,7 @@ struct RecommendationCardView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
-            HStack(alignment: .top, spacing: 14) {
+            HStack(alignment: .center, spacing: 14) {
                 Text(recommendation.valueScore.formatted(.number.precision(.fractionLength(1))))
                     .font(.headline.weight(.bold))
                     .foregroundStyle(Color.resultScoreText)
@@ -144,18 +144,18 @@ private struct MetricBlock: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text(title.uppercased())
-                .font(.system(size: 9, weight: .medium))
-                .foregroundStyle(.secondary)
             Text(value)
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(Color.wineText)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
+            Text(title.uppercased())
+                .font(.system(size: 9, weight: .medium))
+                .foregroundStyle(.secondary)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity, minHeight: 58, alignment: .leading)
         .background(Color.resultMetricBackground)
         .clipShape(.rect(cornerRadius: 12))
     }

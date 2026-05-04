@@ -25,7 +25,7 @@ extension Color {
     static let resultHeroBottom = Color(red: 0.53, green: 0.39, blue: 0.16)
     static let resultHeroIvory = Color(red: 1.0, green: 0.969, blue: 0.902)
     static let resultCardBackground = Color(red: 0.988, green: 0.978, blue: 0.968)
-    static let resultMetricBackground = Color(red: 0.965, green: 0.945, blue: 0.93)
+    static let resultMetricBackground = Color(red: 0.943, green: 0.918, blue: 0.898)
     static let resultScoreTint = Color(red: 0.95, green: 0.49, blue: 0.18)
     static let resultScoreTopTier = Color(red: 0.902, green: 0.827, blue: 0.639)
     static let resultScoreUpperMid = Color(red: 0.918, green: 0.851, blue: 0.761)

@@ -1,5 +1,15 @@
 # Supabase Setup
 
+## Deployment
+
+### prod
+
+npx supabase functions deploy analyze-wine-menu
+
+### local
+
+npx supabase functions serve analyze-wine-menu --env-file functions/.env
+
 This app expects a public Supabase Edge Function at:
 
 `POST /functions/v1/analyze-wine-menu`
