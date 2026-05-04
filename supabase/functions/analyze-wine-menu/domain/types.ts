@@ -1,5 +1,11 @@
 export type PurchaseMode = "glass" | "bottle";
 
+export type WineCategoryPreference =
+  | "anything"
+  | "reds"
+  | "whites"
+  | "sparkling";
+
 export type AnalyzeWineMenuAttachment = {
   base64Data: string;
   mimeType: "image/jpeg" | "application/pdf";
@@ -9,6 +15,7 @@ export type AnalyzeWineMenuAttachment = {
 export type AnalyzeWineMenuRequest = {
   attachment: AnalyzeWineMenuAttachment;
   purchaseMode: PurchaseMode;
+  categoryPreference: WineCategoryPreference;
   userPreferences: {
     preferredStyles: string[];
     favoriteVarietals: string[];

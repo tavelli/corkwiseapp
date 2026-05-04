@@ -4,6 +4,7 @@ struct AnalyzeWineMenuRequest: Codable {
     let attachment: AnalyzeWineMenuAttachment
     let purchaseMode: PurchaseMode
     let bottleContext: BottleContext?
+    let categoryPreference: WineCategoryPreference
     let userPreferences: UserPreferencesPayload
 }
 

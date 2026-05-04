@@ -21,6 +21,8 @@ export function validateAnalyzeRequest(input: unknown): AnalyzeWineMenuRequest {
   const attachment = attachmentOrNull(candidate.attachment) ??
     legacyImageAttachment(candidate.imageBase64);
   const purchaseMode = stringOrNull(candidate.purchaseMode);
+  const categoryPreference = stringOrNull(candidate.categoryPreference) ??
+    "anything";
   const userPreferences = candidate.userPreferences;
 
   if (attachment == null || attachment.base64Data.length === 0) {
@@ -46,6 +48,20 @@ export function validateAnalyzeRequest(input: unknown): AnalyzeWineMenuRequest {
       400,
       "invalid_request",
       "purchaseMode must be either 'glass' or 'bottle'.",
+      false,
+    );
+  }
+
+  if (
+    categoryPreference !== "anything" &&
+    categoryPreference !== "reds" &&
+    categoryPreference !== "whites" &&
+    categoryPreference !== "sparkling"
+  ) {
+    throw new RequestError(
+      400,
+      "invalid_request",
+      "categoryPreference must be 'anything', 'reds', 'whites', or 'sparkling'.",
       false,
     );
   }
@@ -80,6 +96,7 @@ export function validateAnalyzeRequest(input: unknown): AnalyzeWineMenuRequest {
   return {
     attachment,
     purchaseMode,
+    categoryPreference,
     userPreferences: {
       preferredStyles,
       favoriteVarietals,

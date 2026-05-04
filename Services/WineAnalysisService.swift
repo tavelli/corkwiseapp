@@ -13,6 +13,7 @@ struct WineAnalysisService {
         attachment: AnalyzeWineMenuAttachment,
         purchaseMode: PurchaseMode,
         bottleContext: BottleContext?,
+        categoryPreference: WineCategoryPreference,
         preferences: UserWinePreferences
     ) async throws -> WineScanResult {
         guard let endpoint = AppConfiguration.shared.analysisEndpoint else {
@@ -27,6 +28,7 @@ struct WineAnalysisService {
             attachment: attachment,
             purchaseMode: purchaseMode,
             bottleContext: purchaseMode == .bottle ? bottleContext : nil,
+            categoryPreference: categoryPreference,
             userPreferences: preferences.payload
         )
 

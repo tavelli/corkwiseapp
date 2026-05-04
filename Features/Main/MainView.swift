@@ -134,6 +134,24 @@ struct MainView: View {
 
             viewModel.purchaseMode = preferredPurchaseMode
         }
+        .task(id: categoryPreferenceSeedID) {
+            guard preferences != nil || recentScans.isEmpty == false else {
+                return
+            }
+
+            viewModel.configureInitialCategoryPreference(
+                preferences: preferences,
+                latestScan: recentScans.first
+            )
+        }
+    }
+
+    private var categoryPreferenceSeedID: String {
+        [
+            preferences?.favoriteVarietals?.joined(separator: ",") ?? "",
+            recentScans.first?.categoryPreference ?? "",
+            recentScans.first?.createdAt.ISO8601Format() ?? "",
+        ].joined(separator: "|")
     }
 
     private func processSelectedImage(_ image: UIImage) {
@@ -232,7 +250,7 @@ struct MainView: View {
     }
 
     private var controlPanel: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 14) {
             slidingSegmentedControl(
                 items: PurchaseMode.allCases,
                 selection: Binding(
@@ -254,6 +272,13 @@ struct MainView: View {
                 }
             }
 
+            categoryPreferenceChips(
+                selection: Binding(
+                    get: { viewModel.categoryPreference },
+                    set: { viewModel.categoryPreference = $0 }
+                )
+            )
+
 //            if viewModel.purchaseMode == .bottle {
 //                slidingSegmentedControl(
 //                    items: BottleContext.allCases,
@@ -268,6 +293,39 @@ struct MainView: View {
         }
         .padding(.top, 6)
         .padding(.bottom, 6)
+    }
+
+    private func categoryPreferenceChips(selection: Binding<WineCategoryPreference>) -> some View {
+        HStack(spacing: 8) {
+            ForEach(WineCategoryPreference.allCases) { category in
+                let isSelected = selection.wrappedValue == category
+
+                Button {
+                    withAnimation(.spring(response: 0.24, dampingFraction: 0.86)) {
+                        selection.wrappedValue = category
+                    }
+                } label: {
+                    Text(category.title)
+                        .font(.caption.weight(.semibold))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.82)
+                        .foregroundStyle(isSelected ? Color.white : Color.wineText)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 36)
+                        .padding(.horizontal, 6)
+                        .background(isSelected ? Color.wineAccent : Color.wineOptionBackground)
+                        .clipShape(.capsule)
+                        .overlay {
+                            Capsule()
+                                .stroke(
+                                    isSelected ? Color.wineAccent : Color.wineBorder.opacity(0.9),
+                                    lineWidth: 1
+                                )
+                        }
+                }
+                .buttonStyle(.plain)
+            }
+        }
     }
 
     private var heroScanCard: some View {
@@ -305,9 +363,9 @@ struct MainView: View {
                         .tracking(1.2)
                         .foregroundStyle(Color.wineSoftPeach)
 
-                    Text("tap to start your scan")
-                        .font(.subheadline)
-                        .foregroundStyle(Color.wineSoftPeach.opacity(0.74))
+//                    Text("tap to start your scan")
+//                        .font(.subheadline)
+//                        .foregroundStyle(Color.wineSoftPeach.opacity(0.74))
                 }
             }
             .frame(height: 200)
@@ -417,10 +475,10 @@ struct MainView: View {
                     }
                     .foregroundStyle(isSelected ? Color.wineAccent : Color.wineMutedText)
                     .frame(maxWidth: .infinity)
-                    .frame(height: 50)
+                    .frame(height: 38)
                     .background {
                         if isSelected {
-                            RoundedRectangle(cornerRadius: 14)
+                            RoundedRectangle(cornerRadius: 11)
                                 .fill(Color.white.opacity(0.96))
                                 .matchedGeometryEffect(id: "segmentBackground", in: segmentedControlNamespace)
                                 .shadow(color: Color.black.opacity(0.04), radius: 8, y: 2)
@@ -431,12 +489,12 @@ struct MainView: View {
                 .buttonStyle(.plain)
             }
         }
-        .padding(.horizontal, 5)
-        .padding(.vertical, 7)
+        .padding(.horizontal, 4)
+        .padding(.vertical, 5)
         .background(Color.wineSegmentTrack)
-        .clipShape(.rect(cornerRadius: 18))
+        .clipShape(.rect(cornerRadius: 14))
         .overlay {
-            RoundedRectangle(cornerRadius: 18)
+            RoundedRectangle(cornerRadius: 14)
                 .stroke(Color.wineBorder.opacity(0.9), lineWidth: 1)
         }
     }

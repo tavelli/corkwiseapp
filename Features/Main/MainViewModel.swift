@@ -12,8 +12,11 @@ struct ScanFailureState: Identifiable, Hashable {
 @MainActor
 @Observable
 final class MainViewModel {
+    private static let lastScanCategoryPreferenceKey = "lastScanCategoryPreference"
+
     var purchaseMode: PurchaseMode = .bottle
     var bottleContext: BottleContext = .forMe
+    var categoryPreference: WineCategoryPreference = .anything
     var isScanning = false
     var loadingMessage = "Reading the wine list…"
     var failure: ScanFailureState?
@@ -23,6 +26,30 @@ final class MainViewModel {
     private let imagePreparationService = ImagePreparationService()
     private var loadingTask: Task<Void, Never>?
     private var pendingAttachment: AnalyzeWineMenuAttachment?
+    private var hasConfiguredInitialCategoryPreference = false
+
+    func configureInitialCategoryPreference(
+        preferences: UserWinePreferences?,
+        latestScan: WineScan?
+    ) {
+        guard hasConfiguredInitialCategoryPreference == false else { return }
+        hasConfiguredInitialCategoryPreference = true
+
+        if let storedPreference = UserDefaults.standard.string(forKey: Self.lastScanCategoryPreferenceKey),
+           let categoryPreference = WineCategoryPreference(rawValue: storedPreference) {
+            self.categoryPreference = categoryPreference
+            return
+        }
+
+        if let latestScan, latestScan.categoryPreference != nil {
+            categoryPreference = latestScan.categoryPreferenceValue
+            return
+        }
+
+        categoryPreference = WineCategoryPreference.defaultPreference(
+            for: preferences?.favoriteVarietalValues ?? []
+        )
+    }
 
     func startScan(
         image: UIImage,
@@ -60,6 +87,7 @@ final class MainViewModel {
                     attachment: attachment,
                     purchaseMode: purchaseMode,
                     bottleContext: effectiveBottleContext,
+                    categoryPreference: categoryPreference,
                     preferences: preferences
                 )
 
@@ -104,6 +132,7 @@ final class MainViewModel {
             restaurantName: result.restaurantName,
             purchaseMode: purchaseMode.rawValue,
             bottleContext: purchaseMode == .bottle ? bottleContext.rawValue : nil,
+            categoryPreference: categoryPreference.rawValue,
             summaryHeadline: result.summary.headline,
             bestPickName: result.summary.bestPickName,
             bestPickScore: result.summary.bestPickScore,
@@ -112,6 +141,10 @@ final class MainViewModel {
 
         modelContext.insert(scan)
         try modelContext.save()
+        UserDefaults.standard.set(
+            categoryPreference.rawValue,
+            forKey: Self.lastScanCategoryPreferenceKey
+        )
     }
 
     private func startLoadingMessages() {

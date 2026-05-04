@@ -7,6 +7,7 @@ final class WineScan {
     var restaurantName: String?
     var purchaseMode: String
     var bottleContext: String?
+    var categoryPreference: String?
     var summaryHeadline: String?
     var bestPickName: String?
     var bestPickScore: Double?
@@ -17,6 +18,7 @@ final class WineScan {
         restaurantName: String? = nil,
         purchaseMode: String,
         bottleContext: String? = nil,
+        categoryPreference: String? = nil,
         summaryHeadline: String? = nil,
         bestPickName: String? = nil,
         bestPickScore: Double? = nil,
@@ -26,6 +28,7 @@ final class WineScan {
         self.restaurantName = restaurantName
         self.purchaseMode = purchaseMode
         self.bottleContext = bottleContext
+        self.categoryPreference = categoryPreference
         self.summaryHeadline = summaryHeadline
         self.bestPickName = bestPickName
         self.bestPickScore = bestPickScore
@@ -41,5 +44,10 @@ extension WineScan {
     var bottleContextValue: BottleContext? {
         guard let bottleContext else { return nil }
         return BottleContext(rawValue: bottleContext)
+    }
+
+    var categoryPreferenceValue: WineCategoryPreference {
+        guard let categoryPreference else { return .anything }
+        return WineCategoryPreference(rawValue: categoryPreference) ?? .anything
     }
 }
