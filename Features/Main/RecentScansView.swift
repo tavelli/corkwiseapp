@@ -9,7 +9,7 @@ struct RecentScansView: View {
         VStack(alignment: .leading, spacing: 18) {
             HStack {
                 Text("Recent Scans")
-                    .font(.system(size: 28, weight: .bold, design: .serif))
+                    .font(.system(size: 22, weight: .semibold, design: .serif))
 
                 Spacer()
 

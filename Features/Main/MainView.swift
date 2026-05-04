@@ -219,8 +219,8 @@ struct MainView: View {
 
             Button(action: appState.showPreferences) {
                 Image(systemName: "person.crop.circle")
-                    .font(.system(size: 31, weight: .regular))
-                    .foregroundStyle(Color.wineText)
+                    .font(.system(size: 30, weight: .regular))
+                    .foregroundStyle(Color.wineMutedText)
                     .frame(width: 42, height: 42)
             }
             .buttonStyle(.plain)
@@ -267,7 +267,7 @@ struct MainView: View {
                         .renderingMode(.template)
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 24, height: 30)
+                        .frame(width: 17, height: 20)
                 }
             }
 
@@ -312,12 +312,12 @@ struct MainView: View {
                         .frame(maxWidth: .infinity)
                         .frame(height: 36)
                         .padding(.horizontal, 6)
-                        .background(isSelected ? Color.wineAccent : Color.wineOptionBackground)
+                        .background(isSelected ? Color.wineSelectionFill : Color.wineOptionBackground)
                         .clipShape(.capsule)
                         .overlay {
                             Capsule()
                                 .stroke(
-                                    isSelected ? Color.wineAccent : Color.wineBorder.opacity(0.9),
+                                    isSelected ? Color.wineSelectionFill : Color.wineBorder.opacity(0.9),
                                     lineWidth: 1
                                 )
                         }
@@ -379,7 +379,7 @@ struct MainView: View {
                     .fill(Color.wineDivider)
                     .frame(height: 1)
 
-                Text("OR CHOOSE ANOTHER METHOD")
+                Text("Other ways to scan")
                     .font(.caption.weight(.semibold))
                     .tracking(1.2)
                     .foregroundStyle(.secondary)
@@ -475,12 +475,12 @@ struct MainView: View {
                     .foregroundStyle(isSelected ? Color.white : Color.wineText)
                     .frame(maxWidth: .infinity)
                     .frame(height: 38)
-                    .background(isSelected ? Color.wineAccent : Color.wineOptionBackground)
+                    .background(isSelected ? Color.wineSelectionFill : Color.wineOptionBackground)
                     .clipShape(.capsule)
                     .overlay {
                         Capsule()
                             .stroke(
-                                isSelected ? Color.wineAccent : Color.wineBorder.opacity(0.9),
+                                isSelected ? Color.wineSelectionFill : Color.wineBorder.opacity(0.9),
                                 lineWidth: 1
                             )
                     }
