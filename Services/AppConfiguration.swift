@@ -14,12 +14,22 @@ struct AppConfiguration {
     }
 
     var supabaseBaseURL: URL? {
-        if let overrideURL = Self.urlValue(for: environment.environment["CORKWISE_SUPABASE_BASE_URL_OVERRIDE"]) {
+        let environmentValues = Self.normalizedEnvironment(environment.environment)
+        Self.logEnvironmentValue(
+            environmentValues["CORKWISE_USE_LOCAL_SUPABASE"],
+            key: "CORKWISE_USE_LOCAL_SUPABASE"
+        )
+        Self.logEnvironmentValue(
+            environmentValues["CORKWISE_SUPABASE_BASE_URL_OVERRIDE"],
+            key: "CORKWISE_SUPABASE_BASE_URL_OVERRIDE"
+        )
+
+        if let overrideURL = Self.urlValue(for: environmentValues["CORKWISE_SUPABASE_BASE_URL_OVERRIDE"]) {
             Self.logSelectedURL(overrideURL, source: "env override")
             return overrideURL
         }
 
-        if environment.environment["CORKWISE_USE_LOCAL_SUPABASE"] == "1" {
+        if Self.boolValue(for: environmentValues["CORKWISE_USE_LOCAL_SUPABASE"]) {
             let selectedURL = localSupabaseBaseURL ?? productionSupabaseBaseURL
             Self.logSelectedURL(selectedURL, source: "local flag")
             return selectedURL
@@ -45,9 +55,28 @@ private extension AppConfiguration {
 
     static func urlValue(for rawValue: String?) -> URL? {
         guard let rawValue else { return nil }
-        let trimmedValue = rawValue.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedValue = rawValue
+            .removingInvisibleFormatCharacters()
+            .trimmingCharacters(in: .whitespacesAndNewlines)
         guard trimmedValue.isEmpty == false else { return nil }
         return URL(string: trimmedValue)
+    }
+
+    static func boolValue(for rawValue: String?) -> Bool {
+        guard let rawValue else { return false }
+
+        switch rawValue.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() {
+        case "1", "true", "yes":
+            return true
+        default:
+            return false
+        }
+    }
+
+    static func normalizedEnvironment(_ environment: [String: String]) -> [String: String] {
+        environment.reduce(into: [:]) { result, entry in
+            result[entry.key.removingInvisibleFormatCharacters()] = entry.value.removingInvisibleFormatCharacters()
+        }
     }
 
     static func logSelectedURL(_ url: URL?, source: String) {
@@ -55,5 +84,17 @@ private extension AppConfiguration {
         let displayValue = url?.absoluteString ?? "nil"
         print("AppConfiguration using Supabase URL (\(source)): \(displayValue)")
         #endif
+    }
+
+    static func logEnvironmentValue(_ value: String?, key: String) {
+        #if DEBUG
+        print("AppConfiguration env \(key): \(value ?? "nil")")
+        #endif
+    }
+}
+
+private extension String {
+    func removingInvisibleFormatCharacters() -> String {
+        String(unicodeScalars.filter { $0.properties.generalCategory != .format })
     }
 }

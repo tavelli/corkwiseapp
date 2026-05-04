@@ -40,6 +40,8 @@ export function buildSystemPrompt(requestBody: AnalyzeWineMenuRequest): string {
     "Do not overrank a favorite varietal if it is a poor value, weak producer, or clearly inferior to better alternatives on the same list.",
     "If a favorite varietal is recommended, mention that only in the context of something else interesting about it.",
     "Do not make direct observations like 'this matches your preference' or 'since you like X, you'll like this'.",
+    "In why explanations, never use obvious preference boilerplate such as 'perfectly aligns with your preferences', 'matches your taste', or 'fits what you like'.",
+    "Explain the recommendation through concrete menu-specific reasons: value, producer quality, style, age, scarcity, food versatility, or a stronger alternative on the same list.",
     "",
     "Scoring method:",
     "Value score = 1-10 based on estimated retail price vs. menu price, producer reputation, category inflation, age/scarcity, and whether the wine gives the user something meaningfully better than cheaper alternatives on the same list.",
