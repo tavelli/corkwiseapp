@@ -251,7 +251,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 3796344E2FA3AEBC00E30EAA /* Build configuration list for PBXProject "CorkWise" */;
+			buildConfigurationList = 3796344E2FA3AEBC00E30EAA /* Build configuration list for PBXProject "Corkwise" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -337,8 +337,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "CorkWise-Info.plist";
-				INFOPLIST_KEY_NSCameraUsageDescription = "Cork​Wise uses the camera to scan restaurant wine lists.";
-				INFOPLIST_KEY_NSMainCameraUsageDescription = "Cork​Wise uses the camera to scan restaurant wine lists.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Cork​wise uses the camera to scan restaurant wine lists.";
+				INFOPLIST_KEY_NSMainCameraUsageDescription = "Cork​wise uses the camera to scan restaurant wine lists.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -374,8 +374,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "CorkWise-Info.plist";
-				INFOPLIST_KEY_NSCameraUsageDescription = "Cork​Wise uses the camera to scan restaurant wine lists.";
-				INFOPLIST_KEY_NSMainCameraUsageDescription = "Cork​Wise uses the camera to scan restaurant wine lists.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Cork​wise uses the camera to scan restaurant wine lists.";
+				INFOPLIST_KEY_NSMainCameraUsageDescription = "Cork​wise uses the camera to scan restaurant wine lists.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -531,7 +531,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3796344E2FA3AEBC00E30EAA /* Build configuration list for PBXProject "CorkWise" */ = {
+		3796344E2FA3AEBC00E30EAA /* Build configuration list for PBXProject "Corkwise" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3796345E2FA3AEBE00E30EAA /* Debug */,

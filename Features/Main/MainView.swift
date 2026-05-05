@@ -339,14 +339,6 @@ struct MainView: View {
                         )
                     )
 
-                Circle()
-                    .stroke(Color.white.opacity(0.06), lineWidth: 1)
-                    .frame(width: 150, height: 150)
-
-                Circle()
-                    .stroke(Color.white.opacity(0.05), lineWidth: 1)
-                    .frame(width: 118, height: 118)
-
                 VStack(spacing: 10) {
                     RoundedRectangle(cornerRadius: 16)
                         .fill(Color.wineSoftPeach)
@@ -362,9 +354,6 @@ struct MainView: View {
                         .tracking(1.2)
                         .foregroundStyle(Color.wineSoftPeach)
 
-//                    Text("tap to start your scan")
-//                        .font(.subheadline)
-//                        .foregroundStyle(Color.wineSoftPeach.opacity(0.74))
                 }
             }
             .frame(height: 200)
