@@ -220,7 +220,7 @@ struct MainView: View {
             Button(action: appState.showPreferences) {
                 Image(systemName: "person.crop.circle")
                     .font(.system(size: 30, weight: .regular))
-                    .foregroundStyle(Color.wineMutedText)
+                    .foregroundStyle(Color.wineText.opacity(0.78))
                     .frame(width: 42, height: 42)
             }
             .buttonStyle(.plain)

@@ -67,7 +67,7 @@
 		379399CD2FA3CD3F00246506 /* AppRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRoute.swift; sourceTree = "<group>"; };
 		379399CE2FA3CD3F00246506 /* AppRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRouter.swift; sourceTree = "<group>"; };
 		379399CF2FA3CD3F00246506 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
-		379399D42FA3CE5600246506 /* CorkWise.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CorkWise.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		379399D42FA3CE5600246506 /* Corkwise.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Corkwise.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		379399DC2FA3CF1E00246506 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		379399DE2FA3D27500246506 /* CorkWise-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "CorkWise-Info.plist"; sourceTree = "<group>"; };
 		379399DF2FA3D9AE00246506 /* Color+Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Theme.swift"; sourceTree = "<group>"; };
@@ -208,7 +208,7 @@
 		379634542FA3AEBC00E30EAA /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				379399D42FA3CE5600246506 /* CorkWise.app */,
+				379399D42FA3CE5600246506 /* Corkwise.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -232,7 +232,7 @@
 			packageProductDependencies = (
 			);
 			productName = CorkWise;
-			productReference = 379399D42FA3CE5600246506 /* CorkWise.app */;
+			productReference = 379399D42FA3CE5600246506 /* Corkwise.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -251,7 +251,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 3796344E2FA3AEBC00E30EAA /* Build configuration list for PBXProject "Corkwise" */;
+			buildConfigurationList = 3796344E2FA3AEBC00E30EAA /* Build configuration list for PBXProject "CorkWise" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -350,7 +350,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.getcorkwise.CorkWise;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Corkwise;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -387,7 +387,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.getcorkwise.CorkWise;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Corkwise;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -531,7 +531,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3796344E2FA3AEBC00E30EAA /* Build configuration list for PBXProject "Corkwise" */ = {
+		3796344E2FA3AEBC00E30EAA /* Build configuration list for PBXProject "CorkWise" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3796345E2FA3AEBE00E30EAA /* Debug */,
