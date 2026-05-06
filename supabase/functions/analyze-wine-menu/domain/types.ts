@@ -52,10 +52,8 @@ export type WineScanResult = {
     rank: number;
     wineName: string;
     menuPrice: number | null;
-    estimatedRetailLow: number | null;
-    estimatedRetailHigh: number | null;
-    estimatedMarkupLow: number | null;
-    estimatedMarkupHigh: number | null;
+    estimatedRetail: number | null;
+    estimatedMarkup: number | null;
     estimatedMarkupDisplay: string | null;
     valueScore: number;
     why: string;
@@ -67,10 +65,8 @@ export type WineScanResult = {
       rank: number;
       wineName: string;
       menuPrice: number | null;
-      estimatedRetailLow: number | null;
-      estimatedRetailHigh: number | null;
-      estimatedMarkupLow: number | null;
-      estimatedMarkupHigh: number | null;
+      estimatedRetail: number | null;
+      estimatedMarkup: number | null;
       estimatedMarkupDisplay: string | null;
       valueScore: number;
       why: string;

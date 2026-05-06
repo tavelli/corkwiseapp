@@ -44,13 +44,74 @@ struct WineRecommendation: Codable, Identifiable, Hashable {
     let rank: Int
     let wineName: String
     let menuPrice: Double?
-    let estimatedRetailLow: Double?
-    let estimatedRetailHigh: Double?
-    let estimatedMarkupLow: Double?
-    let estimatedMarkupHigh: Double?
-    let estimatedMarkupDisplay: String?
+    let estimatedRetail: Double?
     let valueScore: Double
     let why: String
+
+    private enum CodingKeys: String, CodingKey {
+        case rank
+        case wineName
+        case menuPrice
+        case estimatedRetail
+        case estimatedRetailLow
+        case estimatedRetailHigh
+        case valueScore
+        case why
+    }
+
+    init(
+        rank: Int,
+        wineName: String,
+        menuPrice: Double?,
+        estimatedRetail: Double?,
+        valueScore: Double,
+        why: String
+    ) {
+        self.rank = rank
+        self.wineName = wineName
+        self.menuPrice = menuPrice
+        self.estimatedRetail = estimatedRetail
+        self.valueScore = valueScore
+        self.why = why
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        rank = try container.decode(Int.self, forKey: .rank)
+        wineName = try container.decode(String.self, forKey: .wineName)
+        menuPrice = try container.decodeIfPresent(Double.self, forKey: .menuPrice)
+        valueScore = try container.decode(Double.self, forKey: .valueScore)
+        why = try container.decode(String.self, forKey: .why)
+
+        if let estimatedRetail = try container.decodeIfPresent(Double.self, forKey: .estimatedRetail) {
+            self.estimatedRetail = estimatedRetail
+            return
+        }
+
+        let low = try container.decodeIfPresent(Double.self, forKey: .estimatedRetailLow)
+        let high = try container.decodeIfPresent(Double.self, forKey: .estimatedRetailHigh)
+
+        switch (low, high) {
+        case let (low?, high?):
+            estimatedRetail = (low + high) / 2
+        case let (low?, nil):
+            estimatedRetail = low
+        case let (nil, high?):
+            estimatedRetail = high
+        default:
+            estimatedRetail = nil
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(rank, forKey: .rank)
+        try container.encode(wineName, forKey: .wineName)
+        try container.encodeIfPresent(menuPrice, forKey: .menuPrice)
+        try container.encodeIfPresent(estimatedRetail, forKey: .estimatedRetail)
+        try container.encode(valueScore, forKey: .valueScore)
+        try container.encode(why, forKey: .why)
+    }
 }
 
 struct RecommendationCategorySection: Codable, Hashable {
@@ -87,11 +148,7 @@ extension WineScanResult {
                     rank: 1,
                     wineName: "2012 R. Lopez de Heredia Viña Tondonia Rioja",
                     menuPrice: 88,
-                    estimatedRetailLow: 50,
-                    estimatedRetailHigh: 70,
-                    estimatedMarkupLow: 1.3,
-                    estimatedMarkupHigh: 1.8,
-                    estimatedMarkupDisplay: "~1.3x-1.8x",
+                    estimatedRetail: 60,
                     valueScore: 9.5,
                     why: "A benchmark producer with bottle age that restaurants often price more aggressively than retail availability would suggest."
                 ),
@@ -99,11 +156,7 @@ extension WineScanResult {
                     rank: 2,
                     wineName: "2021 Domaine de la Pepiere Muscadet Sevre et Maine",
                     menuPrice: 54,
-                    estimatedRetailLow: 22,
-                    estimatedRetailHigh: 28,
-                    estimatedMarkupLow: 1.9,
-                    estimatedMarkupHigh: 2.4,
-                    estimatedMarkupDisplay: "~1.9x-2.4x",
+                    estimatedRetail: 25,
                     valueScore: 8.6,
                     why: "A strong producer in a category that can still offer honest restaurant pricing and food-friendly versatility."
                 ),
@@ -111,11 +164,7 @@ extension WineScanResult {
                     rank: 3,
                     wineName: "2019 Lopez Cristobal Ribera del Duero",
                     menuPrice: 76,
-                    estimatedRetailLow: 34,
-                    estimatedRetailHigh: 42,
-                    estimatedMarkupLow: 1.8,
-                    estimatedMarkupHigh: 2.2,
-                    estimatedMarkupDisplay: "~1.8x-2.2x",
+                    estimatedRetail: 38,
                     valueScore: 7.9,
                     why: "The markup is still reasonable, and the producer quality is meaningfully stronger than some similarly priced alternatives."
                 )
@@ -129,11 +178,7 @@ extension WineScanResult {
                             rank: 1,
                             wineName: "2021 Domaine de la Pepiere Muscadet Sevre et Maine",
                             menuPrice: 54,
-                            estimatedRetailLow: 22,
-                            estimatedRetailHigh: 28,
-                            estimatedMarkupLow: 1.9,
-                            estimatedMarkupHigh: 2.4,
-                            estimatedMarkupDisplay: "~1.9x-2.4x",
+                            estimatedRetail: 25,
                             valueScore: 8.6,
                             why: "Strong producer quality and honest restaurant pricing make this the clearest value play."
                         )
@@ -147,11 +192,7 @@ extension WineScanResult {
                             rank: 3,
                             wineName: "2019 Lopez Cristobal Ribera del Duero",
                             menuPrice: 76,
-                            estimatedRetailLow: 34,
-                            estimatedRetailHigh: 42,
-                            estimatedMarkupLow: 1.8,
-                            estimatedMarkupHigh: 2.2,
-                            estimatedMarkupDisplay: "~1.8x-2.2x",
+                            estimatedRetail: 38,
                             valueScore: 7.9,
                             why: "If you want to spend a bit more, this gives a more serious bottle without entering trophy pricing."
                         )
@@ -165,11 +206,7 @@ extension WineScanResult {
                             rank: 2,
                             wineName: "2021 Domaine de la Pepiere Muscadet Sevre et Maine",
                             menuPrice: 54,
-                            estimatedRetailLow: 22,
-                            estimatedRetailHigh: 28,
-                            estimatedMarkupLow: 1.9,
-                            estimatedMarkupHigh: 2.4,
-                            estimatedMarkupDisplay: "~1.9x-2.4x",
+                            estimatedRetail: 25,
                             valueScore: 8.6,
                             why: "A broad-appeal bottle with strong restaurant utility and low risk."
                         )
@@ -183,11 +220,7 @@ extension WineScanResult {
                             rank: 1,
                             wineName: "2012 R. Lopez de Heredia Viña Tondonia Rioja",
                             menuPrice: 88,
-                            estimatedRetailLow: 50,
-                            estimatedRetailHigh: 70,
-                            estimatedMarkupLow: 1.3,
-                            estimatedMarkupHigh: 1.8,
-                            estimatedMarkupDisplay: "~1.3x-1.8x",
+                            estimatedRetail: 60,
                             valueScore: 9.5,
                             why: "Age, style, and producer profile make this the most compelling conversation bottle on the list."
                         )

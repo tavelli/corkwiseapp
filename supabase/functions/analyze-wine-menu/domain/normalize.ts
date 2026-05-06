@@ -76,23 +76,19 @@ function normalizeRecommendation(
 
   const candidate = input as Record<string, unknown>;
   const menuPrice = numberOrNull(candidate.menuPrice);
-  const estimatedRetailLow = numberOrNull(candidate.estimatedRetailLow);
-  const estimatedRetailHigh = numberOrNull(candidate.estimatedRetailHigh);
-  const derivedMarkup = deriveMarkupRange({
+  const estimatedRetail = numberOrNull(candidate.estimatedRetail);
+  const derivedMarkup = deriveMarkup({
     purchaseMode,
     menuPrice,
-    estimatedRetailLow,
-    estimatedRetailHigh,
+    estimatedRetail,
   });
 
   return {
     rank: positiveInt(candidate.rank) ?? index + 1,
     wineName: requiredString(candidate.wineName),
     menuPrice,
-    estimatedRetailLow,
-    estimatedRetailHigh,
-    estimatedMarkupLow: derivedMarkup?.low ?? null,
-    estimatedMarkupHigh: derivedMarkup?.high ?? null,
+    estimatedRetail,
+    estimatedMarkup: derivedMarkup?.value ?? null,
     estimatedMarkupDisplay: derivedMarkup?.display ?? null,
     valueScore: boundedScore(candidate.valueScore),
     why: requiredString(candidate.why),
@@ -117,54 +113,38 @@ function normalizeCategorySection(
   };
 }
 
-function deriveMarkupRange(input: {
+function deriveMarkup(input: {
   purchaseMode: PurchaseMode;
   menuPrice: number | null;
-  estimatedRetailLow: number | null;
-  estimatedRetailHigh: number | null;
-}): { low: number; high: number; display: string } | null {
+  estimatedRetail: number | null;
+}): { value: number; display: string } | null {
   const {
     purchaseMode,
     menuPrice,
-    estimatedRetailLow,
-    estimatedRetailHigh,
+    estimatedRetail,
   } = input;
 
   if (
     menuPrice == null ||
-    estimatedRetailLow == null ||
-    estimatedRetailHigh == null ||
+    estimatedRetail == null ||
     menuPrice <= 0 ||
-    estimatedRetailLow <= 0 ||
-    estimatedRetailHigh <= 0
+    estimatedRetail <= 0
   ) {
     return null;
   }
 
   const isGlassPour = purchaseMode === "glass";
-  const lowCostBasis = isGlassPour ? estimatedRetailHigh / 5 : estimatedRetailHigh;
-  const highCostBasis = isGlassPour ? estimatedRetailLow / 5 : estimatedRetailLow;
-  if (lowCostBasis <= 0 || highCostBasis <= 0) {
+  const costBasis = isGlassPour ? estimatedRetail / 5 : estimatedRetail;
+  if (costBasis <= 0) {
     return null;
   }
 
-  const low = roundToSingleDecimal(menuPrice / lowCostBasis);
-  const high = roundToSingleDecimal(menuPrice / highCostBasis);
-  const lowText = formatSingleDecimal(low);
-  const highText = formatSingleDecimal(high);
-
-  if (Math.abs(low - high) < 0.05) {
-    return {
-      low,
-      high,
-      display: `${lowText}x`,
-    };
-  }
+  const value = roundToSingleDecimal(menuPrice / costBasis);
+  const valueText = formatSingleDecimal(value);
 
   return {
-    low,
-    high,
-    display: `${lowText}x-${highText}x`,
+    value,
+    display: `~${valueText}x`,
   };
 }
 

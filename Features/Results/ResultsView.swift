@@ -30,12 +30,12 @@ struct ResultsView: View {
                     )
 
                     ForEach(result.recommendations) { recommendation in
-                        RecommendationCardView(recommendation: recommendation)
+                        RecommendationCardView(recommendation: recommendation, purchaseMode: purchaseMode)
                     }
                 }
 
                 if result.categoryRecommendations.isEmpty == false {
-                    CategoryHighlightsView(sections: result.categoryRecommendations)
+                    CategoryHighlightsView(sections: result.categoryRecommendations, purchaseMode: purchaseMode)
                 }
 
                 if result.notes.isEmpty == false {

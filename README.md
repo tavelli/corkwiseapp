@@ -525,11 +525,9 @@ struct WineRecommendation: Codable, Identifiable {
     let wineName: String
     let menuPrice: Double?
     let menuPriceDisplay: String?
-    let estimatedRetailLow: Double?
-    let estimatedRetailHigh: Double?
+    let estimatedRetail: Double?
     let estimatedRetailDisplay: String?
-    let estimatedMarkupLow: Double?
-    let estimatedMarkupHigh: Double?
+    let estimatedMarkup: Double?
     let estimatedMarkupDisplay: String?
     let valueScore: Double
     let why: String
@@ -601,12 +599,10 @@ POST /functions/v1/analyze-wine-menu
       "wineName": "2012 R. Lopez de Heredia Viña Tondonia Rioja",
       "menuPrice": 88,
       "menuPriceDisplay": "$88",
-      "estimatedRetailLow": 50,
-      "estimatedRetailHigh": 70,
-      "estimatedRetailDisplay": "~$50–70",
-      "estimatedMarkupLow": 1.3,
-      "estimatedMarkupHigh": 1.8,
-      "estimatedMarkupDisplay": "~1.3–1.8x",
+      "estimatedRetail": 60,
+      "estimatedRetailDisplay": "~$60",
+      "estimatedMarkup": 1.5,
+      "estimatedMarkupDisplay": "~1.5x",
       "valueScore": 9.5,
       "why": "Aged, iconic Rioja at a very fair restaurant price. This is probably the smartest bottle on the list.",
       "fitForUser": "Great for someone who appreciates classic, savory, age-worthy reds.",
@@ -618,12 +614,10 @@ POST /functions/v1/analyze-wine-menu
       "wineName": "2019 Rhys Pinot Noir, Santa Cruz",
       "menuPrice": 65,
       "menuPriceDisplay": "$65",
-      "estimatedRetailLow": 45,
-      "estimatedRetailHigh": 65,
-      "estimatedRetailDisplay": "~$45–65",
-      "estimatedMarkupLow": 1.0,
-      "estimatedMarkupHigh": 1.5,
-      "estimatedMarkupDisplay": "~1.0–1.5x",
+      "estimatedRetail": 55,
+      "estimatedRetailDisplay": "~$55",
+      "estimatedMarkup": 1.2,
+      "estimatedMarkupDisplay": "~1.2x",
       "valueScore": 9.3,
       "why": "Serious California Pinot from a respected producer at almost retail-adjacent pricing.",
       "fitForUser": "Good fit for someone who likes elegant, nuanced reds.",
@@ -762,7 +756,7 @@ For each recommendation, include:
 - wine name
 - menu price if visible
 - estimated retail range
-- estimated markup range
+- estimated markup
 - value score
 - concise explanation
 - fit for user
@@ -791,11 +785,9 @@ type WineScanResult = {
     wineName: string;
     menuPrice: number | null;
     menuPriceDisplay: string | null;
-    estimatedRetailLow: number | null;
-    estimatedRetailHigh: number | null;
+    estimatedRetail: number | null;
     estimatedRetailDisplay: string | null;
-    estimatedMarkupLow: number | null;
-    estimatedMarkupHigh: number | null;
+    estimatedMarkup: number | null;
     estimatedMarkupDisplay: string | null;
     valueScore: number;
     why: string;

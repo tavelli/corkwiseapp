@@ -2,6 +2,7 @@ import SwiftUI
 
 struct RecommendationCardView: View {
     let recommendation: WineRecommendation
+    let purchaseMode: PurchaseMode
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -24,11 +25,8 @@ struct RecommendationCardView: View {
 
             RecommendationMetricRow(
                 menuPrice: recommendation.menuPrice,
-                estimatedRetailLow: recommendation.estimatedRetailLow,
-                estimatedRetailHigh: recommendation.estimatedRetailHigh,
-                estimatedMarkupDisplay: recommendation.estimatedMarkupDisplay,
-                estimatedMarkupLow: recommendation.estimatedMarkupLow,
-                estimatedMarkupHigh: recommendation.estimatedMarkupHigh
+                estimatedRetail: recommendation.estimatedRetail,
+                purchaseMode: purchaseMode
             )
 
             VStack(alignment: .leading, spacing: 8) {
@@ -67,11 +65,8 @@ struct RecommendationCardView: View {
 
 private struct RecommendationMetricRow: View {
     let menuPrice: Double?
-    let estimatedRetailLow: Double?
-    let estimatedRetailHigh: Double?
-    let estimatedMarkupDisplay: String?
-    let estimatedMarkupLow: Double?
-    let estimatedMarkupHigh: Double?
+    let estimatedRetail: Double?
+    let purchaseMode: PurchaseMode
 
     var body: some View {
         HStack(spacing: 0) {
@@ -87,7 +82,7 @@ private struct RecommendationMetricRow: View {
         [
             formattedMenuPrice.map { Metric(title: "Menu", value: $0) },
             formattedRetailBottle.map { Metric(title: "Retail Bottle", value: $0) },
-            normalizedMarkupDisplay.map { Metric(title: "Markup", value: $0) },
+            formattedMarkup.map { Metric(title: "Markup", value: $0) },
         ].compactMap { $0 }
     }
 
@@ -97,41 +92,26 @@ private struct RecommendationMetricRow: View {
     }
 
     private var formattedRetailBottle: String? {
-        switch (estimatedRetailLow, estimatedRetailHigh) {
-        case let (low?, high?):
-            if abs(low - high) < 0.05 {
-                return currency(low)
-            }
-            return "\(currency(low))–\(currency(high))"
-        case let (low?, nil):
-            return currency(low)
-        case let (nil, high?):
-            return currency(high)
-        default:
-            return nil
-        }
+        guard let estimatedRetail else { return nil }
+        return "~\(currency(estimatedRetail))"
     }
 
-    private var normalizedMarkupDisplay: String? {
-        if let estimatedMarkupLow, let estimatedMarkupHigh {
-            let low = estimatedMarkupLow.formatted(.number.precision(.fractionLength(1)))
-            let high = estimatedMarkupHigh.formatted(.number.precision(.fractionLength(1)))
-
-            if abs(estimatedMarkupLow - estimatedMarkupHigh) < 0.05 {
-                return "\(low)x"
-            }
-
-            return "\(low)x–\(high)x"
+    private var formattedMarkup: String? {
+        guard
+            let menuPrice,
+            let estimatedRetail,
+            menuPrice > 0,
+            estimatedRetail > 0
+        else {
+            return nil
         }
 
-        if let estimatedMarkupLow {
-            let low = estimatedMarkupLow.formatted(.number.precision(.fractionLength(1)))
-            return "\(low)x"
-        }
+        let costBasis = purchaseMode == .glass ? estimatedRetail / 5 : estimatedRetail
+        guard costBasis > 0 else { return nil }
 
-        return estimatedMarkupDisplay?
-            .replacingOccurrences(of: "-", with: "–")
-            .replacingOccurrences(of: "%", with: "x")
+        let markup = menuPrice / costBasis
+        let formattedMarkup = markup.formatted(.number.precision(.fractionLength(1)))
+        return "~\(formattedMarkup)x"
     }
 
     private func currency(_ value: Double) -> String {

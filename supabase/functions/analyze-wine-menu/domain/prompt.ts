@@ -18,7 +18,7 @@ export function buildSystemPrompt(requestBody: AnalyzeWineMenuRequest): string {
     "If the user selected bottle, prioritize bottle options when visible.",
     "Always estimate retail as the price of a full bottle, even when the user selected glass.",
     "When a recommendation is for a glass pour, estimate restaurant markup using one-fifth of the bottle retail cost as the cost basis for that glass.",
-    "For glass pours, the menu price should still be the by-the-glass menu price, while estimatedRetailLow and estimatedRetailHigh should represent the full bottle retail estimate.",
+    "For glass pours, the menu price should still be the by-the-glass menu price, while estimatedRetail should represent the full bottle retail estimate.",
     "Do not calculate or return markup fields yourself. The system will derive markup from menu price and retail bottle estimates.",
     "",
     `The user is looking for wine category: ${requestBody.categoryPreference}.`,
