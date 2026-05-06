@@ -36,7 +36,17 @@ export class OpenAIProvider implements WineModelProvider {
         reasoningEffort: OPENAI_REASONING_EFFORT ?? "disabled",
         textVerbosity: OPENAI_TEXT_VERBOSITY ?? "disabled",
         timeoutMs: OPENAI_TIMEOUT_MS,
+        sourceKind: requestBody.source.kind,
       });
+
+      if (requestBody.source.kind === "url") {
+        throw new RequestError(
+          400,
+          "unsupported_input",
+          "Menu URL analysis is only supported when MODEL_PROVIDER is set to gemini.",
+          false,
+        );
+      }
 
       const requestPayload: Record<string, unknown> = {
         model: OPENAI_MODEL,
@@ -149,18 +159,28 @@ export class OpenAIProvider implements WineModelProvider {
 function userAttachmentPart(
   requestBody: AnalyzeWineMenuRequest,
 ): Record<string, unknown> {
-  if (requestBody.attachment.mimeType === "application/pdf") {
+  if (requestBody.source.kind !== "attachment") {
+    throw new RequestError(
+      400,
+      "unsupported_input",
+      "Menu URL analysis is only supported when MODEL_PROVIDER is set to gemini.",
+      false,
+    );
+  }
+
+  const attachment = requestBody.source.attachment;
+  if (attachment.mimeType === "application/pdf") {
     return {
       type: "input_file",
-      filename: requestBody.attachment.filename ?? "wine-list.pdf",
-      file_data: requestBody.attachment.base64Data,
+      filename: attachment.filename ?? "wine-list.pdf",
+      file_data: attachment.base64Data,
     };
   }
 
   return {
     type: "input_image",
     image_url:
-      `data:${requestBody.attachment.mimeType};base64,${requestBody.attachment.base64Data}`,
+      `data:${attachment.mimeType};base64,${attachment.base64Data}`,
     detail: "high",
   };
 }

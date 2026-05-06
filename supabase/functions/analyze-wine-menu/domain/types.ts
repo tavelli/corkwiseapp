@@ -12,8 +12,18 @@ export type AnalyzeWineMenuAttachment = {
   filename?: string | null;
 };
 
+export type AnalyzeWineMenuSource =
+  | {
+    kind: "attachment";
+    attachment: AnalyzeWineMenuAttachment;
+  }
+  | {
+    kind: "url";
+    menuUrl: string;
+  };
+
 export type AnalyzeWineMenuRequest = {
-  attachment: AnalyzeWineMenuAttachment;
+  source: AnalyzeWineMenuSource;
   purchaseMode: PurchaseMode;
   categoryPreference: WineCategoryPreference;
   userPreferences: {

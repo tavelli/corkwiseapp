@@ -29,9 +29,37 @@ export class GeminiProvider implements WineModelProvider {
     const startedAt = Date.now();
 
     try {
+      const requestPayload: Record<string, unknown> = {
+        contents: [
+          {
+            role: "user",
+            parts: [
+              {
+                text: buildSystemPrompt(requestBody),
+              },
+              menuInstructionPart(requestBody),
+              menuSourcePart(requestBody),
+            ],
+          },
+        ],
+        generationConfig: {
+          responseMimeType: "application/json",
+          responseJsonSchema: modelResponseSchema,
+        },
+      };
+
+      if (requestBody.source.kind === "url") {
+        requestPayload.tools = [
+          {
+            url_context: {},
+          },
+        ];
+      }
+
       console.log("calling Gemini", {
         model: GEMINI_MODEL,
         timeoutMs: GEMINI_TIMEOUT_MS,
+        sourceKind: requestBody.source.kind,
       });
 
       const response = await fetch(
@@ -43,26 +71,7 @@ export class GeminiProvider implements WineModelProvider {
             "Content-Type": "application/json",
           },
           signal: controller.signal,
-          body: JSON.stringify({
-            contents: [
-              {
-                role: "user",
-                parts: [
-                  {
-                    text: buildSystemPrompt(requestBody),
-                  },
-                  {
-                    text: "Analyze this restaurant wine list attachment and return only the requested JSON.",
-                  },
-                  attachmentPart(requestBody),
-                ],
-              },
-            ],
-            generationConfig: {
-              responseMimeType: "application/json",
-              responseJsonSchema: modelResponseSchema,
-            },
-          }),
+          body: JSON.stringify(requestPayload),
         },
       );
 
@@ -127,13 +136,33 @@ export class GeminiProvider implements WineModelProvider {
   }
 }
 
-function attachmentPart(
+function menuInstructionPart(
   requestBody: AnalyzeWineMenuRequest,
 ): Record<string, unknown> {
+  if (requestBody.source.kind === "url") {
+    return {
+      text: "Analyze the restaurant wine list available at the provided URL and return only the requested JSON.",
+    };
+  }
+
+  return {
+    text: "Analyze this restaurant wine list attachment and return only the requested JSON.",
+  };
+}
+
+function menuSourcePart(
+  requestBody: AnalyzeWineMenuRequest,
+): Record<string, unknown> {
+  if (requestBody.source.kind === "url") {
+    return {
+      text: `Menu URL: ${requestBody.source.menuUrl}`,
+    };
+  }
+
   return {
     inline_data: {
-      mime_type: requestBody.attachment.mimeType,
-      data: requestBody.attachment.base64Data,
+      mime_type: requestBody.source.attachment.mimeType,
+      data: requestBody.source.attachment.base64Data,
     },
   };
 }

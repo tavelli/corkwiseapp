@@ -26,12 +26,44 @@ struct WineAnalysisService {
 
         let requestBody = AnalyzeWineMenuRequest(
             attachment: attachment,
+            menuUrl: nil,
             purchaseMode: purchaseMode,
             bottleContext: purchaseMode == .bottle ? bottleContext : nil,
             categoryPreference: categoryPreference,
             userPreferences: preferences.payload
         )
 
+        return try await send(requestBody, to: endpoint)
+    }
+
+    func analyzeMenu(
+        menuURL: URL,
+        purchaseMode: PurchaseMode,
+        bottleContext: BottleContext?,
+        categoryPreference: WineCategoryPreference,
+        preferences: UserWinePreferences
+    ) async throws -> WineScanResult {
+        guard let endpoint = AppConfiguration.shared.analysisEndpoint else {
+            throw WineAnalysisServiceError.backendNotConfigured
+        }
+
+        guard menuURL.scheme == "http" || menuURL.scheme == "https" else {
+            throw WineAnalysisServiceError.invalidInput
+        }
+
+        let requestBody = AnalyzeWineMenuRequest(
+            attachment: nil,
+            menuUrl: menuURL.absoluteString,
+            purchaseMode: purchaseMode,
+            bottleContext: purchaseMode == .bottle ? bottleContext : nil,
+            categoryPreference: categoryPreference,
+            userPreferences: preferences.payload
+        )
+
+        return try await send(requestBody, to: endpoint)
+    }
+
+    private func send(_ requestBody: AnalyzeWineMenuRequest, to endpoint: URL) async throws -> WineScanResult {
         var request = URLRequest(url: endpoint)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")

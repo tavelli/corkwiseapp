@@ -21,6 +21,9 @@ final class MainViewModel {
     var loadingMessage = "Reading the wine list…"
     var failure: ScanFailureState?
     var selectedPreviewImage: UIImage?
+    var canRetryLastScan: Bool {
+        pendingAttachment != nil
+    }
 
     private let analysisService = WineAnalysisService()
     private let imagePreparationService = ImagePreparationService()
@@ -85,6 +88,36 @@ final class MainViewModel {
 
                 let result = try await analysisService.analyzeMenu(
                     attachment: attachment,
+                    purchaseMode: purchaseMode,
+                    bottleContext: effectiveBottleContext,
+                    categoryPreference: categoryPreference,
+                    preferences: preferences
+                )
+
+                try save(result: result, modelContext: modelContext)
+                finishScan()
+                onResult(result)
+            } catch {
+                finishScan()
+                failure = failureState(for: error)
+            }
+        }
+    }
+
+    func startScan(
+        menuURL: URL,
+        preferences: UserWinePreferences,
+        modelContext: ModelContext,
+        onResult: @escaping (WineScanResult) -> Void
+    ) {
+        Task {
+            do {
+                pendingAttachment = nil
+                isScanning = true
+                startLoadingMessages()
+
+                let result = try await analysisService.analyzeMenu(
+                    menuURL: menuURL,
                     purchaseMode: purchaseMode,
                     bottleContext: effectiveBottleContext,
                     categoryPreference: categoryPreference,

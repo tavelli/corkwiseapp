@@ -47,7 +47,7 @@ Deno.serve(async (req) => {
       throw new RequestError(
         413,
         "image_too_large",
-        "The selected image is too large. Please try again with a smaller image.",
+        "The selected file is too large. Please try again with a smaller image or PDF.",
         true,
       );
     }
@@ -68,8 +68,16 @@ Deno.serve(async (req) => {
     console.log("request validated", {
       purchaseMode: requestBody.purchaseMode,
       categoryPreference: requestBody.categoryPreference,
-      attachmentMimeType: requestBody.attachment.mimeType,
-      attachmentBase64Length: requestBody.attachment.base64Data.length,
+      sourceKind: requestBody.source.kind,
+      attachmentMimeType: requestBody.source.kind === "attachment"
+        ? requestBody.source.attachment.mimeType
+        : null,
+      attachmentBase64Length: requestBody.source.kind === "attachment"
+        ? requestBody.source.attachment.base64Data.length
+        : null,
+      menuUrlHost: requestBody.source.kind === "url"
+        ? new URL(requestBody.source.menuUrl).host
+        : null,
       preferredStylesCount: requestBody.userPreferences.preferredStyles.length,
     });
 

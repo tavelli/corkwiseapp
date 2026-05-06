@@ -1,6 +1,7 @@
 import PhotosUI
 import SwiftData
 import SwiftUI
+import UIKit
 import UniformTypeIdentifiers
 
 struct MainView: View {
@@ -12,8 +13,9 @@ struct MainView: View {
     @State private var isShowingPhotoPicker = false
     @State private var isShowingFileImporter = false
     @State private var isShowingUploadOptions = false
+    @State private var isShowingURLImporter = false
+    @State private var menuURLText = ""
     @State private var selectedPhotoItem: PhotosPickerItem?
-    @State private var isShowingPasteURLMessage = false
 
     let preferences: UserWinePreferences?
 
@@ -59,11 +61,6 @@ struct MainView: View {
                 ScanLoadingView(message: viewModel.loadingMessage)
             }
         }
-        .alert("Paste URL Coming Soon", isPresented: $isShowingPasteURLMessage) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text("URL import isn't wired up yet. Use Scan Wine List or Upload Photo for now.")
-        }
         .confirmationDialog("Upload Wine List", isPresented: $isShowingUploadOptions, titleVisibility: .visible) {
             Button("Photo Library") {
                 isShowingPhotoPicker = true
@@ -81,6 +78,7 @@ struct MainView: View {
             ScanFailureView(
                 title: failure.title,
                 message: failure.message,
+                canRetry: viewModel.canRetryLastScan,
                 retryAction: {
                     retryLastScan()
                 },
@@ -96,6 +94,13 @@ struct MainView: View {
                 processSelectedImage(image)
             }
             .ignoresSafeArea()
+        }
+        .sheet(isPresented: $isShowingURLImporter) {
+            MenuURLImportSheet(urlText: $menuURLText) { menuURL in
+                processMenuURL(menuURL)
+            }
+            .presentationDetents([.height(300)])
+            .presentationDragIndicator(.visible)
         }
         .task(id: selectedPhotoItem) {
             guard let selectedPhotoItem else { return }
@@ -157,6 +162,14 @@ struct MainView: View {
         guard let preferences else { return }
 
         viewModel.startScan(image: image, preferences: preferences, modelContext: modelContext) { result in
+            appState.showResults(result, purchaseMode: viewModel.purchaseMode, viewedAt: .now)
+        }
+    }
+
+    private func processMenuURL(_ menuURL: URL) {
+        guard let preferences else { return }
+
+        viewModel.startScan(menuURL: menuURL, preferences: preferences, modelContext: modelContext) { result in
             appState.showResults(result, purchaseMode: viewModel.purchaseMode, viewedAt: .now)
         }
     }
@@ -393,7 +406,7 @@ struct MainView: View {
                     subtitle: "Menu link",
                     systemImage: "link"
                 ) {
-                    isShowingPasteURLMessage = true
+                    isShowingURLImporter = true
                 }
             }
         }
@@ -478,6 +491,143 @@ struct MainView: View {
                 .buttonStyle(.plain)
             }
         }
+    }
+}
+
+private struct MenuURLImportSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    @Binding var urlText: String
+    @State private var validationMessage: String?
+    @FocusState private var isURLFieldFocused: Bool
+
+    let onAnalyze: (URL) -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            VStack(alignment: .leading, spacing: 7) {
+                Text("Analyze from link")
+                    .font(.title3.weight(.semibold))
+                    .foregroundStyle(Color.wineText)
+
+                Text("Enter a link to the restaurant menu page.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 10) {
+                    Image(systemName: "link")
+                        .font(.body.weight(.semibold))
+                        .foregroundStyle(Color.wineAccent)
+                        .frame(width: 20)
+
+                    TextField("", text: $urlText)
+                        .keyboardType(.URL)
+                        .textContentType(.URL)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                        .foregroundStyle(Color.wineText)
+                        .tint(Color.wineAccent)
+                        .focused($isURLFieldFocused)
+                        .submitLabel(.go)
+                        .onSubmit(submit)
+
+                    if urlText.isEmpty == false {
+                        Button {
+                            urlText = ""
+                            validationMessage = nil
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.body.weight(.semibold))
+                                .foregroundStyle(Color.secondary.opacity(0.55))
+                                .frame(width: 34, height: 34)
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel("Clear URL")
+                    }
+                }
+                .padding(.horizontal, 14)
+                .frame(height: 52)
+                .background(Color.wineOptionBackground)
+                .clipShape(.rect(cornerRadius: 14))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 14)
+                        .stroke(validationMessage == nil ? Color.wineBorder : Color.red.opacity(0.65), lineWidth: 1)
+                }
+
+                if let validationMessage {
+                    Text(validationMessage)
+                        .font(.caption)
+                        .foregroundStyle(Color.red)
+                }
+            }
+
+            Button(action: submit) {
+                Text("Analyze Menu")
+                    .font(.headline.weight(.semibold))
+                    .foregroundStyle(Color.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 52)
+                    .background(canSubmit ? Color.wineAccent : Color.wineAccent.opacity(0.38))
+                    .clipShape(.rect(cornerRadius: 16))
+            }
+            .buttonStyle(.plain)
+            .disabled(canSubmit == false)
+
+            Button("Cancel", role: .cancel) {
+                dismiss()
+            }
+            .font(.subheadline.weight(.semibold))
+            .foregroundStyle(Color.wineText.opacity(0.72))
+            .frame(maxWidth: .infinity)
+
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 22)
+        .padding(.top, 34)
+        .padding(.bottom, 12)
+        .background(Color.wineCardBackground.ignoresSafeArea())
+        .onAppear {
+            isURLFieldFocused = true
+        }
+    }
+
+    private var canSubmit: Bool {
+        Self.normalizedURL(from: urlText) != nil
+    }
+
+    private func submit() {
+        guard let menuURL = Self.normalizedURL(from: urlText) else {
+            validationMessage = "Enter a valid menu link."
+            return
+        }
+
+        validationMessage = nil
+        isURLFieldFocused = false
+        dismiss()
+        onAnalyze(menuURL)
+    }
+
+    static func normalizedURL(from text: String) -> URL? {
+        let trimmedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmedText.isEmpty == false else { return nil }
+
+        let candidateText: String
+        let lowercasedText = trimmedText.lowercased()
+        if lowercasedText.hasPrefix("http://") || lowercasedText.hasPrefix("https://") {
+            candidateText = trimmedText
+        } else {
+            candidateText = "https://\(trimmedText)"
+        }
+
+        guard let url = URL(string: candidateText),
+              let scheme = url.scheme?.lowercased(),
+              (scheme == "http" || scheme == "https"),
+              url.host?.isEmpty == false else {
+            return nil
+        }
+
+        return url
     }
 }
 

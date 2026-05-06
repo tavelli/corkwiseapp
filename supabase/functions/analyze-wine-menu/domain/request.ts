@@ -6,6 +6,7 @@ import {
 
 export const MAX_REQUEST_BYTES = 8_000_000;
 const MAX_ATTACHMENT_BASE64_LENGTH = 7_000_000;
+const MAX_MENU_URL_LENGTH = 2_000;
 
 export function validateAnalyzeRequest(input: unknown): AnalyzeWineMenuRequest {
   if (input == null || typeof input !== "object") {
@@ -20,21 +21,28 @@ export function validateAnalyzeRequest(input: unknown): AnalyzeWineMenuRequest {
   const candidate = input as Record<string, unknown>;
   const attachment = attachmentOrNull(candidate.attachment) ??
     legacyImageAttachment(candidate.imageBase64);
+  const menuUrl = menuUrlOrNull(candidate.menuUrl) ?? menuUrlOrNull(candidate.url);
   const purchaseMode = stringOrNull(candidate.purchaseMode);
   const categoryPreference = stringOrNull(candidate.categoryPreference) ??
     "anything";
   const userPreferences = candidate.userPreferences;
 
-  if (attachment == null || attachment.base64Data.length === 0) {
+  if (
+    (attachment == null || attachment.base64Data.length === 0) &&
+    menuUrl == null
+  ) {
     throw new RequestError(
       400,
       "invalid_request",
-      "An image or PDF file is required.",
+      "An image, PDF, or menu URL is required.",
       false,
     );
   }
 
-  if (attachment.base64Data.length > MAX_ATTACHMENT_BASE64_LENGTH) {
+  if (
+    attachment != null &&
+    attachment.base64Data.length > MAX_ATTACHMENT_BASE64_LENGTH
+  ) {
     throw new RequestError(
       413,
       "image_too_large",
@@ -94,7 +102,15 @@ export function validateAnalyzeRequest(input: unknown): AnalyzeWineMenuRequest {
   }
 
   return {
-    attachment,
+    source: menuUrl == null
+      ? {
+        kind: "attachment",
+        attachment: attachment!,
+      }
+      : {
+        kind: "url",
+        menuUrl,
+      },
     purchaseMode,
     categoryPreference,
     userPreferences: {
@@ -155,6 +171,45 @@ function attachmentOrNull(value: unknown): AnalyzeWineMenuAttachment | null {
     mimeType,
     filename,
   };
+}
+
+function menuUrlOrNull(value: unknown): string | null {
+  const menuUrl = stringOrNull(value);
+  if (menuUrl == null) {
+    return null;
+  }
+
+  if (menuUrl.length > MAX_MENU_URL_LENGTH) {
+    throw new RequestError(
+      400,
+      "invalid_request",
+      "menuUrl is too long.",
+      false,
+    );
+  }
+
+  let parsedUrl: URL;
+  try {
+    parsedUrl = new URL(menuUrl);
+  } catch {
+    throw new RequestError(
+      400,
+      "invalid_request",
+      "menuUrl must be a valid URL.",
+      false,
+    );
+  }
+
+  if (parsedUrl.protocol !== "https:" && parsedUrl.protocol !== "http:") {
+    throw new RequestError(
+      400,
+      "invalid_request",
+      "menuUrl must use http or https.",
+      false,
+    );
+  }
+
+  return parsedUrl.href;
 }
 
 function legacyImageAttachment(value: unknown): AnalyzeWineMenuAttachment | null {

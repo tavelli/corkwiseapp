@@ -57,3 +57,45 @@ The Edge Function keeps one stable app-facing endpoint and swaps model providers
 - `MODEL_PROVIDER=openai` uses `providers/openai.ts`
 - `MODEL_PROVIDER=gemini` uses `providers/gemini.ts`
 - Both providers normalize into the same `WineScanResult` response shape before returning to iOS
+
+## Request inputs
+
+The analysis endpoint accepts either a file attachment or a menu URL.
+
+Attachment input:
+
+```json
+{
+  "attachment": {
+    "base64Data": "BASE64_IMAGE_OR_PDF",
+    "mimeType": "image/jpeg",
+    "filename": "menu.jpg"
+  },
+  "purchaseMode": "bottle",
+  "categoryPreference": "anything",
+  "userPreferences": {
+    "preferredStyles": ["crisp whites"],
+    "favoriteVarietals": [],
+    "choiceStyle": "value",
+    "tone": "standard"
+  }
+}
+```
+
+URL input:
+
+```json
+{
+  "menuUrl": "https://example.com/menu",
+  "purchaseMode": "bottle",
+  "categoryPreference": "anything",
+  "userPreferences": {
+    "preferredStyles": ["crisp whites"],
+    "favoriteVarietals": [],
+    "choiceStyle": "value",
+    "tone": "standard"
+  }
+}
+```
+
+Menu URL analysis requires `MODEL_PROVIDER=gemini`. The Gemini provider enables URL context with `tools: [{ "url_context": {} }]`.
