@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		375DE4FF2FA675A7008D4574 /* winebottle1.svg in Resources */ = {isa = PBXBuildFile; fileRef = 375DE4FE2FA675A7008D4574 /* winebottle1.svg */; };
 		375DE5232FA68901008D4574 /* CorkWise-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 379399DE2FA3D27500246506 /* CorkWise-Info.plist */; };
+		375DE5ED2FA97D83008D4574 /* Adapty in Frameworks */ = {isa = PBXBuildFile; productRef = 375DE5EC2FA97D83008D4574 /* Adapty */; };
+		375DE5EF2FAB9D92008D4574 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 375DE5EE2FAB9D92008D4574 /* Launch Screen.storyboard */; };
 		379399B62FA3CC7400246506 /* PLAN.md in Resources */ = {isa = PBXBuildFile; fileRef = 379399AA2FA3CC7400246506 /* PLAN.md */; };
 		379399B72FA3CC7400246506 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 379399AC2FA3CC7400246506 /* README.md */; };
 		379399B82FA3CC7400246506 /* ScanFailureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399B22FA3CC7400246506 /* ScanFailureView.swift */; };
@@ -45,6 +47,7 @@
 
 /* Begin PBXFileReference section */
 		375DE4FE2FA675A7008D4574 /* winebottle1.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = winebottle1.svg; sourceTree = "<group>"; };
+		375DE5EE2FAB9D92008D4574 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		379399A22FA3CC7400246506 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		379399A32FA3CC7400246506 /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
 		379399A62FA3CC7400246506 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
@@ -86,6 +89,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				375DE5ED2FA97D83008D4574 /* Adapty in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -192,6 +196,7 @@
 		3796344A2FA3AEBC00E30EAA = {
 			isa = PBXGroup;
 			children = (
+				375DE5EE2FAB9D92008D4574 /* Launch Screen.storyboard */,
 				379399DE2FA3D27500246506 /* CorkWise-Info.plist */,
 				379399A42FA3CC7400246506 /* Models */,
 				379399AA2FA3CC7400246506 /* PLAN.md */,
@@ -230,6 +235,7 @@
 			);
 			name = CorkWise;
 			packageProductDependencies = (
+				375DE5EC2FA97D83008D4574 /* Adapty */,
 			);
 			productName = CorkWise;
 			productReference = 379399D42FA3CE5600246506 /* Corkwise.app */;
@@ -260,6 +266,9 @@
 			);
 			mainGroup = 3796344A2FA3AEBC00E30EAA;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				375DE5EB2FA97D83008D4574 /* XCRemoteSwiftPackageReference "AdaptySDK-iOS" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 379634542FA3AEBC00E30EAA /* Products */;
 			projectDirPath = "";
@@ -275,6 +284,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				375DE5EF2FAB9D92008D4574 /* Launch Screen.storyboard in Resources */,
 				379399B62FA3CC7400246506 /* PLAN.md in Resources */,
 				379399DD2FA3CF1E00246506 /* Assets.xcassets in Resources */,
 				379399B72FA3CC7400246506 /* README.md in Resources */,
@@ -337,11 +347,13 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "CorkWise-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Corkwise;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Cork​wise uses the camera to scan restaurant wine lists.";
 				INFOPLIST_KEY_NSMainCameraUsageDescription = "Cork​wise uses the camera to scan restaurant wine lists.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -374,11 +386,13 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "CorkWise-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Corkwise;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Cork​wise uses the camera to scan restaurant wine lists.";
 				INFOPLIST_KEY_NSMainCameraUsageDescription = "Cork​wise uses the camera to scan restaurant wine lists.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -541,6 +555,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		375DE5EB2FA97D83008D4574 /* XCRemoteSwiftPackageReference "AdaptySDK-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/adaptyteam/AdaptySDK-iOS.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.15.7;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		375DE5EC2FA97D83008D4574 /* Adapty */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 375DE5EB2FA97D83008D4574 /* XCRemoteSwiftPackageReference "AdaptySDK-iOS" */;
+			productName = Adapty;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 3796344B2FA3AEBC00E30EAA /* Project object */;
 }
