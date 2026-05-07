@@ -25,6 +25,7 @@
 		379399C12FA3CC7400246506 /* RecommendationCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399AE2FA3CC7400246506 /* RecommendationCardView.swift */; };
 		379399C22FA3CC7400246506 /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399A32FA3CC7400246506 /* MainViewModel.swift */; };
 		379399C32FA3CC7400246506 /* RecentScansView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399AD2FA3CC7400246506 /* RecentScansView.swift */; };
+		379399C52FAC31C200246506 /* ScanProgressResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399C42FAC31C200246506 /* ScanProgressResultsView.swift */; };
 		379399C82FA3CC9800246506 /* WineScanResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399C72FA3CC9800246506 /* WineScanResult.swift */; };
 		379399C92FA3CC9800246506 /* UserWinePreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399C42FA3CC9800246506 /* UserWinePreferences.swift */; };
 		379399CA2FA3CC9800246506 /* WineAnalysisService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399C52FA3CC9800246506 /* WineAnalysisService.swift */; };
@@ -63,6 +64,7 @@
 		379399B22FA3CC7400246506 /* ScanFailureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanFailureView.swift; sourceTree = "<group>"; };
 		379399B32FA3CC7400246506 /* ScanLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanLoadingView.swift; sourceTree = "<group>"; };
 		379399B42FA3CC7400246506 /* SelectedPhoto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedPhoto.swift; sourceTree = "<group>"; };
+		379399C42FAC31C200246506 /* ScanProgressResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanProgressResultsView.swift; sourceTree = "<group>"; };
 		379399C42FA3CC9800246506 /* UserWinePreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserWinePreferences.swift; sourceTree = "<group>"; };
 		379399C52FA3CC9800246506 /* WineAnalysisService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WineAnalysisService.swift; sourceTree = "<group>"; };
 		379399C62FA3CC9800246506 /* WineScan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WineScan.swift; sourceTree = "<group>"; };
@@ -176,6 +178,7 @@
 			isa = PBXGroup;
 			children = (
 				379399B02FA3CC7400246506 /* ResultsView.swift */,
+				379399C42FAC31C200246506 /* ScanProgressResultsView.swift */,
 				379399AE2FA3CC7400246506 /* RecommendationCardView.swift */,
 				379399FD2FA3F10000246506 /* BestPickHeroView.swift */,
 				379399FE2FA3F10000246506 /* CategoryHighlightsView.swift */,
@@ -311,6 +314,7 @@
 				379399BE2FA3CC7400246506 /* MainView.swift in Sources */,
 				379399BF2FA3CC7400246506 /* PurchaseMode.swift in Sources */,
 				379399C82FA3CC9800246506 /* WineScanResult.swift in Sources */,
+				379399C52FAC31C200246506 /* ScanProgressResultsView.swift in Sources */,
 				379399C92FA3CC9800246506 /* UserWinePreferences.swift in Sources */,
 				379399D02FA3CD3F00246506 /* AppRoute.swift in Sources */,
 				379399D12FA3CD3F00246506 /* AppConfiguration.swift in Sources */,

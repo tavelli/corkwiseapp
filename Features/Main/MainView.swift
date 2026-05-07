@@ -16,6 +16,7 @@ struct MainView: View {
     @State private var isShowingURLImporter = false
     @State private var menuURLText = ""
     @State private var selectedPhotoItem: PhotosPickerItem?
+    @State private var activeScanID: UUID?
 
     let preferences: UserWinePreferences?
 
@@ -56,11 +57,6 @@ struct MainView: View {
                 }
         }
         .navigationBarBackButtonHidden()
-        .overlay {
-            if viewModel.isScanning {
-                ScanLoadingView(message: viewModel.loadingMessage)
-            }
-        }
         .confirmationDialog("Upload Wine List", isPresented: $isShowingUploadOptions, titleVisibility: .visible) {
             Button("Photo Library") {
                 isShowingPhotoPicker = true
@@ -148,6 +144,11 @@ struct MainView: View {
                 latestScan: recentScans.first
             )
         }
+        .onChange(of: viewModel.failure) { _, failure in
+            guard failure != nil, let activeScanID else { return }
+            appState.dismissScanProgress(id: activeScanID)
+            self.activeScanID = nil
+        }
     }
 
     private var categoryPreferenceSeedID: String {
@@ -161,24 +162,27 @@ struct MainView: View {
     private func processSelectedImage(_ image: UIImage) {
         guard let preferences else { return }
 
+        let scanID = beginScanProgress()
         viewModel.startScan(image: image, preferences: preferences, modelContext: modelContext) { result in
-            appState.showResults(result, purchaseMode: viewModel.purchaseMode, viewedAt: .now)
+            completeScanProgress(id: scanID, result: result)
         }
     }
 
     private func processMenuURL(_ menuURL: URL) {
         guard let preferences else { return }
 
+        let scanID = beginScanProgress()
         viewModel.startScan(menuURL: menuURL, preferences: preferences, modelContext: modelContext) { result in
-            appState.showResults(result, purchaseMode: viewModel.purchaseMode, viewedAt: .now)
+            completeScanProgress(id: scanID, result: result)
         }
     }
 
     private func retryLastScan() {
         guard let preferences else { return }
 
+        let scanID = beginScanProgress()
         viewModel.retryLastScan(preferences: preferences, modelContext: modelContext) { result in
-            appState.showResults(result, purchaseMode: viewModel.purchaseMode, viewedAt: .now)
+            completeScanProgress(id: scanID, result: result)
         }
     }
 
@@ -202,8 +206,9 @@ struct MainView: View {
             guard let preferences else { return }
 
             let attachment = try ImagePreparationService().prepareAttachment(from: fileURL)
+            let scanID = beginScanProgress()
             viewModel.startScan(attachment: attachment, preferences: preferences, modelContext: modelContext) { result in
-                appState.showResults(result, purchaseMode: viewModel.purchaseMode, viewedAt: .now)
+                completeScanProgress(id: scanID, result: result)
             }
         } catch {
             viewModel.failure = ScanFailureState(
@@ -219,6 +224,19 @@ struct MainView: View {
 
         guard let result = try? decoder.decode(WineScanResult.self, from: data) else { return }
         appState.showResults(result, purchaseMode: scan.purchaseModeValue, viewedAt: scan.createdAt)
+    }
+
+    private func beginScanProgress() -> UUID {
+        let scanID = appState.showScanProgress(purchaseMode: viewModel.purchaseMode, viewedAt: .now)
+        activeScanID = scanID
+        return scanID
+    }
+
+    private func completeScanProgress(id: UUID, result: WineScanResult) {
+        appState.completeScanProgress(id: id, result: result)
+        if activeScanID == id {
+            activeScanID = nil
+        }
     }
 
     private var header: some View {

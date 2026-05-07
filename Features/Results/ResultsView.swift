@@ -18,6 +18,18 @@ struct ResultsView: View {
     }
 
     var body: some View {
+        ResultsContentView(result: result, purchaseMode: purchaseMode)
+            .navigationTitle(pageTitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .background(mainScreenBackground.ignoresSafeArea())
+    }
+}
+
+struct ResultsContentView: View {
+    let result: WineScanResult
+    let purchaseMode: PurchaseMode
+
+    var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 if let topRecommendation = result.recommendations.first {
@@ -83,9 +95,6 @@ struct ResultsView: View {
             }
             .padding(20)
         }
-        .navigationTitle(pageTitle)
-        .navigationBarTitleDisplayMode(.inline)
-        .background(mainScreenBackground.ignoresSafeArea())
     }
 
     private var remainingRecommendations: [WineRecommendation] {
