@@ -7,38 +7,33 @@ struct BestPickHeroView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
-            HStack(alignment: .top) {
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack(spacing: 8) {
-                        Image(systemName: "star.fill")
-                            .font(.caption.weight(.bold))
-                            .foregroundStyle(Color.resultHeroIvory)
-                            .frame(width: 22, height: 22)
-                            .background(Color.white.opacity(0.12))
-                            .clipShape(.rect(cornerRadius: 7))
+            HStack(spacing: 8) {
+                Image(systemName: "star.fill")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(Color.resultHeroIvory)
+                    .frame(width: 22, height: 22)
+                    .background(Color.white.opacity(0.0))
+                    .clipShape(.rect(cornerRadius: 7))
 
-                        Text("TOP PICK")
-                            .font(.caption.weight(.bold))
-                            .tracking(0.8)
-                            .foregroundStyle(Color.white.opacity(0.95))
-                    }
+                Text("TOP PICK")
+                    .font(.caption.weight(.bold))
+                    .tracking(0.8)
+                    .foregroundStyle(Color.white.opacity(0.95))
+            }
 
-                    Text(recommendation.displayTitle)
-                        .font(.system(size: 25, weight: .bold, design: .serif))
-                        .foregroundStyle(Color.white.opacity(0.95))
-                }
+            HStack(alignment: .center, spacing: 14) {
+                Text(recommendation.valueScore.formatted(.number.precision(.fractionLength(1))))
+                    .font(.system(size: 22, weight: .bold, design: .serif))
+                    .foregroundStyle(Color.resultHeroIvory)
+                    .frame(width: 58, height: 58)
+                    .background(
+                        Circle()
+                            .fill(Color.white.opacity(0.10))
+                    )
 
-                Spacer()
-
-                VStack(alignment: .trailing, spacing: 4) {
-                    Text("Score")
-                        .font(.subheadline)
-                        .foregroundStyle(Color.white.opacity(0.95))
-                    Text(recommendation.valueScore.formatted(.number.precision(.fractionLength(1))))
-                        .font(.system(size: 31, weight: .bold, design: .serif))
-                        .bold()
-                        .foregroundStyle(Color.resultHeroIvory)
-                }
+                Text(recommendation.displayTitle)
+                    .font(.system(size: 22, weight: .bold, design: .serif))
+                    .foregroundStyle(Color.white.opacity(0.95))
             }
 
             RecommendationMetricRow(

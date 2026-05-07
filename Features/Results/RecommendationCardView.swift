@@ -66,8 +66,8 @@ struct RecommendationCardView: View {
 
     private var wineDataTags: [String] {
         [
-            recommendation.region?.trimmedNonEmpty,
             recommendation.varietal?.trimmedNonEmpty,
+            recommendation.region?.trimmedNonEmpty,
             recommendation.vintage.map(String.init),
         ].compactMap { $0 }
     }
@@ -144,7 +144,7 @@ struct RecommendationMetricRow: View {
         case .standard:
             return .clear
         case .hero:
-            return Color.white.opacity(0.10)
+            return Color.white.opacity(0.05)
         }
     }
 }
