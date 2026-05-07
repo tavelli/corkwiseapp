@@ -1,8 +1,4 @@
-import {
-  RequestError,
-  type PurchaseMode,
-  type WineScanResult,
-} from "./types.ts";
+import {RequestError, type PurchaseMode, type WineScanResult} from "./types.ts";
 
 export function normalizeScanResult(
   input: unknown,
@@ -82,14 +78,30 @@ function normalizeRecommendation(
     menuPrice,
     estimatedRetail,
   });
+  const wineName = requiredString(candidate.wineName);
+  const extractedText = requiredString(candidate.extractedText);
+  const producer = stringOrNull(candidate.producer);
+  const region = stringOrNull(candidate.region);
+  const varietal = stringOrNull(candidate.varietal);
 
   return {
     rank: positiveInt(candidate.rank) ?? index + 1,
-    wineName: requiredString(candidate.wineName),
+    wineName,
+    displayName: deriveDisplayName({
+      producer,
+      wineName,
+      region,
+      varietal,
+      extractedText,
+    }),
+    extractedText,
+    producer,
+    region,
+    vintage: vintageOrNull(candidate.vintage),
+    varietal,
     menuPrice,
     estimatedRetail,
     estimatedMarkup: derivedMarkup?.value ?? null,
-    estimatedMarkupDisplay: derivedMarkup?.display ?? null,
     valueScore: boundedScore(candidate.valueScore),
     why: requiredString(candidate.why),
   };
@@ -109,20 +121,119 @@ function normalizeCategorySection(
     title: requiredString(candidate.title),
     recommendations: arrayOrEmpty(candidate.recommendations)
       .slice(0, 2)
-      .map((entry, index) => normalizeRecommendation(entry, index, purchaseMode)),
+      .map((entry, index) =>
+        normalizeRecommendation(entry, index, purchaseMode),
+      ),
   };
+}
+
+function deriveDisplayName(input: {
+  producer: string | null;
+  wineName: string | null;
+  region: string | null;
+  varietal: string | null;
+  extractedText: string;
+}): string {
+  const {producer, region, varietal, extractedText} = input;
+  const wineName = distinctPart(input.wineName, [producer, varietal]);
+
+  if (producer != null && wineName != null) {
+    return joinDisplayParts(producer, wineName);
+  }
+
+  if (producer != null && varietal != null) {
+    return joinDisplayParts(producer, varietal);
+  }
+
+  if (wineName != null) {
+    return wineName;
+  }
+
+  if (varietal != null && region != null) {
+    return joinDisplayParts(varietal, region);
+  }
+
+  if (varietal != null) {
+    return varietal;
+  }
+
+  return extractedText;
+}
+
+function joinDisplayParts(first: string, second: string): string {
+  if (sameDisplayValue(first, second)) {
+    return first;
+  }
+
+  return `${first} — ${second}`;
+}
+
+function distinctPart(
+  value: string | null,
+  existingParts: Array<string | null>,
+): string | null {
+  if (value == null) {
+    return null;
+  }
+
+  const knownParts = existingParts.filter((part): part is string =>
+    part != null && part.trim().length > 0
+  );
+  const trimmedValue = knownParts.reduce<string>(
+    (candidate, part) =>
+      candidate.replace(
+        new RegExp(`\\b${escapeRegExp(part)}\\b`, "gi"),
+        " ",
+      ),
+    value,
+  ).trim().replace(/\s+/g, " ");
+
+  if (trimmedValue.length === 0) {
+    return null;
+  }
+
+  if (
+    knownParts.some((part) =>
+      sameDisplayValue(trimmedValue, part) ||
+      includesDisplayValue(part, trimmedValue)
+    )
+  ) {
+    return null;
+  }
+
+  return trimmedValue;
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function sameDisplayValue(left: string, right: string): boolean {
+  return normalizedDisplayValue(left) === normalizedDisplayValue(right);
+}
+
+function includesDisplayValue(container: string, value: string): boolean {
+  const normalizedContainer = normalizedDisplayValue(container);
+  const normalizedValue = normalizedDisplayValue(value);
+  return normalizedContainer.includes(normalizedValue);
+}
+
+function normalizedDisplayValue(value: string): string {
+  return value
+    .normalize("NFKD")
+    .replace(/\p{Diacritic}/gu, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim()
+    .replace(/\s+/g, " ");
 }
 
 function deriveMarkup(input: {
   purchaseMode: PurchaseMode;
   menuPrice: number | null;
   estimatedRetail: number | null;
-}): { value: number; display: string } | null {
-  const {
-    purchaseMode,
-    menuPrice,
-    estimatedRetail,
-  } = input;
+}): {value: number; display: string} | null {
+  const {purchaseMode, menuPrice, estimatedRetail} = input;
 
   if (
     menuPrice == null ||
@@ -211,6 +322,19 @@ function positiveInt(value: unknown): number | null {
     typeof value !== "number" ||
     Number.isInteger(value) === false ||
     value < 1
+  ) {
+    return null;
+  }
+
+  return value;
+}
+
+function vintageOrNull(value: unknown): number | null {
+  if (
+    typeof value !== "number" ||
+    Number.isInteger(value) === false ||
+    value < 1800 ||
+    value > 2100
   ) {
     return null;
   }

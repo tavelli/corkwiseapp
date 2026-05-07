@@ -1,11 +1,12 @@
 import SwiftUI
 
 struct BestPickHeroView: View {
-    let summary: ScanSummary
+    let recommendation: WineRecommendation
+    let purchaseMode: PurchaseMode
     let restaurantName: String?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 22) {
+        VStack(alignment: .leading, spacing: 18) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack(spacing: 8) {
@@ -22,7 +23,7 @@ struct BestPickHeroView: View {
                             .foregroundStyle(Color.white.opacity(0.95))
                     }
 
-                    Text(summary.bestPickName)
+                    Text(recommendation.displayTitle)
                         .font(.system(size: 25, weight: .bold, design: .serif))
                         .foregroundStyle(Color.white.opacity(0.95))
                 }
@@ -33,17 +34,26 @@ struct BestPickHeroView: View {
                     Text("Score")
                         .font(.subheadline)
                         .foregroundStyle(Color.white.opacity(0.95))
-                    Text(summary.bestPickScore.formatted(.number.precision(.fractionLength(1))))
+                    Text(recommendation.valueScore.formatted(.number.precision(.fractionLength(1))))
                         .font(.system(size: 31, weight: .bold, design: .serif))
                         .bold()
                         .foregroundStyle(Color.resultHeroIvory)
                 }
             }
 
-            Text(summary.bestPickWhy)
+            RecommendationMetricRow(
+                menuPrice: recommendation.menuPrice,
+                estimatedRetail: recommendation.estimatedRetail,
+                purchaseMode: purchaseMode,
+                style: .hero
+            )
+
+            Text(recommendation.why)
                 .font(.body)
                 .lineSpacing(2)
                 .foregroundStyle(Color.white.opacity(0.95))
+
+            WineDataTagRow(tags: wineDataTags, style: .hero)
 
 //            if let restaurantName {
 //                Label(restaurantName, systemImage: "fork.knife")
@@ -102,5 +112,13 @@ struct BestPickHeroView: View {
         }
         .clipShape(.rect(cornerRadius: 28))
         .shadow(color: Color.black.opacity(0.08), radius: 18, y: 10)
+    }
+
+    private var wineDataTags: [String] {
+        [
+            recommendation.region?.trimmedNonEmpty,
+            recommendation.varietal?.trimmedNonEmpty,
+            recommendation.vintage.map(String.init),
+        ].compactMap { $0 }
     }
 }

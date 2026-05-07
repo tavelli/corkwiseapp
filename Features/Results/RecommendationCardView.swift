@@ -17,7 +17,7 @@ struct RecommendationCardView: View {
                     )
 
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(recommendation.wineName)
+                    Text(recommendation.displayTitle)
                         .font(.system(size: 17, weight: .bold, design: .serif))
                         .foregroundStyle(Color.wineText)
                 }
@@ -38,6 +38,8 @@ struct RecommendationCardView: View {
                     .foregroundStyle(Color.wineText)
                     .lineSpacing(2)
             }
+
+            WineDataTagRow(tags: wineDataTags)
         }
         .padding(20)
         .background(Color.resultCardBackground)
@@ -61,21 +63,37 @@ struct RecommendationCardView: View {
             return .resultScoreLow
         }
     }
+
+    private var wineDataTags: [String] {
+        [
+            recommendation.region?.trimmedNonEmpty,
+            recommendation.varietal?.trimmedNonEmpty,
+            recommendation.vintage.map(String.init),
+        ].compactMap { $0 }
+    }
 }
 
-private struct RecommendationMetricRow: View {
+struct RecommendationMetricRow: View {
+    enum Style {
+        case standard
+        case hero
+    }
+
     let menuPrice: Double?
     let estimatedRetail: Double?
     let purchaseMode: PurchaseMode
+    var style: Style = .standard
 
     var body: some View {
         HStack(spacing: 0) {
             ForEach(metrics, id: \.title) { metric in
-                MetricItem(title: metric.title, value: metric.value)
+                MetricItem(title: metric.title, value: metric.value, style: style)
             }
         }
         .padding(.vertical, 4)
         .frame(maxWidth: .infinity)
+        .background(backgroundColor)
+        .clipShape(.rect(cornerRadius: style == .hero ? 16 : 0))
     }
 
     private var metrics: [Metric] {
@@ -120,6 +138,15 @@ private struct RecommendationMetricRow: View {
         let precision = isWholeNumber ? 0 : 1
         return value.formatted(.currency(code: "USD").precision(.fractionLength(precision)))
     }
+
+    private var backgroundColor: Color {
+        switch style {
+        case .standard:
+            return .clear
+        case .hero:
+            return Color.white.opacity(0.10)
+        }
+    }
 }
 
 private struct Metric: Hashable {
@@ -130,20 +157,178 @@ private struct Metric: Hashable {
 private struct MetricItem: View {
     let title: String
     let value: String
+    let style: RecommendationMetricRow.Style
 
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text(value)
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(Color.wineText)
+                .foregroundStyle(valueColor)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
             Text(title.uppercased())
                 .font(.system(size: 9, weight: .medium))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(titleColor)
         }
         .padding(.horizontal, 10)
         .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
         .layoutPriority(1)
+    }
+
+    private var valueColor: Color {
+        switch style {
+        case .standard:
+            return .wineText
+        case .hero:
+            return Color.white.opacity(0.96)
+        }
+    }
+
+    private var titleColor: Color {
+        switch style {
+        case .standard:
+            return .secondary
+        case .hero:
+            return Color.resultHeroIvory.opacity(0.82)
+        }
+    }
+}
+
+struct WineDataTagRow: View {
+    enum Style {
+        case standard
+        case hero
+    }
+
+    let tags: [String]
+    var style: Style = .standard
+
+    var body: some View {
+        if tags.isEmpty == false {
+            FlowLayout(spacing: 8) {
+                ForEach(tags, id: \.self) { tag in
+                    Text(tag)
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(foregroundColor)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.85)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(backgroundColor)
+                        .clipShape(.capsule)
+                }
+            }
+            .padding(.top, 2)
+        }
+    }
+
+    private var foregroundColor: Color {
+        switch style {
+        case .standard:
+            return .wineText
+        case .hero:
+            return Color.white.opacity(0.94)
+        }
+    }
+
+    private var backgroundColor: Color {
+        switch style {
+        case .standard:
+            return Color.wineSoftPeach.opacity(0.18)
+        case .hero:
+            return Color.resultHeroIvory.opacity(0.16)
+        }
+    }
+}
+
+private struct FlowLayout: Layout {
+    let spacing: CGFloat
+
+    init(spacing: CGFloat) {
+        self.spacing = spacing
+    }
+
+    func sizeThatFits(
+        proposal: ProposedViewSize,
+        subviews: Subviews,
+        cache: inout ()
+    ) -> CGSize {
+        let rows = rows(for: subviews, proposal: proposal)
+        return CGSize(
+            width: proposal.width ?? rows.map(\.width).max() ?? 0,
+            height: rows.map(\.height).reduce(0, +) + spacing * CGFloat(max(rows.count - 1, 0))
+        )
+    }
+
+    func placeSubviews(
+        in bounds: CGRect,
+        proposal: ProposedViewSize,
+        subviews: Subviews,
+        cache: inout ()
+    ) {
+        var y = bounds.minY
+
+        for row in rows(for: subviews, proposal: ProposedViewSize(width: bounds.width, height: proposal.height)) {
+            var x = bounds.minX
+
+            for item in row.items {
+                item.subview.place(
+                    at: CGPoint(x: x, y: y),
+                    anchor: .topLeading,
+                    proposal: ProposedViewSize(item.size)
+                )
+                x += item.size.width + spacing
+            }
+
+            y += row.height + spacing
+        }
+    }
+
+    private func rows(for subviews: Subviews, proposal: ProposedViewSize) -> [FlowRow] {
+        let maxWidth = proposal.width ?? .infinity
+        var rows: [FlowRow] = []
+        var currentItems: [FlowItem] = []
+        var currentWidth: CGFloat = 0
+        var currentHeight: CGFloat = 0
+
+        for subview in subviews {
+            let size = subview.sizeThatFits(.unspecified)
+            let nextWidth = currentItems.isEmpty ? size.width : currentWidth + spacing + size.width
+
+            if nextWidth > maxWidth, currentItems.isEmpty == false {
+                rows.append(FlowRow(items: currentItems, width: currentWidth, height: currentHeight))
+                currentItems = [FlowItem(subview: subview, size: size)]
+                currentWidth = size.width
+                currentHeight = size.height
+            } else {
+                currentItems.append(FlowItem(subview: subview, size: size))
+                currentWidth = nextWidth
+                currentHeight = max(currentHeight, size.height)
+            }
+        }
+
+        if currentItems.isEmpty == false {
+            rows.append(FlowRow(items: currentItems, width: currentWidth, height: currentHeight))
+        }
+
+        return rows
+    }
+}
+
+private struct FlowRow {
+    let items: [FlowItem]
+    let width: CGFloat
+    let height: CGFloat
+}
+
+private struct FlowItem {
+    let subview: LayoutSubview
+    let size: CGSize
+}
+
+extension String {
+    var trimmedNonEmpty: String? {
+        let value = trimmingCharacters(in: .whitespacesAndNewlines)
+        return value.isEmpty ? nil : value
     }
 }

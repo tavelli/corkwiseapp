@@ -33,16 +33,23 @@ struct WineScanResult: Codable, Hashable {
 
 struct ScanSummary: Codable, Hashable {
     let headline: String
-    let bestPickName: String
-    let bestPickScore: Double
-    let bestPickWhy: String
+    let bestPickName: String?
+    let bestPickScore: Double?
+    let bestPickWhy: String?
 }
 
 struct WineRecommendation: Codable, Identifiable, Hashable {
     var id: String { "\(rank)-\(wineName)" }
+    var displayTitle: String { displayName ?? wineName }
 
     let rank: Int
     let wineName: String
+    let displayName: String?
+    let extractedText: String?
+    let producer: String?
+    let region: String?
+    let vintage: Int?
+    let varietal: String?
     let menuPrice: Double?
     let estimatedRetail: Double?
     let valueScore: Double
@@ -51,6 +58,12 @@ struct WineRecommendation: Codable, Identifiable, Hashable {
     private enum CodingKeys: String, CodingKey {
         case rank
         case wineName
+        case displayName
+        case extractedText
+        case producer
+        case region
+        case vintage
+        case varietal
         case menuPrice
         case estimatedRetail
         case estimatedRetailLow
@@ -62,6 +75,12 @@ struct WineRecommendation: Codable, Identifiable, Hashable {
     init(
         rank: Int,
         wineName: String,
+        displayName: String? = nil,
+        extractedText: String? = nil,
+        producer: String? = nil,
+        region: String? = nil,
+        vintage: Int? = nil,
+        varietal: String? = nil,
         menuPrice: Double?,
         estimatedRetail: Double?,
         valueScore: Double,
@@ -69,6 +88,12 @@ struct WineRecommendation: Codable, Identifiable, Hashable {
     ) {
         self.rank = rank
         self.wineName = wineName
+        self.displayName = displayName
+        self.extractedText = extractedText
+        self.producer = producer
+        self.region = region
+        self.vintage = vintage
+        self.varietal = varietal
         self.menuPrice = menuPrice
         self.estimatedRetail = estimatedRetail
         self.valueScore = valueScore
@@ -79,6 +104,12 @@ struct WineRecommendation: Codable, Identifiable, Hashable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         rank = try container.decode(Int.self, forKey: .rank)
         wineName = try container.decode(String.self, forKey: .wineName)
+        displayName = try container.decodeIfPresent(String.self, forKey: .displayName)
+        extractedText = try container.decodeIfPresent(String.self, forKey: .extractedText)
+        producer = try container.decodeIfPresent(String.self, forKey: .producer)
+        region = try container.decodeIfPresent(String.self, forKey: .region)
+        vintage = try container.decodeIfPresent(Int.self, forKey: .vintage)
+        varietal = try container.decodeIfPresent(String.self, forKey: .varietal)
         menuPrice = try container.decodeIfPresent(Double.self, forKey: .menuPrice)
         valueScore = try container.decode(Double.self, forKey: .valueScore)
         why = try container.decode(String.self, forKey: .why)
@@ -107,6 +138,12 @@ struct WineRecommendation: Codable, Identifiable, Hashable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(rank, forKey: .rank)
         try container.encode(wineName, forKey: .wineName)
+        try container.encodeIfPresent(displayName, forKey: .displayName)
+        try container.encodeIfPresent(extractedText, forKey: .extractedText)
+        try container.encodeIfPresent(producer, forKey: .producer)
+        try container.encodeIfPresent(region, forKey: .region)
+        try container.encodeIfPresent(vintage, forKey: .vintage)
+        try container.encodeIfPresent(varietal, forKey: .varietal)
         try container.encodeIfPresent(menuPrice, forKey: .menuPrice)
         try container.encodeIfPresent(estimatedRetail, forKey: .estimatedRetail)
         try container.encode(valueScore, forKey: .valueScore)
@@ -147,6 +184,10 @@ extension WineScanResult {
                 WineRecommendation(
                     rank: 1,
                     wineName: "2012 R. Lopez de Heredia Viña Tondonia Rioja",
+                    displayName: "R. Lopez de Heredia - Vina Tondonia Rioja",
+                    region: "Rioja, Spain",
+                    vintage: 2012,
+                    varietal: "Tempranillo",
                     menuPrice: 88,
                     estimatedRetail: 60,
                     valueScore: 9.5,
@@ -155,6 +196,10 @@ extension WineScanResult {
                 WineRecommendation(
                     rank: 2,
                     wineName: "2021 Domaine de la Pepiere Muscadet Sevre et Maine",
+                    displayName: "Domaine de la Pepiere - Muscadet Sevre et Maine",
+                    region: "Loire Valley, France",
+                    vintage: 2021,
+                    varietal: "Melon de Bourgogne",
                     menuPrice: 54,
                     estimatedRetail: 25,
                     valueScore: 8.6,
@@ -163,6 +208,10 @@ extension WineScanResult {
                 WineRecommendation(
                     rank: 3,
                     wineName: "2019 Lopez Cristobal Ribera del Duero",
+                    displayName: "Lopez Cristobal - Ribera del Duero",
+                    region: "Ribera del Duero, Spain",
+                    vintage: 2019,
+                    varietal: "Tempranillo",
                     menuPrice: 76,
                     estimatedRetail: 38,
                     valueScore: 7.9,
@@ -177,6 +226,10 @@ extension WineScanResult {
                         WineRecommendation(
                             rank: 1,
                             wineName: "2021 Domaine de la Pepiere Muscadet Sevre et Maine",
+                            displayName: "Domaine de la Pepiere - Muscadet Sevre et Maine",
+                            region: "Loire Valley, France",
+                            vintage: 2021,
+                            varietal: "Melon de Bourgogne",
                             menuPrice: 54,
                             estimatedRetail: 25,
                             valueScore: 8.6,
@@ -185,12 +238,16 @@ extension WineScanResult {
                     ]
                 ),
                 RecommendationCategorySection(
-                    key: "best_splurge",
-                    title: "Best Splurge",
+                    key: "worth_the_splurge",
+                    title: "Worth the Splurge",
                     recommendations: [
                         WineRecommendation(
                             rank: 3,
                             wineName: "2019 Lopez Cristobal Ribera del Duero",
+                            displayName: "Lopez Cristobal - Ribera del Duero",
+                            region: "Ribera del Duero, Spain",
+                            vintage: 2019,
+                            varietal: "Tempranillo",
                             menuPrice: 76,
                             estimatedRetail: 38,
                             valueScore: 7.9,
@@ -199,12 +256,16 @@ extension WineScanResult {
                     ]
                 ),
                 RecommendationCategorySection(
-                    key: "safest_choice",
-                    title: "Safest Choice",
+                    key: "crowd_pleaser",
+                    title: "Crowd Pleaser",
                     recommendations: [
                         WineRecommendation(
                             rank: 2,
                             wineName: "2021 Domaine de la Pepiere Muscadet Sevre et Maine",
+                            displayName: "Domaine de la Pepiere - Muscadet Sevre et Maine",
+                            region: "Loire Valley, France",
+                            vintage: 2021,
+                            varietal: "Melon de Bourgogne",
                             menuPrice: 54,
                             estimatedRetail: 25,
                             valueScore: 8.6,
@@ -213,16 +274,56 @@ extension WineScanResult {
                     ]
                 ),
                 RecommendationCategorySection(
-                    key: "most_interesting_pick",
-                    title: "Most Interesting Pick",
+                    key: "hidden_gem",
+                    title: "Hidden Gem",
                     recommendations: [
                         WineRecommendation(
                             rank: 1,
                             wineName: "2012 R. Lopez de Heredia Viña Tondonia Rioja",
+                            displayName: "R. Lopez de Heredia - Vina Tondonia Rioja",
+                            region: "Rioja, Spain",
+                            vintage: 2012,
+                            varietal: "Tempranillo",
                             menuPrice: 88,
                             estimatedRetail: 60,
                             valueScore: 9.5,
                             why: "Age, style, and producer profile make this the most compelling conversation bottle on the list."
+                        )
+                    ]
+                ),
+                RecommendationCategorySection(
+                    key: "overpriced_here",
+                    title: "Overpriced Here",
+                    recommendations: [
+                        WineRecommendation(
+                            rank: 3,
+                            wineName: "2019 Lopez Cristobal Ribera del Duero",
+                            displayName: "Lopez Cristobal - Ribera del Duero",
+                            region: "Ribera del Duero, Spain",
+                            vintage: 2019,
+                            varietal: "Tempranillo",
+                            menuPrice: 76,
+                            estimatedRetail: 38,
+                            valueScore: 7.9,
+                            why: "A solid wine, but the menu price is less compelling than the stronger values around it."
+                        )
+                    ]
+                ),
+                RecommendationCategorySection(
+                    key: "try_something_new",
+                    title: "Try Something New",
+                    recommendations: [
+                        WineRecommendation(
+                            rank: 1,
+                            wineName: "2021 Domaine de la Pepiere Muscadet Sevre et Maine",
+                            displayName: "Domaine de la Pepiere - Muscadet Sevre et Maine",
+                            region: "Loire Valley, France",
+                            vintage: 2021,
+                            varietal: "Melon de Bourgogne",
+                            menuPrice: 54,
+                            estimatedRetail: 25,
+                            valueScore: 8.6,
+                            why: "A crisp, coastal white that is a more interesting move than the usual by-the-bottle defaults."
                         )
                     ]
                 )

@@ -1,13 +1,7 @@
-import {
-  MAX_REQUEST_BYTES,
-  validateAnalyzeRequest,
-} from "./domain/request.ts";
+import {MAX_REQUEST_BYTES, validateAnalyzeRequest} from "./domain/request.ts";
 import {normalizeScanResult} from "./domain/normalize.ts";
 import {makeProvider} from "./providers/factory.ts";
-import {
-  RequestError,
-  type WineAnalysisErrorResponse,
-} from "./domain/types.ts";
+import {RequestError, type WineAnalysisErrorResponse} from "./domain/types.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -69,15 +63,18 @@ Deno.serve(async (req) => {
       purchaseMode: requestBody.purchaseMode,
       categoryPreference: requestBody.categoryPreference,
       sourceKind: requestBody.source.kind,
-      attachmentMimeType: requestBody.source.kind === "attachment"
-        ? requestBody.source.attachment.mimeType
-        : null,
-      attachmentBase64Length: requestBody.source.kind === "attachment"
-        ? requestBody.source.attachment.base64Data.length
-        : null,
-      menuUrlHost: requestBody.source.kind === "url"
-        ? new URL(requestBody.source.menuUrl).host
-        : null,
+      attachmentMimeType:
+        requestBody.source.kind === "attachment"
+          ? requestBody.source.attachment.mimeType
+          : null,
+      attachmentBase64Length:
+        requestBody.source.kind === "attachment"
+          ? requestBody.source.attachment.base64Data.length
+          : null,
+      menuUrlHost:
+        requestBody.source.kind === "url"
+          ? new URL(requestBody.source.menuUrl).host
+          : null,
       preferredStylesCount: requestBody.userPreferences.preferredStyles.length,
     });
 
@@ -97,6 +94,7 @@ Deno.serve(async (req) => {
       provider: providerResult.provider,
       recommendationCount: normalizedResult.recommendations.length,
       restaurantName: normalizedResult.restaurantName,
+      results: normalizedResult,
     });
 
     return Response.json(normalizedResult, {

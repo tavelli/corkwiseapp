@@ -48,6 +48,7 @@
 /* Begin PBXFileReference section */
 		375DE4FE2FA675A7008D4574 /* winebottle1.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = winebottle1.svg; sourceTree = "<group>"; };
 		375DE5EE2FAB9D92008D4574 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
+		375DE5F02FAC2097008D4574 /* AGENTS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = AGENTS.md; sourceTree = "<group>"; };
 		379399A22FA3CC7400246506 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		379399A32FA3CC7400246506 /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
 		379399A62FA3CC7400246506 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
@@ -196,6 +197,7 @@
 		3796344A2FA3AEBC00E30EAA = {
 			isa = PBXGroup;
 			children = (
+				375DE5F02FAC2097008D4574 /* AGENTS.md */,
 				375DE5EE2FAB9D92008D4574 /* Launch Screen.storyboard */,
 				379399DE2FA3D27500246506 /* CorkWise-Info.plist */,
 				379399A42FA3CC7400246506 /* Models */,

@@ -14,13 +14,13 @@ export type AnalyzeWineMenuAttachment = {
 
 export type AnalyzeWineMenuSource =
   | {
-    kind: "attachment";
-    attachment: AnalyzeWineMenuAttachment;
-  }
+      kind: "attachment";
+      attachment: AnalyzeWineMenuAttachment;
+    }
   | {
-    kind: "url";
-    menuUrl: string;
-  };
+      kind: "url";
+      menuUrl: string;
+    };
 
 export type AnalyzeWineMenuRequest = {
   source: AnalyzeWineMenuSource;
@@ -51,10 +51,15 @@ export type WineScanResult = {
   recommendations: Array<{
     rank: number;
     wineName: string;
+    displayName: string;
+    extractedText: string;
+    producer: string | null;
+    region: string | null;
+    vintage: number | null;
+    varietal: string | null;
     menuPrice: number | null;
     estimatedRetail: number | null;
     estimatedMarkup: number | null;
-    estimatedMarkupDisplay: string | null;
     valueScore: number;
     why: string;
   }>;
@@ -64,10 +69,15 @@ export type WineScanResult = {
     recommendations: Array<{
       rank: number;
       wineName: string;
+      displayName: string;
+      extractedText: string;
+      producer: string | null;
+      region: string | null;
+      vintage: number | null;
+      varietal: string | null;
       menuPrice: number | null;
       estimatedRetail: number | null;
       estimatedMarkup: number | null;
-      estimatedMarkupDisplay: string | null;
       valueScore: number;
       why: string;
     }>;

@@ -28,9 +28,11 @@ struct CategoryHighlightsView: View {
     private var displaySections: [DisplayCategorySection] {
         let canonicalKeys = [
             "best_value",
-            "best_splurge",
-            "safest_choice",
-            "most_interesting_pick",
+            "worth_the_splurge",
+            "crowd_pleaser",
+            "hidden_gem",
+            "overpriced_here",
+            "try_something_new",
         ]
 
         let mappedSections = sections.map { section in
@@ -46,23 +48,23 @@ struct CategoryHighlightsView: View {
             mappedSections.first { $0.key == key }
         }
 
-        let fallbackSections = mappedSections.filter { section in
-            canonicalKeys.contains(section.key) == false
-        }
-
-        return canonicalMatches + fallbackSections
+        return canonicalMatches
     }
 
     private static func displayTitle(for section: RecommendationCategorySection) -> String {
         switch section.key {
         case "best_value":
             return "Best Value"
-        case "best_splurge":
-            return "Best Splurge"
-        case "safest_choice":
-            return "Safest Choice"
-        case "most_interesting_pick":
-            return "Most Interesting Pick"
+        case "worth_the_splurge":
+            return "Worth the Splurge"
+        case "crowd_pleaser":
+            return "Crowd Pleaser"
+        case "hidden_gem":
+            return "Hidden Gem"
+        case "overpriced_here":
+            return "Overpriced Here"
+        case "try_something_new":
+            return "Try Something New"
         default:
             return section.title
         }
@@ -72,12 +74,16 @@ struct CategoryHighlightsView: View {
         switch key {
         case "best_value":
             return "tag.fill"
-        case "best_splurge":
+        case "worth_the_splurge":
             return "crown.fill"
-        case "safest_choice":
+        case "crowd_pleaser":
             return "checkmark.shield.fill"
-        case "most_interesting_pick":
+        case "hidden_gem":
             return "sparkles"
+        case "overpriced_here":
+            return "exclamationmark.triangle.fill"
+        case "try_something_new":
+            return "sparkles.square.filled.on.square"
         default:
             return "star.circle.fill"
         }

@@ -20,17 +20,25 @@ struct ResultsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-                BestPickHeroView(summary: result.summary, restaurantName: result.restaurantName)
-
-                VStack(alignment: .leading, spacing: 16) {
-                    ResultSectionHeader(
-                        title: "Best Overall Picks",
-                        systemImage: "star.circle.fill",
-                        style: .ribbon
+                if let topRecommendation = result.recommendations.first {
+                    BestPickHeroView(
+                        recommendation: topRecommendation,
+                        purchaseMode: purchaseMode,
+                        restaurantName: result.restaurantName
                     )
+                }
 
-                    ForEach(result.recommendations) { recommendation in
-                        RecommendationCardView(recommendation: recommendation, purchaseMode: purchaseMode)
+                if remainingRecommendations.isEmpty == false {
+                    VStack(alignment: .leading, spacing: 16) {
+                        ResultSectionHeader(
+                            title: "Other Great Picks",
+                            systemImage: "star.circle.fill",
+                            style: .ribbon
+                        )
+
+                        ForEach(remainingRecommendations) { recommendation in
+                            RecommendationCardView(recommendation: recommendation, purchaseMode: purchaseMode)
+                        }
                     }
                 }
 
@@ -74,6 +82,10 @@ struct ResultsView: View {
         .navigationTitle(pageTitle)
         .navigationBarTitleDisplayMode(.inline)
         .background(mainScreenBackground.ignoresSafeArea())
+    }
+
+    private var remainingRecommendations: [WineRecommendation] {
+        Array(result.recommendations.dropFirst())
     }
 }
 

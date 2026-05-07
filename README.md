@@ -523,6 +523,12 @@ struct WineRecommendation: Codable, Identifiable {
 
     let rank: Int
     let wineName: String
+    let displayName: String?
+    let extractedText: String?
+    let producer: String?
+    let region: String?
+    let vintage: Int?
+    let varietal: String?
     let menuPrice: Double?
     let menuPriceDisplay: String?
     let estimatedRetail: Double?
@@ -596,7 +602,13 @@ POST /functions/v1/analyze-wine-menu
   "recommendations": [
     {
       "rank": 1,
-      "wineName": "2012 R. Lopez de Heredia Viña Tondonia Rioja",
+      "wineName": "Viña Tondonia Rioja",
+      "displayName": "R. Lopez de Heredia — Viña Tondonia Rioja",
+      "extractedText": "2012 R. Lopez de Heredia Viña Tondonia Rioja $88",
+      "producer": "R. Lopez de Heredia",
+      "region": "Rioja",
+      "vintage": 2012,
+      "varietal": null,
       "menuPrice": 88,
       "menuPriceDisplay": "$88",
       "estimatedRetail": 60,
@@ -611,7 +623,13 @@ POST /functions/v1/analyze-wine-menu
     },
     {
       "rank": 2,
-      "wineName": "2019 Rhys Pinot Noir, Santa Cruz",
+      "wineName": "Santa Cruz",
+      "displayName": "Rhys — Santa Cruz",
+      "extractedText": "2019 Rhys Pinot Noir, Santa Cruz $65",
+      "producer": "Rhys",
+      "region": "Santa Cruz",
+      "vintage": 2019,
+      "varietal": "Pinot Noir",
       "menuPrice": 65,
       "menuPriceDisplay": "$65",
       "estimatedRetail": 55,
@@ -622,7 +640,7 @@ POST /functions/v1/analyze-wine-menu
       "why": "Serious California Pinot from a respected producer at almost retail-adjacent pricing.",
       "fitForUser": "Good fit for someone who likes elegant, nuanced reds.",
       "styleTags": ["red", "pinot_noir", "elegant"],
-      "categoryTags": ["safest_choice"]
+      "categoryTags": ["crowd_pleaser"]
     }
   ],
   "categoryHighlights": [
@@ -637,9 +655,14 @@ POST /functions/v1/analyze-wine-menu
       "wineRank": 1
     },
     {
-      "key": "safest_choice",
-      "title": "Safest Choice",
+      "key": "crowd_pleaser",
+      "title": "Crowd Pleaser",
       "wineRank": 2
+    },
+    {
+      "key": "try_something_new",
+      "title": "Try Something New",
+      "wineRank": 3
     }
   ],
   "notes": [
@@ -783,6 +806,12 @@ type WineScanResult = {
   recommendations: Array<{
     rank: number;
     wineName: string;
+    displayName: string;
+    extractedText: string;
+    producer: string | null;
+    region: string | null;
+    vintage: number | null;
+    varietal: string | null;
     menuPrice: number | null;
     menuPriceDisplay: string | null;
     estimatedRetail: number | null;

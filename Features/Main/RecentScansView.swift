@@ -109,6 +109,7 @@ struct ScanHistoryCard: View {
 
     private var metadataText: String {
         var parts = [scan.purchaseModeValue.title]
+        parts.append(scan.categoryPreferenceValue.title)
 
         // this was for me / for a group thing we can probably delete
 //        if scan.purchaseModeValue == .bottle, let bottleContext = scan.bottleContextValue {
