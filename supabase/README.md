@@ -44,6 +44,17 @@ Local URL:
 3. Deploy:
    `supabase functions deploy analyze-wine-menu`
 
+## GitHub Actions deploy
+
+The `Deploy Supabase Edge Function` workflow runs when `analyze-wine-menu`
+or its Supabase config changes on `main`. It lints, type-checks, runs Deno
+tests, and then deploys the function.
+
+Add these GitHub repository secrets before enabling it:
+
+- `SUPABASE_ACCESS_TOKEN`: Supabase access token for the CLI
+- `SUPABASE_PROJECT_ID`: target Supabase project ref
+
 ## iOS app config
 
 Set `CorkWiseSupabaseBaseURL` in the iOS target to your base project URL, for example:

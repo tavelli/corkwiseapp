@@ -1,4 +1,9 @@
 {
+  "scripts": {
+    "lint": "deno lint functions/analyze-wine-menu",
+    "check": "deno check functions/analyze-wine-menu/index.ts",
+    "test": "deno test --allow-env functions/analyze-wine-menu/domain"
+  },
   "devDependencies": {
     "supabase": "^2.98.0"
   }

@@ -1,0 +1,8 @@
+{
+  "lint": {
+    "include": ["functions/analyze-wine-menu"]
+  },
+  "test": {
+    "include": ["functions/analyze-wine-menu"]
+  }
+}

@@ -31,9 +31,17 @@ struct BestPickHeroView: View {
                             .fill(Color.white.opacity(0.10))
                     )
 
-                Text(recommendation.displayTitle)
-                    .font(.system(size: 22, weight: .bold, design: .serif))
-                    .foregroundStyle(Color.white.opacity(0.95))
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(recommendation.displayTitle)
+                        .font(.system(size: 22, weight: .bold, design: .serif))
+                        .foregroundStyle(Color.white.opacity(0.95))
+
+                    if let displayProducer = recommendation.displayProducer {
+                        Text(displayProducer)
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundStyle(Color.white.opacity(0.78))
+                    }
+                }
             }
 
             RecommendationMetricRow(

@@ -131,14 +131,6 @@ function deriveDisplayName(input: {
   const {producer, region, varietal, extractedText} = input;
   const wineName = distinctPart(input.wineName, [producer, varietal]);
 
-  if (producer != null && wineName != null) {
-    return joinDisplayParts(producer, wineName);
-  }
-
-  if (producer != null && varietal != null) {
-    return joinDisplayParts(producer, varietal);
-  }
-
   if (wineName != null) {
     return wineName;
   }
@@ -151,7 +143,7 @@ function deriveDisplayName(input: {
     return varietal;
   }
 
-  return extractedText;
+  return distinctPart(extractedText, [producer]) ?? extractedText;
 }
 
 function joinDisplayParts(first: string, second: string): string {

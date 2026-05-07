@@ -20,6 +20,12 @@ struct RecommendationCardView: View {
                     Text(recommendation.displayTitle)
                         .font(.system(size: 17, weight: .bold, design: .serif))
                         .foregroundStyle(Color.wineText)
+
+                    if let displayProducer = recommendation.displayProducer {
+                        Text(displayProducer)
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundStyle(Color.wineMutedText)
+                    }
                 }
             }
 
@@ -144,7 +150,7 @@ struct RecommendationMetricRow: View {
         case .standard:
             return .clear
         case .hero:
-            return Color.white.opacity(0.05)
+            return Color.white.opacity(0.0)
         }
     }
 }
@@ -162,7 +168,7 @@ private struct MetricItem: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text(value)
-                .font(.system(size: 18, weight: .semibold))
+                .font(.system(size: valueFontSize, weight: .semibold))
                 .foregroundStyle(valueColor)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
@@ -181,6 +187,15 @@ private struct MetricItem: View {
             return .wineText
         case .hero:
             return Color.white.opacity(0.96)
+        }
+    }
+
+    private var valueFontSize: CGFloat {
+        switch style {
+        case .standard:
+            return 18
+        case .hero:
+            return 20
         }
     }
 
@@ -330,5 +345,12 @@ extension String {
     var trimmedNonEmpty: String? {
         let value = trimmingCharacters(in: .whitespacesAndNewlines)
         return value.isEmpty ? nil : value
+    }
+}
+
+extension WineRecommendation {
+    var displayProducer: String? {
+        guard let producer = producer?.trimmedNonEmpty else { return nil }
+        return displayTitle.localizedCaseInsensitiveContains(producer) ? nil : producer
     }
 }

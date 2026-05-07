@@ -175,8 +175,6 @@ struct WineAnalysisErrorResponse: Codable {
 
 extension WineScanResult {
     static func sample(for purchaseMode: PurchaseMode, preferences: UserWinePreferences) -> WineScanResult {
-        let purchaseModeTitle = purchaseMode.title.lowercased()
-
         return WineScanResult(
             restaurantName: "Example Bistro",
             summary: ScanSummary(
@@ -185,8 +183,9 @@ extension WineScanResult {
             recommendations: [
                 WineRecommendation(
                     rank: 1,
-                    wineName: "2012 R. Lopez de Heredia Viña Tondonia Rioja",
-                    displayName: "R. Lopez de Heredia - Vina Tondonia Rioja",
+                    wineName: "Viña Tondonia Rioja",
+                    displayName: "Viña Tondonia Rioja",
+                    producer: "R. Lopez de Heredia",
                     region: "Rioja, Spain",
                     vintage: 2012,
                     varietal: "Tempranillo",
@@ -197,8 +196,9 @@ extension WineScanResult {
                 ),
                 WineRecommendation(
                     rank: 2,
-                    wineName: "2021 Domaine de la Pepiere Muscadet Sevre et Maine",
-                    displayName: "Domaine de la Pepiere - Muscadet Sevre et Maine",
+                    wineName: "Muscadet Sevre et Maine",
+                    displayName: "Muscadet Sevre et Maine",
+                    producer: "Domaine de la Pepiere",
                     region: "Loire Valley, France",
                     vintage: 2021,
                     varietal: "Melon de Bourgogne",
@@ -209,8 +209,9 @@ extension WineScanResult {
                 ),
                 WineRecommendation(
                     rank: 3,
-                    wineName: "2019 Lopez Cristobal Ribera del Duero",
-                    displayName: "Lopez Cristobal - Ribera del Duero",
+                    wineName: "Ribera del Duero",
+                    displayName: "Ribera del Duero",
+                    producer: "Lopez Cristobal",
                     region: "Ribera del Duero, Spain",
                     vintage: 2019,
                     varietal: "Tempranillo",
@@ -227,8 +228,9 @@ extension WineScanResult {
                     recommendations: [
                         WineRecommendation(
                             rank: 1,
-                            wineName: "2021 Domaine de la Pepiere Muscadet Sevre et Maine",
-                            displayName: "Domaine de la Pepiere - Muscadet Sevre et Maine",
+                            wineName: "Muscadet Sevre et Maine",
+                            displayName: "Muscadet Sevre et Maine",
+                            producer: "Domaine de la Pepiere",
                             region: "Loire Valley, France",
                             vintage: 2021,
                             varietal: "Melon de Bourgogne",
@@ -245,8 +247,9 @@ extension WineScanResult {
                     recommendations: [
                         WineRecommendation(
                             rank: 3,
-                            wineName: "2019 Lopez Cristobal Ribera del Duero",
-                            displayName: "Lopez Cristobal - Ribera del Duero",
+                            wineName: "Ribera del Duero",
+                            displayName: "Ribera del Duero",
+                            producer: "Lopez Cristobal",
                             region: "Ribera del Duero, Spain",
                             vintage: 2019,
                             varietal: "Tempranillo",
@@ -263,8 +266,9 @@ extension WineScanResult {
                     recommendations: [
                         WineRecommendation(
                             rank: 2,
-                            wineName: "2021 Domaine de la Pepiere Muscadet Sevre et Maine",
-                            displayName: "Domaine de la Pepiere - Muscadet Sevre et Maine",
+                            wineName: "Muscadet Sevre et Maine",
+                            displayName: "Muscadet Sevre et Maine",
+                            producer: "Domaine de la Pepiere",
                             region: "Loire Valley, France",
                             vintage: 2021,
                             varietal: "Melon de Bourgogne",
@@ -281,8 +285,9 @@ extension WineScanResult {
                     recommendations: [
                         WineRecommendation(
                             rank: 1,
-                            wineName: "2012 R. Lopez de Heredia Viña Tondonia Rioja",
-                            displayName: "R. Lopez de Heredia - Vina Tondonia Rioja",
+                            wineName: "Viña Tondonia Rioja",
+                            displayName: "Viña Tondonia Rioja",
+                            producer: "R. Lopez de Heredia",
                             region: "Rioja, Spain",
                             vintage: 2012,
                             varietal: "Tempranillo",
@@ -299,8 +304,9 @@ extension WineScanResult {
                     recommendations: [
                         WineRecommendation(
                             rank: 3,
-                            wineName: "2019 Lopez Cristobal Ribera del Duero",
-                            displayName: "Lopez Cristobal - Ribera del Duero",
+                            wineName: "Ribera del Duero",
+                            displayName: "Ribera del Duero",
+                            producer: "Lopez Cristobal",
                             region: "Ribera del Duero, Spain",
                             vintage: 2019,
                             varietal: "Tempranillo",
@@ -317,8 +323,9 @@ extension WineScanResult {
                     recommendations: [
                         WineRecommendation(
                             rank: 1,
-                            wineName: "2021 Domaine de la Pepiere Muscadet Sevre et Maine",
-                            displayName: "Domaine de la Pepiere - Muscadet Sevre et Maine",
+                            wineName: "Muscadet Sevre et Maine",
+                            displayName: "Muscadet Sevre et Maine",
+                            producer: "Domaine de la Pepiere",
                             region: "Loire Valley, France",
                             vintage: 2021,
                             varietal: "Melon de Bourgogne",

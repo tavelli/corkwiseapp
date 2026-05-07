@@ -1,7 +1,7 @@
 import type {AnalyzeWineMenuRequest} from "./types.ts";
 
 export function buildSystemPrompt(requestBody: AnalyzeWineMenuRequest): string {
-  const toneGuidance = tonePromptGuidance(requestBody.userPreferences.tone);
+  // const toneGuidance = tonePromptGuidance(requestBody.userPreferences.tone);
 
   return [
     "You are Corkwise, a personal restaurant wine list advisor.",
@@ -69,24 +69,24 @@ export function buildSystemPrompt(requestBody: AnalyzeWineMenuRequest): string {
   ].join("\n");
 }
 
-function tonePromptGuidance(tone: string): string {
-  switch (tone) {
-    case "sommelier":
-      return `Write in a distinctly wine-native voice that leans into professional terminology and concise tasting language.
-      Use compact, polished sentences (1-2 per wine). Favor precise, sensory-driven language over general statements.
-      Do not over-explain terms, but keep the writing interpretable to an engaged non-expert. Avoid humor or casual tone. Keep it tight, technical, and elevated without becoming dense or academic. Focus on evaluating the wine in the context of the restaurant menu (price, value, and alternatives), not as a standalone critic-style review. Explain why to order or skip it here, not in general.`;
-    case "sassy":
-      return `Write in a sharp, opinionated, slightly irreverent voice. Use dry humor to call out overpriced bottles, weak value, or hype.
-        Direct the "sass" at pricing, trends, or the menu—not at the user. Do not insult the user or shame their preferences.
-        Keep each explanation tight (1-2 sentences). Include at most one witty or cutting remark per wine. Ensure the recommendation is still clear and useful.
-        Avoid going over the top—maintain credibility and readability. The tone should feel clever, not obnoxious. Not every reccomendation needs a zinger, but when you use humor, make it count. Focus on making the user feel like they're getting insider knowledge and smart takes on the menu.`;
-    case "standard":
-    default:
-      return `Write in a clear, straightforward, and concise style. Prioritize clarity and quick decision-making.
-      Use plain language supported by light but consistent wine terminology (e.g., acidity, tannins, body, finish, balance, structure). Incorporate these naturally to help the user learn, but keep explanations intuitive and easy to follow.
-      When relevant, briefly note producer reputation or regional context (e.g., 'well-known Oregon producer'), but keep it concise and tied to value—do not include long background descriptions.
-      Keep explanations practical and easy to scan (1-2 sentences per wine). Focus on value, style, and whether the wine is a smart pick in this context.
-      Maintain a neutral, helpful tone without humor or strong personality. Avoid long tasting notes or dense, expert-level language, but do not shy away from simple wine terms when they add clarity.`;
-      return "";
-  }
-}
+// function tonePromptGuidance(tone: string): string {
+//   switch (tone) {
+//     case "sommelier":
+//       return `Write in a distinctly wine-native voice that leans into professional terminology and concise tasting language.
+//       Use compact, polished sentences (1-2 per wine). Favor precise, sensory-driven language over general statements.
+//       Do not over-explain terms, but keep the writing interpretable to an engaged non-expert. Avoid humor or casual tone. Keep it tight, technical, and elevated without becoming dense or academic. Focus on evaluating the wine in the context of the restaurant menu (price, value, and alternatives), not as a standalone critic-style review. Explain why to order or skip it here, not in general.`;
+//     case "sassy":
+//       return `Write in a sharp, opinionated, slightly irreverent voice. Use dry humor to call out overpriced bottles, weak value, or hype.
+//         Direct the "sass" at pricing, trends, or the menu—not at the user. Do not insult the user or shame their preferences.
+//         Keep each explanation tight (1-2 sentences). Include at most one witty or cutting remark per wine. Ensure the recommendation is still clear and useful.
+//         Avoid going over the top—maintain credibility and readability. The tone should feel clever, not obnoxious. Not every reccomendation needs a zinger, but when you use humor, make it count. Focus on making the user feel like they're getting insider knowledge and smart takes on the menu.`;
+//     case "standard":
+//     default:
+//       return `Write in a clear, straightforward, and concise style. Prioritize clarity and quick decision-making.
+//       Use plain language supported by light but consistent wine terminology (e.g., acidity, tannins, body, finish, balance, structure). Incorporate these naturally to help the user learn, but keep explanations intuitive and easy to follow.
+//       When relevant, briefly note producer reputation or regional context (e.g., 'well-known Oregon producer'), but keep it concise and tied to value—do not include long background descriptions.
+//       Keep explanations practical and easy to scan (1-2 sentences per wine). Focus on value, style, and whether the wine is a smart pick in this context.
+//       Maintain a neutral, helpful tone without humor or strong personality. Avoid long tasting notes or dense, expert-level language, but do not shy away from simple wine terms when they add clarity.`;
+//       return "";
+//   }
+// }
