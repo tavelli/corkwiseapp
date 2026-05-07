@@ -66,8 +66,6 @@ struct AllScansView: View {
             restaurantName: "Max's",
             purchaseMode: PurchaseMode.glass.rawValue,
             summaryHeadline: sampleResult.summary.headline,
-            bestPickName: "Roederer Estate Brut (Glass)",
-            bestPickScore: 8.8,
             resultJSON: sampleJSON
         )
     )
@@ -79,8 +77,6 @@ struct AllScansView: View {
             purchaseMode: PurchaseMode.bottle.rawValue,
             bottleContext: BottleContext.forGroup.rawValue,
             summaryHeadline: sampleResult.summary.headline,
-            bestPickName: "Lopez de Heredia Viña Tondonia Rioja",
-            bestPickScore: 9.2,
             resultJSON: sampleJSON
         )
     )
@@ -91,8 +87,6 @@ struct AllScansView: View {
             restaurantName: nil,
             purchaseMode: PurchaseMode.glass.rawValue,
             summaryHeadline: sampleResult.summary.headline,
-            bestPickName: "Cune Rioja Crianza (Glass)",
-            bestPickScore: 8.2,
             resultJSON: sampleJSON
         )
     )

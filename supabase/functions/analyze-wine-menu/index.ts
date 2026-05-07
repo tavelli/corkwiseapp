@@ -88,6 +88,8 @@ Deno.serve(async (req) => {
     normalizedResult.debugInfo = {
       model: providerResult.model,
       apiDurationMilliseconds: providerResult.apiDurationMilliseconds,
+      usage: providerResult.usage,
+      totalCostUsd: providerResult.totalCostUsd,
     };
 
     console.log("analysis complete", {

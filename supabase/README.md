@@ -57,6 +57,7 @@ The Edge Function keeps one stable app-facing endpoint and swaps model providers
 - `MODEL_PROVIDER=openai` uses `providers/openai.ts`
 - `MODEL_PROVIDER=gemini` uses `providers/gemini.ts`
 - Both providers normalize into the same `WineScanResult` response shape before returning to iOS
+- Debug token cost estimates come from provider-local pricing constants in `providers/openai.ts` and `providers/gemini.ts`
 
 ## Request inputs
 

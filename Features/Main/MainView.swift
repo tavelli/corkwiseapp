@@ -658,8 +658,6 @@ private struct MenuURLImportSheet: View {
             restaurantName: "Max's",
             purchaseMode: PurchaseMode.glass.rawValue,
             summaryHeadline: sampleResult.summary.headline,
-            bestPickName: "Roederer Estate Brut (Glass)",
-            bestPickScore: 8.8,
             resultJSON: sampleJSON
         )
     )
@@ -670,8 +668,6 @@ private struct MenuURLImportSheet: View {
             restaurantName: "Wine List",
             purchaseMode: PurchaseMode.glass.rawValue,
             summaryHeadline: sampleResult.summary.headline,
-            bestPickName: "Cune Rioja Crianza (Glass)",
-            bestPickScore: 8.2,
             resultJSON: sampleJSON
         )
     )

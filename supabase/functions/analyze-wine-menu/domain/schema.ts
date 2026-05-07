@@ -8,11 +8,8 @@ export const modelResponseSchema = {
       additionalProperties: false,
       properties: {
         headline: {type: "string"},
-        bestPickName: {type: "string"},
-        bestPickScore: {type: "number"},
-        bestPickWhy: {type: "string"},
       },
-      required: ["headline", "bestPickName", "bestPickScore", "bestPickWhy"],
+      required: ["headline"],
     },
     recommendations: {
       type: "array",

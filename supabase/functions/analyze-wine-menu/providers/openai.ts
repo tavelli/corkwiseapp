@@ -4,6 +4,7 @@ import {
   RequestError,
   type AnalyzeWineMenuRequest,
   type ProviderAnalysisResult,
+  type TokenUsage,
   type WineModelProvider,
 } from "../domain/types.ts";
 
@@ -12,6 +13,34 @@ const OPENAI_MODEL = Deno.env.get("OPENAI_MODEL") ?? "gpt-4o";
 const OPENAI_REASONING_EFFORT = readOptionalEnv("OPENAI_REASONING_EFFORT");
 const OPENAI_TEXT_VERBOSITY = readOptionalEnv("OPENAI_TEXT_VERBOSITY");
 const OPENAI_TIMEOUT_MS = 45_000;
+
+type ModelPricing = {
+  inputPricePer1MTokens: number;
+  outputPricePer1MTokens: number;
+};
+
+const OPENAI_PRICING_BY_MODEL: Record<string, ModelPricing> = {
+  "gpt-4o": {
+    inputPricePer1MTokens: 2.5,
+    outputPricePer1MTokens: 10.0,
+  },
+  "gpt-4o-mini": {
+    inputPricePer1MTokens: 0.15,
+    outputPricePer1MTokens: 0.6,
+  },
+  "gpt-4.1": {
+    inputPricePer1MTokens: 2.0,
+    outputPricePer1MTokens: 8.0,
+  },
+  "gpt-4.1-mini": {
+    inputPricePer1MTokens: 0.4,
+    outputPricePer1MTokens: 1.6,
+  },
+  "gpt-4.1-nano": {
+    inputPricePer1MTokens: 0.1,
+    outputPricePer1MTokens: 0.4,
+  },
+};
 
 export class OpenAIProvider implements WineModelProvider {
   async analyzeMenu(
@@ -122,15 +151,21 @@ export class OpenAIProvider implements WineModelProvider {
         throw upstreamAnalysisFailure();
       }
 
+      const usage = extractUsage(payload);
       try {
         return {
           payload: JSON.parse(outputText),
           provider: "openai",
           model: OPENAI_MODEL,
           apiDurationMilliseconds: Date.now() - startedAt,
+          usage,
+          totalCostUsd: calculateTotalCostUsd(usage, OPENAI_MODEL),
         };
       } catch {
-        console.error("OpenAI output was not valid JSON", outputText.slice(0, 500));
+        console.error(
+          "OpenAI output was not valid JSON",
+          outputText.slice(0, 500),
+        );
         throw upstreamAnalysisFailure();
       }
     } catch (error) {
@@ -139,7 +174,11 @@ export class OpenAIProvider implements WineModelProvider {
       }
 
       if (error instanceof Error && error.name === "AbortError") {
-        console.error("OpenAI request timed out after", OPENAI_TIMEOUT_MS, "ms");
+        console.error(
+          "OpenAI request timed out after",
+          OPENAI_TIMEOUT_MS,
+          "ms",
+        );
         throw new RequestError(
           504,
           "analysis_failed",
@@ -154,6 +193,34 @@ export class OpenAIProvider implements WineModelProvider {
       clearTimeout(timeout);
     }
   }
+}
+
+function extractUsage(
+  payload: Record<string, unknown>,
+): TokenUsage | undefined {
+  const usage = payload.usage;
+  if (usage == null || typeof usage !== "object") {
+    return undefined;
+  }
+
+  const candidate = usage as Record<string, unknown>;
+  const promptTokenCount = numberOrNull(candidate.input_tokens);
+  const candidatesTokenCount = numberOrNull(candidate.output_tokens);
+  const totalTokenCount = numberOrNull(candidate.total_tokens);
+
+  if (
+    promptTokenCount == null ||
+    candidatesTokenCount == null ||
+    totalTokenCount == null
+  ) {
+    return undefined;
+  }
+
+  return {
+    promptTokenCount,
+    candidatesTokenCount,
+    totalTokenCount,
+  };
 }
 
 function userAttachmentPart(
@@ -179,8 +246,7 @@ function userAttachmentPart(
 
   return {
     type: "input_image",
-    image_url:
-      `data:${attachment.mimeType};base64,${attachment.base64Data}`,
+    image_url: `data:${attachment.mimeType};base64,${attachment.base64Data}`,
     detail: "high",
   };
 }
@@ -274,6 +340,26 @@ function stringOrNull(value: unknown): string | null {
 
   const trimmed = value.trim();
   return trimmed.length > 0 ? trimmed : null;
+}
+
+function numberOrNull(value: unknown): number | null {
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+
+function calculateTotalCostUsd(
+  usage: TokenUsage | undefined,
+  model: string,
+): number | undefined {
+  const pricing = OPENAI_PRICING_BY_MODEL[model];
+  if (usage == null || pricing == null) {
+    return undefined;
+  }
+
+  return (
+    (usage.promptTokenCount * pricing.inputPricePer1MTokens +
+      usage.candidatesTokenCount * pricing.outputPricePer1MTokens) /
+    1_000_000
+  );
 }
 
 function upstreamAnalysisFailure(): RequestError {

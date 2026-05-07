@@ -160,8 +160,6 @@ final class MainViewModel {
             throw CocoaError(.coderInvalidValue)
         }
 
-        let topRecommendation = result.recommendations.first
-
         let scan = WineScan(
             createdAt: .now,
             restaurantName: result.restaurantName,
@@ -169,8 +167,6 @@ final class MainViewModel {
             bottleContext: purchaseMode == .bottle ? bottleContext.rawValue : nil,
             categoryPreference: categoryPreference.rawValue,
             summaryHeadline: result.summary.headline,
-            bestPickName: topRecommendation?.displayTitle ?? result.summary.bestPickName,
-            bestPickScore: topRecommendation?.valueScore ?? result.summary.bestPickScore,
             resultJSON: json
         )
 

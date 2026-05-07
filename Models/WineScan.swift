@@ -9,8 +9,6 @@ final class WineScan {
     var bottleContext: String?
     var categoryPreference: String?
     var summaryHeadline: String?
-    var bestPickName: String?
-    var bestPickScore: Double?
     var resultJSON: String
 
     init(
@@ -20,8 +18,6 @@ final class WineScan {
         bottleContext: String? = nil,
         categoryPreference: String? = nil,
         summaryHeadline: String? = nil,
-        bestPickName: String? = nil,
-        bestPickScore: Double? = nil,
         resultJSON: String
     ) {
         self.createdAt = createdAt
@@ -30,8 +26,6 @@ final class WineScan {
         self.bottleContext = bottleContext
         self.categoryPreference = categoryPreference
         self.summaryHeadline = summaryHeadline
-        self.bestPickName = bestPickName
-        self.bestPickScore = bestPickScore
         self.resultJSON = resultJSON
     }
 }

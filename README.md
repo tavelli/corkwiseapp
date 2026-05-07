@@ -457,8 +457,6 @@ final class WineScan {
     var restaurantName: String?
     var purchaseMode: String
     var summaryHeadline: String?
-    var bestPickName: String?
-    var bestPickScore: Double?
     var resultJSON: String
 
     init(
@@ -466,16 +464,12 @@ final class WineScan {
         restaurantName: String? = nil,
         purchaseMode: String,
         summaryHeadline: String? = nil,
-        bestPickName: String? = nil,
-        bestPickScore: Double? = nil,
         resultJSON: String
     ) {
         self.createdAt = createdAt
         self.restaurantName = restaurantName
         self.purchaseMode = purchaseMode
         self.summaryHeadline = summaryHeadline
-        self.bestPickName = bestPickName
-        self.bestPickScore = bestPickScore
         self.resultJSON = resultJSON
     }
 }
@@ -513,9 +507,6 @@ struct WineScanResult: Codable {
 
 struct ScanSummary: Codable {
     let headline: String
-    let bestPickName: String
-    let bestPickScore: Double
-    let bestPickWhy: String
 }
 
 struct WineRecommendation: Codable, Identifiable {
@@ -594,10 +585,7 @@ POST /functions/v1/analyze-wine-menu
   "restaurantName": "Example Bistro",
   "purchaseMode": "bottle",
   "summary": {
-    "headline": "Best bottle values on this list",
-    "bestPickName": "2012 R. Lopez de Heredia Viña Tondonia Rioja",
-    "bestPickScore": 9.5,
-    "bestPickWhy": "Aged, iconic Rioja at a very fair restaurant price. This is probably the smartest bottle on the list."
+    "headline": "Best bottle values on this list"
   },
   "recommendations": [
     {
@@ -799,9 +787,6 @@ type WineScanResult = {
   purchaseMode: "glass" | "bottle";
   summary: {
     headline: string;
-    bestPickName: string;
-    bestPickScore: number;
-    bestPickWhy: string;
   };
   recommendations: Array<{
     rank: number;

@@ -37,10 +37,7 @@ export function normalizeScanResult(
     notes: normalizedNotes,
   };
 
-  if (
-    result.summary.bestPickName.length === 0 ||
-    result.summary.headline.length === 0
-  ) {
+  if (result.summary.headline.length === 0) {
     throw genericAnalysisFailure();
   }
 
@@ -55,9 +52,6 @@ function normalizeSummary(input: unknown): WineScanResult["summary"] {
   const candidate = input as Record<string, unknown>;
   return {
     headline: requiredString(candidate.headline),
-    bestPickName: requiredString(candidate.bestPickName),
-    bestPickScore: boundedScore(candidate.bestPickScore),
-    bestPickWhy: requiredString(candidate.bestPickWhy),
   };
 }
 

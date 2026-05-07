@@ -4,12 +4,33 @@ import {
   RequestError,
   type AnalyzeWineMenuRequest,
   type ProviderAnalysisResult,
+  type TokenUsage,
   type WineModelProvider,
 } from "../domain/types.ts";
 
 const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
 const GEMINI_MODEL = Deno.env.get("GEMINI_MODEL") ?? "gemini-2.5-flash";
 const GEMINI_TIMEOUT_MS = 45_000;
+
+type ModelPricing = {
+  inputPricePer1MTokens: number;
+  outputPricePer1MTokens: number;
+};
+
+const GEMINI_PRICING_BY_MODEL: Record<string, ModelPricing> = {
+  "gemini-3-flash-preview": {
+    inputPricePer1MTokens: 0.5,
+    outputPricePer1MTokens: 3.0,
+  },
+  "gemini-2.5-flash": {
+    inputPricePer1MTokens: 0.3,
+    outputPricePer1MTokens: 2.5,
+  },
+  "gemini-2.5-flash-lite": {
+    inputPricePer1MTokens: 0.1,
+    outputPricePer1MTokens: 0.4,
+  },
+};
 
 export class GeminiProvider implements WineModelProvider {
   async analyzeMenu(
@@ -95,12 +116,15 @@ export class GeminiProvider implements WineModelProvider {
         throw upstreamAnalysisFailure();
       }
 
+      const usage = extractUsageMetadata(payload);
       try {
         return {
           payload: JSON.parse(outputText),
           provider: "gemini",
           model: GEMINI_MODEL,
           apiDurationMilliseconds: Date.now() - startedAt,
+          usage,
+          totalCostUsd: calculateTotalCostUsd(usage, GEMINI_MODEL),
         };
       } catch {
         console.error(
@@ -134,6 +158,34 @@ export class GeminiProvider implements WineModelProvider {
       clearTimeout(timeout);
     }
   }
+}
+
+function extractUsageMetadata(
+  payload: Record<string, unknown>,
+): TokenUsage | undefined {
+  const usageMetadata = payload.usageMetadata;
+  if (usageMetadata == null || typeof usageMetadata !== "object") {
+    return undefined;
+  }
+
+  const candidate = usageMetadata as Record<string, unknown>;
+  const promptTokenCount = numberOrNull(candidate.promptTokenCount);
+  const candidatesTokenCount = numberOrNull(candidate.candidatesTokenCount);
+  const totalTokenCount = numberOrNull(candidate.totalTokenCount);
+
+  if (
+    promptTokenCount == null ||
+    candidatesTokenCount == null ||
+    totalTokenCount == null
+  ) {
+    return undefined;
+  }
+
+  return {
+    promptTokenCount,
+    candidatesTokenCount,
+    totalTokenCount,
+  };
 }
 
 function menuInstructionPart(
@@ -211,6 +263,26 @@ function extractCandidateText(candidate: unknown): string | null {
   }
 
   return null;
+}
+
+function numberOrNull(value: unknown): number | null {
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+
+function calculateTotalCostUsd(
+  usage: TokenUsage | undefined,
+  model: string,
+): number | undefined {
+  const pricing = GEMINI_PRICING_BY_MODEL[model];
+  if (usage == null || pricing == null) {
+    return undefined;
+  }
+
+  return (
+    (usage.promptTokenCount * pricing.inputPricePer1MTokens +
+      usage.candidatesTokenCount * pricing.outputPricePer1MTokens) /
+    1_000_000
+  );
 }
 
 function upstreamAnalysisFailure(): RequestError {

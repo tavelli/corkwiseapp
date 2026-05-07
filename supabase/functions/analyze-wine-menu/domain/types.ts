@@ -40,13 +40,16 @@ export type WineAnalysisErrorResponse = {
   retrySuggested: boolean;
 };
 
+export type TokenUsage = {
+  promptTokenCount: number;
+  candidatesTokenCount: number;
+  totalTokenCount: number;
+};
+
 export type WineScanResult = {
   restaurantName: string | null;
   summary: {
     headline: string;
-    bestPickName: string;
-    bestPickScore: number;
-    bestPickWhy: string;
   };
   recommendations: Array<{
     rank: number;
@@ -86,6 +89,8 @@ export type WineScanResult = {
   debugInfo?: {
     model: string;
     apiDurationMilliseconds: number;
+    usage?: TokenUsage;
+    totalCostUsd?: number;
   };
 };
 
@@ -96,6 +101,8 @@ export type ProviderAnalysisResult = {
   provider: AnalysisProviderName;
   model: string;
   apiDurationMilliseconds: number;
+  usage?: TokenUsage;
+  totalCostUsd?: number;
 };
 
 export interface WineModelProvider {

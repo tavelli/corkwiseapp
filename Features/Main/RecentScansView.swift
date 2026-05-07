@@ -78,7 +78,7 @@ struct ScanHistoryCard: View {
                         .font(.caption.weight(.medium))
                         .foregroundStyle(.secondary)
 
-                    Text("Top pick: \(scan.bestPickName ?? "Unknown")")
+                    Text("Top pick: \(topPickName)")
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(Color.wineAccent)
                         .lineLimit(2)
@@ -103,10 +103,6 @@ struct ScanHistoryCard: View {
         .buttonStyle(.plain)
     }
 
-    private var scoreText: String {
-        (scan.bestPickScore ?? 0).formatted(.number.precision(.fractionLength(1)))
-    }
-
     private var metadataText: String {
         var parts = [scan.purchaseModeValue.title]
         parts.append(scan.categoryPreferenceValue.title)
@@ -118,5 +114,17 @@ struct ScanHistoryCard: View {
 
         parts.append(scan.createdAt.formatted(date: .abbreviated, time: .omitted))
         return parts.joined(separator: " • ")
+    }
+
+    private var topPickName: String {
+        guard
+            let data = scan.resultJSON.data(using: .utf8),
+            let result = try? JSONDecoder().decode(WineScanResult.self, from: data),
+            let topRecommendation = result.recommendations.first
+        else {
+            return "Unknown"
+        }
+
+        return topRecommendation.displayTitle
     }
 }

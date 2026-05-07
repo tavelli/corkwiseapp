@@ -33,9 +33,6 @@ struct WineScanResult: Codable, Hashable {
 
 struct ScanSummary: Codable, Hashable {
     let headline: String
-    let bestPickName: String?
-    let bestPickScore: Double?
-    let bestPickWhy: String?
 }
 
 struct WineRecommendation: Codable, Identifiable, Hashable {
@@ -160,6 +157,14 @@ struct RecommendationCategorySection: Codable, Hashable {
 struct ScanDebugInfo: Codable, Hashable {
     let model: String
     let apiDurationMilliseconds: Int
+    let usage: TokenUsage?
+    let totalCostUsd: Double?
+}
+
+struct TokenUsage: Codable, Hashable {
+    let promptTokenCount: Int
+    let candidatesTokenCount: Int
+    let totalTokenCount: Int
 }
 
 struct WineAnalysisErrorResponse: Codable {
@@ -175,10 +180,7 @@ extension WineScanResult {
         return WineScanResult(
             restaurantName: "Example Bistro",
             summary: ScanSummary(
-                headline: "Smartest \(purchaseModeTitle) picks on this list",
-                bestPickName: "2012 R. Lopez de Heredia Viña Tondonia Rioja",
-                bestPickScore: 9.5,
-                bestPickWhy: "Aged, iconic Rioja at a very fair restaurant price relative to the rest of the list."
+                headline: "A thoughtful list featuring benchmark producers and exceptional value in the Rhone and Bordeaux sections."
             ),
             recommendations: [
                 WineRecommendation(
@@ -334,7 +336,13 @@ extension WineScanResult {
             ],
             debugInfo: ScanDebugInfo(
                 model: "sample-data",
-                apiDurationMilliseconds: 820
+                apiDurationMilliseconds: 820,
+                usage: TokenUsage(
+                    promptTokenCount: 125,
+                    candidatesTokenCount: 50,
+                    totalTokenCount: 175
+                ),
+                totalCostUsd: 0.0008125
             )
         )
     }

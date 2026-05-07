@@ -28,6 +28,10 @@ struct ResultsView: View {
                     )
                 }
 
+                if snapshotText.isEmpty == false {
+                    MenuSnapshotView(text: snapshotText)
+                }
+
                 if remainingRecommendations.isEmpty == false {
                     VStack(alignment: .leading, spacing: 16) {
                         ResultSectionHeader(
@@ -87,6 +91,10 @@ struct ResultsView: View {
     private var remainingRecommendations: [WineRecommendation] {
         Array(result.recommendations.dropFirst())
     }
+
+    private var snapshotText: String {
+        result.summary.headline.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
 }
 
 #Preview {
@@ -120,14 +128,70 @@ private struct DebugScanInfoView: View {
 
             Text("API Time: \(debugInfo.apiDurationMilliseconds) ms")
                 .font(.subheadline)
+
+            if let usage = debugInfo.usage {
+                Text("Tokens: \(usage.promptTokenCount) in / \(usage.candidatesTokenCount) out / \(usage.totalTokenCount) total")
+                    .font(.subheadline)
+            }
+
+            if let totalCostUsd = debugInfo.totalCostUsd {
+                Text("Cost: \(formattedCost(totalCostUsd))")
+                    .font(.subheadline)
+            }
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.resultCardBackground)
         .clipShape(.rect(cornerRadius: 22))
     }
+
+    private func formattedCost(_ value: Double) -> String {
+        if value < 0.000001 {
+            return String(format: "$%.8f", value)
+        }
+
+        return String(format: "$%.6f", value)
+    }
 }
 #endif
+
+private struct MenuSnapshotView: View {
+    let text: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "fork.knife")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(Color.wineAccent)
+                    .frame(width: 18, height: 18)
+
+                Text("MENU SNAPSHOT")
+                    .font(.caption.weight(.bold))
+                    .tracking(0.9)
+                    .foregroundStyle(Color.wineAccent)
+            }
+
+            Text(text)
+                .font(.subheadline)
+                .lineSpacing(2)
+                .foregroundStyle(Color.wineText)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(.horizontal, 22)
+        .padding(.vertical, 18)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 22)
+                .fill(Color.resultCardBackground.opacity(0.92))
+        )
+        .overlay {
+            RoundedRectangle(cornerRadius: 22)
+                .stroke(Color.wineBorder.opacity(0.85), lineWidth: 1)
+        }
+        .shadow(color: Color.black.opacity(0.035), radius: 12, y: 6)
+    }
+}
 
 struct ResultSectionHeader: View {
     enum Style {
