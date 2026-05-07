@@ -170,12 +170,12 @@ private struct MenuSnapshotView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
-                Image(systemName: "fork.knife")
+                Image(systemName: "wineglass")
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(Color.wineAccent)
                     .frame(width: 18, height: 18)
 
-                Text("MENU SNAPSHOT")
+                Text("CELLAR NOTES")
                     .font(.caption.weight(.bold))
                     .tracking(0.9)
                     .foregroundStyle(Color.wineAccent)

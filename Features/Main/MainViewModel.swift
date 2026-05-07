@@ -28,6 +28,7 @@ final class MainViewModel {
     private let analysisService = WineAnalysisService()
     private let imagePreparationService = ImagePreparationService()
     private var loadingTask: Task<Void, Never>?
+    private var scanTask: Task<Void, Never>?
     private var pendingAttachment: AnalyzeWineMenuAttachment?
     private var hasConfiguredInitialCategoryPreference = false
 
@@ -80,7 +81,8 @@ final class MainViewModel {
         modelContext: ModelContext,
         onResult: @escaping (WineScanResult) -> Void
     ) {
-        Task {
+        scanTask?.cancel()
+        scanTask = Task {
             do {
                 pendingAttachment = attachment
                 isScanning = true
@@ -94,10 +96,16 @@ final class MainViewModel {
                     preferences: preferences
                 )
 
+                guard Task.isCancelled == false else { return }
                 try save(result: result, modelContext: modelContext)
+                guard Task.isCancelled == false else { return }
                 finishScan()
                 onResult(result)
             } catch {
+                guard Task.isCancelled == false else {
+                    finishScan()
+                    return
+                }
                 finishScan()
                 failure = failureState(for: error)
             }
@@ -110,7 +118,8 @@ final class MainViewModel {
         modelContext: ModelContext,
         onResult: @escaping (WineScanResult) -> Void
     ) {
-        Task {
+        scanTask?.cancel()
+        scanTask = Task {
             do {
                 pendingAttachment = nil
                 isScanning = true
@@ -124,10 +133,16 @@ final class MainViewModel {
                     preferences: preferences
                 )
 
+                guard Task.isCancelled == false else { return }
                 try save(result: result, modelContext: modelContext)
+                guard Task.isCancelled == false else { return }
                 finishScan()
                 onResult(result)
             } catch {
+                guard Task.isCancelled == false else {
+                    finishScan()
+                    return
+                }
                 finishScan()
                 failure = failureState(for: error)
             }
@@ -151,6 +166,12 @@ final class MainViewModel {
 
     func clearFailure() {
         failure = nil
+    }
+
+    func cancelScan() {
+        scanTask?.cancel()
+        scanTask = nil
+        finishScan()
     }
 
     private func save(result: WineScanResult, modelContext: ModelContext) throws {
@@ -200,6 +221,7 @@ final class MainViewModel {
     private func finishScan() {
         loadingTask?.cancel()
         loadingTask = nil
+        scanTask = nil
         isScanning = false
         loadingMessage = "Reading the wine list…"
     }

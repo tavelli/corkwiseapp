@@ -7,6 +7,7 @@ struct ScanProgressResultsView: View {
     @State private var progress = 0.01
     @State private var isCompleting = false
     @State private var isOverlayVisible = true
+    @State private var isShowingCancelConfirmation = false
 
     let scanID: UUID
 
@@ -34,6 +35,7 @@ struct ScanProgressResultsView: View {
     }
 
     private var pageTitle: String {
+        guard isOverlayVisible == false else { return "" }
         guard let result else { return "Analyzing Wine List" }
 
         let restaurantName = result.restaurantName?.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -56,22 +58,30 @@ struct ScanProgressResultsView: View {
 
             if isOverlayVisible {
                 Color.black
-                    .opacity(0.36)
+                    .opacity(0.32)
                     .ignoresSafeArea()
                     .transition(.opacity)
 
                 ScanProgressModal(
                     progress: progress,
                     elapsedSeconds: elapsedSeconds,
-                    isCompleting: isCompleting
+                    isCompleting: isCompleting,
+                    purchaseMode: purchaseMode,
+                    isCancelVisible: isCancelVisible,
+                    cancelAction: {
+                        isShowingCancelConfirmation = true
+                    }
                 )
                 .transition(.opacity.combined(with: .scale(scale: 0.98)))
                 .zIndex(1)
             }
+
         }
         .background(mainScreenBackground.ignoresSafeArea())
         .navigationTitle(pageTitle)
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(isOverlayVisible)
+        .interactiveDismissDisabled(isOverlayVisible)
         .onAppear {
             startedAt = Date()
             progress = 0.01
@@ -86,6 +96,24 @@ struct ScanProgressResultsView: View {
             guard newValue != nil, isCompleting == false else { return }
             completeLoadingExperience()
         }
+        .sheet(isPresented: $isShowingCancelConfirmation) {
+            ScanCancelConfirmationSheet(
+                keepScanningAction: {
+                    isShowingCancelConfirmation = false
+                },
+                cancelScanAction: {
+                    isShowingCancelConfirmation = false
+                    appState.cancelScanProgress(id: scanID)
+                }
+            )
+            .presentationDetents([.height(238)])
+            .presentationDragIndicator(.visible)
+            .presentationCornerRadius(28)
+        }
+    }
+
+    private var isCancelVisible: Bool {
+        result == nil && isCompleting == false
     }
 
     private func estimatedProgress(for elapsed: TimeInterval) -> Double {
@@ -130,16 +158,59 @@ struct ScanProgressResultsView: View {
     }
 }
 
+private struct ScanCancelConfirmationSheet: View {
+    let keepScanningAction: () -> Void
+    let cancelScanAction: () -> Void
+
+    var body: some View {
+        VStack(spacing: 22) {
+            VStack(spacing: 8) {
+                Text("Cancel scan?")
+                    .font(.title3.weight(.semibold))
+                    .foregroundStyle(Color.wineText)
+
+                Text("Your recommendations will be discarded.")
+                    .font(.subheadline)
+                    .foregroundStyle(Color.wineMutedText)
+                    .multilineTextAlignment(.center)
+            }
+            .padding(.top, 24)
+
+            VStack(spacing: 10) {
+                Button("Keep scanning", action: keepScanningAction)
+                    .font(.headline.weight(.semibold))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 46)
+                    .background(Color.wineMutedText.opacity(0.78))
+                    .clipShape(.rect(cornerRadius: 14))
+
+                Button("Cancel scan", role: .destructive, action: cancelScanAction)
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(.red)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 44)
+                    .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal, 24)
+        .presentationBackground(Color(red: 0.998, green: 0.992, blue: 0.985))
+    }
+}
+
 private struct ScanProgressModal: View {
     let progress: Double
     let elapsedSeconds: TimeInterval
     let isCompleting: Bool
+    let purchaseMode: PurchaseMode
+    let isCancelVisible: Bool
+    let cancelAction: () -> Void
 
     private let steps = [
-        "Uploading image",
+        "Scanning menu",
         "Reading wine list",
-        "Evaluating value & producer quality",
-        "Ranking best picks",
+        "Evaluating quality & value",
+        "Curating recommendations",
     ]
 
     private var activeStepIndex: Int {
@@ -162,23 +233,32 @@ private struct ScanProgressModal: View {
         guard elapsedSeconds < 20 else { return "Finishing up..." }
 
         let remaining = max(1, Int(ceil(20 - elapsedSeconds)))
-        return "About \(remaining) sec remaining"
+        return "~\(remaining) sec remaining"
+    }
+
+    private var titleText: String {
+        switch purchaseMode {
+        case .glass:
+            return "Finding the best pours"
+        case .bottle:
+            return "Finding the best bottles"
+        }
     }
 
     var body: some View {
         GeometryReader { proxy in
-            VStack(spacing: 20) {
+            VStack(spacing: 24) {
                 VStack(spacing: 6) {
-                    Text("Analyzing wine list")
+                    Text(titleText)
                         .font(.system(size: 21, weight: .bold, design: .serif))
                         .foregroundStyle(Color.wineText)
 
-                    Text("Usually takes about 20 seconds")
+                    Text("takes about 20 seconds")
                         .font(.subheadline)
                         .foregroundStyle(Color.wineMutedText)
                 }
 
-                VStack(spacing: 13) {
+                VStack(spacing: 18) {
                     ForEach(Array(steps.enumerated()), id: \.offset) { index, title in
                         ScanProgressStepRow(
                             title: title,
@@ -186,28 +266,37 @@ private struct ScanProgressModal: View {
                         )
                     }
                 }
+                .padding(.bottom, 2)
 
-                VStack(spacing: 9) {
-                    ProgressView(value: progress)
-                        .tint(Color.wineAccent)
-                        .progressViewStyle(.linear)
-                        .scaleEffect(x: 1, y: 1.35, anchor: .center)
+                VStack(spacing: 11) {
+                    ScanProgressBar(progress: progress)
 
                     HStack {
                         Text(footerText)
+                            .foregroundStyle(Color.wineMutedText.opacity(0.92))
                         Spacer()
-                        Text("\(Int((progress * 100).rounded()))%")
+                        Button("Cancel", action: cancelAction)
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(Color.wineMutedText.opacity(0.68))
+                            .buttonStyle(.plain)
+                            .opacity(isCancelVisible ? 1 : 0)
+                            .allowsHitTesting(isCancelVisible)
+                            .animation(.easeOut(duration: 0.28), value: isCancelVisible)
                     }
                     .font(.caption.weight(.semibold))
-                    .foregroundStyle(Color.wineMutedText)
                     .monospacedDigit()
                 }
             }
             .padding(22)
             .frame(width: min(proxy.size.width - 48, 336))
-            .background(Color.resultCardBackground)
+            .background(Color(red: 0.998, green: 0.992, blue: 0.985))
             .clipShape(.rect(cornerRadius: 22))
-            .shadow(color: Color.black.opacity(0.22), radius: 26, y: 14)
+            .overlay {
+                RoundedRectangle(cornerRadius: 22)
+                    .stroke(Color.wineBorder.opacity(0.58), lineWidth: 1)
+            }
+            .shadow(color: Color.black.opacity(0.30), radius: 34, y: 18)
+            .shadow(color: Color.wineDeep.opacity(0.08), radius: 10, y: 4)
             .position(x: proxy.size.width / 2, y: proxy.size.height / 2)
         }
     }
@@ -225,6 +314,25 @@ private struct ScanProgressModal: View {
     }
 }
 
+private struct ScanProgressBar: View {
+    let progress: Double
+
+    var body: some View {
+        GeometryReader { proxy in
+            ZStack(alignment: .leading) {
+                Capsule()
+                    .fill(Color.wineMutedText.opacity(0.28))
+
+                Capsule()
+                    .fill(Color.wineAccent)
+                    .frame(width: max(proxy.size.width * progress, 6))
+            }
+        }
+        .frame(height: 7)
+        .animation(.easeOut(duration: 0.22), value: progress)
+    }
+}
+
 private struct ScanProgressStepRow: View {
     enum State {
         case upcoming
@@ -239,30 +347,90 @@ private struct ScanProgressStepRow: View {
         HStack(spacing: 11) {
             indicator
                 .frame(width: 20, height: 20)
+                .animation(.easeInOut(duration: 0.20), value: state)
 
             Text(title)
                 .font(.subheadline.weight(.medium))
-                .foregroundStyle(state == .upcoming ? Color.wineMutedText : Color.wineText)
+                .foregroundStyle(textColor)
                 .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .opacity(rowOpacity)
+        .offset(y: rowOffset)
+        .scaleEffect(state == .completed ? 0.995 : 1, anchor: .leading)
+        .animation(.easeOut(duration: 0.26), value: state)
+    }
+
+    private var textColor: Color {
+        switch state {
+        case .upcoming:
+            return Color.wineMutedText.opacity(0.88)
+        case .active:
+            return Color.wineText
+        case .completed:
+            return Color.wineText.opacity(0.72)
         }
     }
 
-    @ViewBuilder
-    private var indicator: some View {
+    private var rowOpacity: Double {
         switch state {
         case .upcoming:
-            Circle()
-                .stroke(Color.wineMutedText.opacity(0.34), lineWidth: 1.4)
-                .frame(width: 12, height: 12)
+            return 0.78
         case .active:
-            ProgressView()
-                .tint(Color.wineAccent)
-                .scaleEffect(0.72)
+            return 1
         case .completed:
-            Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(Color.wineAccent)
+            return 0.88
         }
+    }
+
+    private var indicator: some View {
+        ZStack {
+            if state == .upcoming {
+                Circle()
+                    .stroke(Color.wineMutedText.opacity(0.42), lineWidth: 1.4)
+                    .frame(width: 12, height: 12)
+                    .transition(.opacity.combined(with: .scale(scale: 0.88)))
+            }
+
+            if state == .active {
+                ActiveStepRing()
+                    .transition(.opacity.combined(with: .scale(scale: 0.88)))
+            }
+
+            if state == .completed {
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(Color.wineAccent)
+                    .transition(.opacity.combined(with: .scale(scale: 0.76)))
+            }
+        }
+    }
+
+    private var rowOffset: CGFloat {
+        switch state {
+        case .upcoming:
+            return 3
+        case .active, .completed:
+            return 0
+        }
+    }
+}
+
+private struct ActiveStepRing: View {
+    @State private var isRotating = false
+
+    var body: some View {
+        Circle()
+            .trim(from: 0.08, to: 0.76)
+            .stroke(
+                Color.wineAccent,
+                style: StrokeStyle(lineWidth: 2.3, lineCap: .round)
+            )
+            .frame(width: 17, height: 17)
+            .rotationEffect(.degrees(isRotating ? 360 : 0))
+            .animation(.linear(duration: 0.95).repeatForever(autoreverses: false), value: isRotating)
+            .onAppear {
+                isRotating = true
+            }
     }
 }
 
@@ -292,7 +460,7 @@ private struct ScanResultsSkeletonView: View {
             }
             .padding(20)
         }
-        .opacity(isPulsing ? 0.72 : 0.56)
+        .opacity(isPulsing ? 0.84 : 0.68)
         .animation(.easeInOut(duration: 1.15).repeatForever(autoreverses: true), value: isPulsing)
         .onAppear {
             isPulsing = true
@@ -313,10 +481,10 @@ private struct ScanResultsSkeletonView: View {
 
                 VStack(alignment: .leading, spacing: 8) {
                     Capsule()
-                        .fill(Color.white.opacity(0.24))
+                    .fill(Color.white.opacity(0.30))
                         .frame(width: 210, height: 22)
                     Capsule()
-                        .fill(Color.white.opacity(0.16))
+                        .fill(Color.white.opacity(0.22))
                         .frame(width: 150, height: 16)
                 }
             }
@@ -324,17 +492,17 @@ private struct ScanResultsSkeletonView: View {
             HStack(spacing: 12) {
                 ForEach(0..<3, id: \.self) { _ in
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(Color.white.opacity(0.16))
+                        .fill(Color.white.opacity(0.22))
                         .frame(height: 44)
                 }
             }
 
             VStack(alignment: .leading, spacing: 8) {
                 Capsule()
-                    .fill(Color.white.opacity(0.22))
+                    .fill(Color.white.opacity(0.28))
                     .frame(height: 14)
                 Capsule()
-                    .fill(Color.white.opacity(0.16))
+                    .fill(Color.white.opacity(0.21))
                     .frame(width: 250, height: 14)
             }
         }
@@ -343,8 +511,8 @@ private struct ScanResultsSkeletonView: View {
         .background(
             LinearGradient(
                 colors: [
-                    Color.resultHeroTop.opacity(0.42),
-                    Color.resultHeroBottom.opacity(0.42),
+                    Color.resultHeroTop.opacity(0.50),
+                    Color.resultHeroBottom.opacity(0.50),
                 ],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
@@ -369,7 +537,7 @@ private struct ScanResultsSkeletonView: View {
         .padding(.horizontal, 22)
         .padding(.vertical, 18)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.resultCardBackground.opacity(0.64))
+        .background(Color.resultCardBackground.opacity(0.74))
         .clipShape(.rect(cornerRadius: 22))
         .overlay {
             RoundedRectangle(cornerRadius: 22)
@@ -415,7 +583,7 @@ private struct ScanResultsSkeletonView: View {
             }
         }
         .padding(20)
-        .background(Color.resultCardBackground.opacity(0.62))
+        .background(Color.resultCardBackground.opacity(0.72))
         .clipShape(.rect(cornerRadius: 22))
         .overlay {
             RoundedRectangle(cornerRadius: 22)
@@ -424,7 +592,7 @@ private struct ScanResultsSkeletonView: View {
     }
 
     private var skeletonFill: Color {
-        Color.wineMutedText.opacity(0.12)
+        Color.wineMutedText.opacity(0.17)
     }
 }
 

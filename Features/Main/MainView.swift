@@ -227,7 +227,13 @@ struct MainView: View {
     }
 
     private func beginScanProgress() -> UUID {
-        let scanID = appState.showScanProgress(purchaseMode: viewModel.purchaseMode, viewedAt: .now)
+        let scanID = appState.showScanProgress(
+            purchaseMode: viewModel.purchaseMode,
+            viewedAt: .now
+        ) {
+            viewModel.cancelScan()
+            activeScanID = nil
+        }
         activeScanID = scanID
         return scanID
     }

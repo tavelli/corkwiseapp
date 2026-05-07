@@ -7,8 +7,16 @@ final class AppState {
     var navigationPath: [AppDestination] = []
     var activeScanPresentation: ScanPresentation?
 
-    func showScanProgress(purchaseMode: PurchaseMode, viewedAt: Date = .now) -> UUID {
-        let presentation = ScanPresentation(purchaseMode: purchaseMode, viewedAt: viewedAt)
+    func showScanProgress(
+        purchaseMode: PurchaseMode,
+        viewedAt: Date = .now,
+        cancellationHandler: (() -> Void)? = nil
+    ) -> UUID {
+        let presentation = ScanPresentation(
+            purchaseMode: purchaseMode,
+            viewedAt: viewedAt,
+            cancellationHandler: cancellationHandler
+        )
         activeScanPresentation = presentation
         navigationPath.append(.scanProgress(presentation.id))
         return presentation.id
@@ -27,6 +35,12 @@ final class AppState {
         }
 
         activeScanPresentation = nil
+    }
+
+    func cancelScanProgress(id: UUID) {
+        guard activeScanPresentation?.id == id else { return }
+        activeScanPresentation?.cancellationHandler?()
+        dismissScanProgress(id: id)
     }
 
     func showResults(_ result: WineScanResult, purchaseMode: PurchaseMode, viewedAt: Date = .now) {
@@ -52,11 +66,18 @@ final class ScanPresentation {
     let id: UUID
     let purchaseMode: PurchaseMode
     let viewedAt: Date
+    let cancellationHandler: (() -> Void)?
     var result: WineScanResult?
 
-    init(id: UUID = UUID(), purchaseMode: PurchaseMode, viewedAt: Date) {
+    init(
+        id: UUID = UUID(),
+        purchaseMode: PurchaseMode,
+        viewedAt: Date,
+        cancellationHandler: (() -> Void)? = nil
+    ) {
         self.id = id
         self.purchaseMode = purchaseMode
         self.viewedAt = viewedAt
+        self.cancellationHandler = cancellationHandler
     }
 }

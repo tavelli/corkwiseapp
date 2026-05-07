@@ -16,7 +16,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "379399512FA3CB5A00246506"
-               BuildableName = "CorkWise.app"
+               BuildableName = "Corkwise.app"
                BlueprintName = "CorkWise"
                ReferencedContainer = "container:CorkWise.xcodeproj">
             </BuildableReference>
@@ -46,7 +46,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "379399512FA3CB5A00246506"
-            BuildableName = "CorkWise.app"
+            BuildableName = "Corkwise.app"
             BlueprintName = "CorkWise"
             ReferencedContainer = "container:CorkWise.xcodeproj">
          </BuildableReference>
@@ -54,7 +54,7 @@
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "CORKWISE&#x200b;_&#x200b;USE&#x200b;_&#x200b;LOCAL&#x200b;_&#x200b;SUPABASE"
-            value = "1"
+            value = "0"
             isEnabled = "YES">
          </EnvironmentVariable>
          <EnvironmentVariable
@@ -75,7 +75,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "379399512FA3CB5A00246506"
-            BuildableName = "CorkWise.app"
+            BuildableName = "Corkwise.app"
             BlueprintName = "CorkWise"
             ReferencedContainer = "container:CorkWise.xcodeproj">
          </BuildableReference>
