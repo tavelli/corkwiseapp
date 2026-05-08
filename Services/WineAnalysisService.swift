@@ -75,6 +75,9 @@ struct WineAnalysisService {
         var request = URLRequest(url: endpoint)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        if let apiKey = AppConfiguration.shared.supabaseAPIKey {
+            request.setValue(apiKey, forHTTPHeaderField: "apikey")
+        }
         request.setValue("Bearer \(try await accessToken())", forHTTPHeaderField: "Authorization")
         request.timeoutInterval = 45
         request.httpBody = try JSONEncoder().encode(requestBody)

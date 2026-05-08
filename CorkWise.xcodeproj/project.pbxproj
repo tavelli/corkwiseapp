@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		375DE5ED2FA97D83008D4574 /* Adapty in Frameworks */ = {isa = PBXBuildFile; productRef = 375DE5EC2FA97D83008D4574 /* Adapty */; };
+		375DE5FB2FAE74E9008D4574 /* AdaptyUI in Frameworks */ = {isa = PBXBuildFile; productRef = 375DE5FA2FAE74E9008D4574 /* AdaptyUI */; };
 		375DE5EF2FAB9D92008D4574 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 375DE5EE2FAB9D92008D4574 /* Launch Screen.storyboard */; };
 		375DE5F32FAE2729008D4574 /* Auth in Frameworks */ = {isa = PBXBuildFile; productRef = 375DE5F22FAE2729008D4574 /* Auth */; };
 		375DE5F52FAE4094008D4574 /* AppIdentityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375DE5F42FAE4094008D4574 /* AppIdentityService.swift */; };
@@ -97,6 +98,7 @@
 			files = (
 				375DE5F32FAE2729008D4574 /* Auth in Frameworks */,
 				375DE5ED2FA97D83008D4574 /* Adapty in Frameworks */,
+				375DE5FB2FAE74E9008D4574 /* AdaptyUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -248,6 +250,7 @@
 			name = CorkWise;
 			packageProductDependencies = (
 				375DE5EC2FA97D83008D4574 /* Adapty */,
+				375DE5FA2FAE74E9008D4574 /* AdaptyUI */,
 				375DE5F22FAE2729008D4574 /* Auth */,
 			);
 			productName = CorkWise;
@@ -594,6 +597,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 375DE5EB2FA97D83008D4574 /* XCRemoteSwiftPackageReference "AdaptySDK-iOS" */;
 			productName = Adapty;
+		};
+		375DE5FA2FAE74E9008D4574 /* AdaptyUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 375DE5EB2FA97D83008D4574 /* XCRemoteSwiftPackageReference "AdaptySDK-iOS" */;
+			productName = AdaptyUI;
 		};
 		375DE5F22FAE2729008D4574 /* Auth */ = {
 			isa = XCSwiftPackageProductDependency;

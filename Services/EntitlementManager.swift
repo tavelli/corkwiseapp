@@ -1,6 +1,8 @@
 import Adapty
+import AdaptyUI
 import Foundation
 import Observation
+import StoreKit
 
 @MainActor
 @Observable
@@ -8,16 +10,21 @@ final class EntitlementManager {
     var hasActiveEntitlement = false
     var isLoading = true
     var isConfigured = false
-    var purchaseDisplay: PurchaseDisplay?
+    var paywallConfiguration: AdaptyUI.PaywallConfiguration?
     var isPurchaseInProgress = false
     var purchaseStatusMessage: String?
     var purchaseErrorMessage: String?
-
-    private var products: [any AdaptyPaywallProduct] = []
+    private var hasActivatedAdaptyUI = false
 
     func configure() async {
         isLoading = true
         defer { isLoading = false }
+
+        if isConfigured {
+            await refreshEntitlement()
+            await loadPaywallConfiguration()
+            return
+        }
 
         guard let sdkKey = AppConfiguration.shared.adaptySDKKey else {
             isConfigured = false
@@ -27,18 +34,28 @@ final class EntitlementManager {
 
         do {
             let appUserID = try AppIdentityService.shared.appUserID()
-            let configuration = AdaptyConfiguration
+            let configurationBuilder = AdaptyConfiguration
                 .builder(withAPIKey: sdkKey)
                 .with(customerUserId: appUserID, withAppAccountToken: UUID(uuidString: appUserID))
-                .build()
+
+            let configuration = configurationBuilder.build()
             try await Adapty.activate(with: configuration)
+            if hasActivatedAdaptyUI == false {
+                try await AdaptyUI.activate()
+                hasActivatedAdaptyUI = true
+            }
             isConfigured = true
             await refreshEntitlement()
-            await loadPaywallProducts()
+            await loadPaywallConfiguration()
         } catch {
             isConfigured = false
             hasActiveEntitlement = false
-            purchaseErrorMessage = "Purchases are unavailable right now. Please try again later."
+            Self.logPaywallError(error, context: "configure")
+            #if DEBUG
+            purchaseErrorMessage = "Paywall setup failed: \(Self.debugDescription(for: error))"
+            #else
+            purchaseErrorMessage = "Paywall is unavailable right now. Please try again later."
+            #endif
         }
     }
 
@@ -58,25 +75,38 @@ final class EntitlementManager {
         isLoading = false
     }
 
-    func loadPaywallProducts() async {
+    func loadPaywallConfiguration() async {
         guard isConfigured else { return }
+        guard paywallConfiguration == nil else { return }
 
         purchaseErrorMessage = nil
 
         do {
+            let placementID = AppConfiguration.shared.adaptyPaywallPlacementID
             let paywall = try await Adapty.getPaywall(
-                placementId: AppConfiguration.shared.adaptyPaywallPlacementID
+                placementId: placementID
             )
-            products = try await Adapty.getPaywallProducts(paywall: paywall)
-            purchaseDisplay = products.first.map(PurchaseDisplay.init(product:))
-
-            if products.isEmpty {
-                purchaseErrorMessage = "No subscription products are available yet."
+            #if DEBUG
+            print("Adapty paywall:", paywall)
+            print("Adapty vendor product IDs:", paywall.vendorProductIds)
+            do {
+                let storeKitProducts = try await Product.products(for: paywall.vendorProductIds)
+                print("Direct StoreKit products:", storeKitProducts.map(\.id))
+            } catch {
+                print("Direct StoreKit error:", error)
             }
+            #endif
+            paywallConfiguration = try await AdaptyUI.getPaywallConfiguration(
+                forPaywall: paywall
+            )
         } catch {
-            products = []
-            purchaseDisplay = nil
-            purchaseErrorMessage = "Couldn't load subscription options. Please try again."
+            paywallConfiguration = nil
+            Self.logPaywallError(error, context: "load paywall \(AppConfiguration.shared.adaptyPaywallPlacementID)")
+            #if DEBUG
+            purchaseErrorMessage = "Couldn't load paywall \(AppConfiguration.shared.adaptyPaywallPlacementID): \(Self.debugDescription(for: error))"
+            #else
+            purchaseErrorMessage = "Couldn't load the paywall. Please try again."
+            #endif
         }
     }
 
@@ -96,50 +126,86 @@ final class EntitlementManager {
         }
     }
 
-    func purchasePrimaryProduct() async {
-        guard let product = products.first else {
-            await loadPaywallProducts()
-            guard products.isEmpty == false else { return }
-            return await purchasePrimaryProduct()
-        }
-
+    func startPurchase() {
         isPurchaseInProgress = true
         purchaseErrorMessage = nil
         purchaseStatusMessage = nil
-        defer { isPurchaseInProgress = false }
+    }
 
-        do {
-            let result = try await Adapty.makePurchase(product: product)
+    func finishPurchase(_ result: AdaptyPurchaseResult) {
+        isPurchaseInProgress = false
 
-            switch result {
-            case .success(let profile, _):
-                hasActiveEntitlement = Self.hasActiveEntitlement(in: profile)
-                if hasActiveEntitlement == false {
+        switch result {
+        case .success(let profile, _):
+            hasActiveEntitlement = Self.hasActiveEntitlement(in: profile)
+            if hasActiveEntitlement == false {
+                Task {
                     await refreshEntitlement()
                 }
-            case .pending:
-                purchaseStatusMessage = "Purchase pending approval."
-            case .userCancelled:
-                break
             }
-        } catch {
-            purchaseErrorMessage = "Purchase couldn't be completed. Please try again."
+        case .pending:
+            purchaseStatusMessage = "Purchase pending approval."
+        case .userCancelled:
+            break
         }
+    }
+
+    func failPurchase() {
+        isPurchaseInProgress = false
+        purchaseErrorMessage = "Purchase couldn't be completed. Please try again."
+    }
+
+    func finishRestore(_ profile: AdaptyProfile) {
+        isPurchaseInProgress = false
+        hasActiveEntitlement = Self.hasActiveEntitlement(in: profile)
+
+        if hasActiveEntitlement {
+            purchaseStatusMessage = "Purchases restored."
+        } else {
+            purchaseErrorMessage = "No active subscription was found for this Apple ID."
+        }
+    }
+
+    func failRestore() {
+        isPurchaseInProgress = false
+        purchaseErrorMessage = "Couldn't restore purchases. Please try again."
+    }
+
+    func failRendering() {
+        purchaseErrorMessage = "Couldn't render the paywall. Please try again."
     }
 
     private static func hasActiveEntitlement(in profile: AdaptyProfile) -> Bool {
         profile.accessLevels[AppConfiguration.shared.paidAccessLevelID]?.isActive == true
     }
-}
 
-struct PurchaseDisplay {
-    let title: String
-    let price: String
-    let period: String?
+    private static func debugDescription(for error: Error) -> String {
+        let debugDescription = String(reflecting: error)
+        if debugDescription.isEmpty == false {
+            return debugDescription
+        }
 
-    init(product: any AdaptyPaywallProduct) {
-        title = product.localizedTitle.isEmpty ? "CorkWise Premium" : product.localizedTitle
-        price = product.localizedPrice ?? "\(product.price)"
-        period = product.localizedSubscriptionPeriod
+        let nsError = error as NSError
+        if nsError.localizedDescription.isEmpty == false {
+            return nsError.localizedDescription
+        }
+
+        return String(describing: error)
+    }
+
+    private static func logPaywallError(_ error: Error, context: String) {
+        #if DEBUG
+        let nsError = error as NSError
+        print(
+            """
+            Adapty paywall error (\(context)):
+            domain: \(nsError.domain)
+            code: \(nsError.code)
+            debug: \(String(reflecting: error))
+            description: \(nsError.localizedDescription)
+            underlying: \(nsError.userInfo)
+            """
+        )
+        #endif
     }
 }
