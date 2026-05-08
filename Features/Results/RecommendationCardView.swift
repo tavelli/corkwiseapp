@@ -3,6 +3,7 @@ import SwiftUI
 struct RecommendationCardView: View {
     let recommendation: WineRecommendation
     let purchaseMode: PurchaseMode
+    let currencyCode: String
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -32,7 +33,8 @@ struct RecommendationCardView: View {
             RecommendationMetricRow(
                 menuPrice: recommendation.menuPrice,
                 estimatedRetail: recommendation.estimatedRetail,
-                purchaseMode: purchaseMode
+                purchaseMode: purchaseMode,
+                currencyCode: currencyCode
             )
 
             VStack(alignment: .leading, spacing: 8) {
@@ -88,6 +90,7 @@ struct RecommendationMetricRow: View {
     let menuPrice: Double?
     let estimatedRetail: Double?
     let purchaseMode: PurchaseMode
+    let currencyCode: String
     var style: Style = .standard
 
     var body: some View {
@@ -142,7 +145,7 @@ struct RecommendationMetricRow: View {
         let roundedValue = value.rounded()
         let isWholeNumber = abs(value - roundedValue) < 0.05
         let precision = isWholeNumber ? 0 : 1
-        return value.formatted(.currency(code: "USD").precision(.fractionLength(precision)))
+        return value.formatted(.currency(code: currencyCode).precision(.fractionLength(precision)))
     }
 
     private var backgroundColor: Color {

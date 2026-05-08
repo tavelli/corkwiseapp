@@ -36,6 +36,7 @@ struct ResultsContentView: View {
                     BestPickHeroView(
                         recommendation: topRecommendation,
                         purchaseMode: purchaseMode,
+                        currencyCode: result.currencyCode,
                         restaurantName: result.restaurantName
                     )
                 }
@@ -53,13 +54,21 @@ struct ResultsContentView: View {
                         )
 
                         ForEach(remainingRecommendations) { recommendation in
-                            RecommendationCardView(recommendation: recommendation, purchaseMode: purchaseMode)
+                            RecommendationCardView(
+                                recommendation: recommendation,
+                                purchaseMode: purchaseMode,
+                                currencyCode: result.currencyCode
+                            )
                         }
                     }
                 }
 
                 if result.categoryRecommendations.isEmpty == false {
-                    CategoryHighlightsView(sections: result.categoryRecommendations, purchaseMode: purchaseMode)
+                    CategoryHighlightsView(
+                        sections: result.categoryRecommendations,
+                        purchaseMode: purchaseMode,
+                        currencyCode: result.currencyCode
+                    )
                 }
 
                 if result.notes.isEmpty == false {

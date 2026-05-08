@@ -28,6 +28,10 @@ export type AnalyzeWineMenuRequest = {
   source: AnalyzeWineMenuSource;
   purchaseMode: PurchaseMode;
   categoryPreference: WineCategoryPreference;
+  pricingContext: {
+    localeIdentifier: string;
+    currencyCode: string;
+  };
   userPreferences: {
     preferredStyles: string[];
     favoriteVarietals: string[];
@@ -50,6 +54,7 @@ export type TokenUsage = {
 
 export type WineScanResult = {
   restaurantName: string | null;
+  currencyCode: string;
   summary: {
     headline: string;
   };

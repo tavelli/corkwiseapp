@@ -31,6 +31,7 @@ export function normalizeScanResult(
 
   const result: WineScanResult = {
     restaurantName: stringOrNull(candidate.restaurantName),
+    currencyCode: currencyCodeOrDefault(candidate.currencyCode),
     summary,
     recommendations: normalizedRecommendations,
     categoryRecommendations: normalizedCategoryRecommendations,
@@ -252,6 +253,15 @@ function genericAnalysisFailure(): RequestError {
     "Something went wrong while analyzing the wine list.",
     true,
   );
+}
+
+function currencyCodeOrDefault(value: unknown): string {
+  if (typeof value !== "string") {
+    return "USD";
+  }
+
+  const currencyCode = value.trim().toUpperCase();
+  return /^[A-Z]{3}$/.test(currencyCode) ? currencyCode : "USD";
 }
 
 function roundToSingleDecimal(value: number): number {

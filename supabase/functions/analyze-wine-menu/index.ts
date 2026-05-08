@@ -107,6 +107,8 @@ Deno.serve(async (req) => {
     console.log("request validated", {
       purchaseMode: requestBody.purchaseMode,
       categoryPreference: requestBody.categoryPreference,
+      pricingLocale: requestBody.pricingContext.localeIdentifier,
+      currencyCode: requestBody.pricingContext.currencyCode,
       sourceKind: requestBody.source.kind,
       attachmentMimeType:
         requestBody.source.kind === "attachment"
@@ -159,6 +161,7 @@ Deno.serve(async (req) => {
       provider: providerResult.provider,
       recommendationCount: normalizedResult.recommendations.length,
       restaurantName: normalizedResult.restaurantName,
+      currencyCode: normalizedResult.currencyCode,
     });
 
     return Response.json(normalizedResult, {

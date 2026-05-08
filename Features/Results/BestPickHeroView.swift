@@ -3,6 +3,7 @@ import SwiftUI
 struct BestPickHeroView: View {
     let recommendation: WineRecommendation
     let purchaseMode: PurchaseMode
+    let currencyCode: String
     let restaurantName: String?
 
     var body: some View {
@@ -48,6 +49,7 @@ struct BestPickHeroView: View {
                 menuPrice: recommendation.menuPrice,
                 estimatedRetail: recommendation.estimatedRetail,
                 purchaseMode: purchaseMode,
+                currencyCode: currencyCode,
                 style: .hero
             )
 

@@ -35,6 +35,7 @@ struct WineAnalysisService {
             purchaseMode: purchaseMode,
             bottleContext: purchaseMode == .bottle ? bottleContext : nil,
             categoryPreference: categoryPreference,
+            pricingContext: .current,
             userPreferences: preferences.payload
         )
 
@@ -65,6 +66,7 @@ struct WineAnalysisService {
             purchaseMode: purchaseMode,
             bottleContext: purchaseMode == .bottle ? bottleContext : nil,
             categoryPreference: categoryPreference,
+            pricingContext: .current,
             userPreferences: preferences.payload
         )
 

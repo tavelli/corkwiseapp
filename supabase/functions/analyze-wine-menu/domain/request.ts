@@ -27,6 +27,7 @@ export function validateAnalyzeRequest(input: unknown): AnalyzeWineMenuRequest {
   const purchaseMode = stringOrNull(candidate.purchaseMode);
   const categoryPreference = stringOrNull(candidate.categoryPreference) ??
     "anything";
+  const pricingContext = pricingContextOrDefault(candidate.pricingContext);
   const userPreferences = candidate.userPreferences;
 
   if (
@@ -126,6 +127,7 @@ export function validateAnalyzeRequest(input: unknown): AnalyzeWineMenuRequest {
       },
     purchaseMode,
     categoryPreference,
+    pricingContext,
     userPreferences: {
       preferredStyles,
       favoriteVarietals,
@@ -133,6 +135,61 @@ export function validateAnalyzeRequest(input: unknown): AnalyzeWineMenuRequest {
       tone,
     },
   };
+}
+
+function pricingContextOrDefault(
+  value: unknown,
+): AnalyzeWineMenuRequest["pricingContext"] {
+  if (value == null) {
+    return {
+      localeIdentifier: "en_US",
+      currencyCode: "USD",
+    };
+  }
+
+  if (typeof value !== "object") {
+    throw new RequestError(
+      400,
+      "invalid_request",
+      "pricingContext must be a JSON object.",
+      false,
+    );
+  }
+
+  const candidate = value as Record<string, unknown>;
+  const localeIdentifier = stringOrNull(candidate.localeIdentifier);
+  const currencyCode = stringOrNull(candidate.currencyCode)?.toUpperCase();
+
+  if (localeIdentifier == null || isLocaleIdentifier(localeIdentifier) === false) {
+    throw new RequestError(
+      400,
+      "invalid_request",
+      "pricingContext.localeIdentifier is invalid.",
+      false,
+    );
+  }
+
+  if (currencyCode == null || isCurrencyCode(currencyCode) === false) {
+    throw new RequestError(
+      400,
+      "invalid_request",
+      "pricingContext.currencyCode must be a three-letter currency code.",
+      false,
+    );
+  }
+
+  return {
+    localeIdentifier,
+    currencyCode,
+  };
+}
+
+function isLocaleIdentifier(value: string): boolean {
+  return /^[A-Za-z0-9_.-]{2,35}$/.test(value);
+}
+
+function isCurrencyCode(value: string): boolean {
+  return /^[A-Z]{3}$/.test(value);
 }
 
 function isUUID(value: string): boolean {

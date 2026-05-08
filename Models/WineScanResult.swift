@@ -8,6 +8,7 @@ struct AnalyzeWineMenuRequest: Codable {
     let purchaseMode: PurchaseMode
     let bottleContext: BottleContext?
     let categoryPreference: WineCategoryPreference
+    let pricingContext: PricingContextPayload
     let userPreferences: UserPreferencesPayload
 }
 
@@ -24,13 +25,65 @@ struct UserPreferencesPayload: Codable {
     let tone: String
 }
 
+struct PricingContextPayload: Codable, Hashable {
+    let localeIdentifier: String
+    let currencyCode: String
+
+    static var current: PricingContextPayload {
+        PricingContextPayload(
+            localeIdentifier: Locale.current.identifier,
+            currencyCode: Locale.current.currency?.identifier ?? "USD"
+        )
+    }
+}
+
 struct WineScanResult: Codable, Hashable {
     let restaurantName: String?
+    let currencyCode: String
     let summary: ScanSummary
     let recommendations: [WineRecommendation]
     let categoryRecommendations: [RecommendationCategorySection]
     let notes: [String]
     let debugInfo: ScanDebugInfo?
+
+    private enum CodingKeys: String, CodingKey {
+        case restaurantName
+        case currencyCode
+        case summary
+        case recommendations
+        case categoryRecommendations
+        case notes
+        case debugInfo
+    }
+
+    init(
+        restaurantName: String?,
+        currencyCode: String = "USD",
+        summary: ScanSummary,
+        recommendations: [WineRecommendation],
+        categoryRecommendations: [RecommendationCategorySection],
+        notes: [String],
+        debugInfo: ScanDebugInfo?
+    ) {
+        self.restaurantName = restaurantName
+        self.currencyCode = currencyCode
+        self.summary = summary
+        self.recommendations = recommendations
+        self.categoryRecommendations = categoryRecommendations
+        self.notes = notes
+        self.debugInfo = debugInfo
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        restaurantName = try container.decodeIfPresent(String.self, forKey: .restaurantName)
+        currencyCode = try container.decodeIfPresent(String.self, forKey: .currencyCode) ?? "USD"
+        summary = try container.decode(ScanSummary.self, forKey: .summary)
+        recommendations = try container.decode([WineRecommendation].self, forKey: .recommendations)
+        categoryRecommendations = try container.decode([RecommendationCategorySection].self, forKey: .categoryRecommendations)
+        notes = try container.decode([String].self, forKey: .notes)
+        debugInfo = try container.decodeIfPresent(ScanDebugInfo.self, forKey: .debugInfo)
+    }
 }
 
 struct ScanSummary: Codable, Hashable {
@@ -179,6 +232,7 @@ extension WineScanResult {
     static func sample(for purchaseMode: PurchaseMode, preferences: UserWinePreferences) -> WineScanResult {
         return WineScanResult(
             restaurantName: "Example Bistro",
+            currencyCode: PricingContextPayload.current.currencyCode,
             summary: ScanSummary(
                 headline: "A thoughtful list featuring benchmark producers and exceptional value in the Rhone and Bordeaux sections."
             ),

@@ -40,6 +40,80 @@ Deno.test("validateAnalyzeRequest accepts build configuration metadata", () => {
   }
 });
 
+Deno.test("validateAnalyzeRequest accepts pricing context", () => {
+  const request = validateAnalyzeRequest({
+    appUserId: "7e95be64-3a08-4b6f-9943-61b9c1d15525",
+    buildConfiguration: "testflight",
+    menuUrl: "https://example.com/wine-list",
+    purchaseMode: "bottle",
+    pricingContext: {
+      localeIdentifier: "en_GB",
+      currencyCode: "gbp",
+    },
+    userPreferences: {
+      preferredStyles: ["crisp whites"],
+      favoriteVarietals: [],
+      choiceStyle: "value",
+    },
+  });
+
+  if (request.pricingContext.localeIdentifier !== "en_GB") {
+    throw new Error("Expected locale identifier to be preserved.");
+  }
+
+  if (request.pricingContext.currencyCode !== "GBP") {
+    throw new Error("Expected currency code to be normalized.");
+  }
+});
+
+Deno.test("validateAnalyzeRequest defaults legacy pricing context", () => {
+  const request = validateAnalyzeRequest({
+    appUserId: "7e95be64-3a08-4b6f-9943-61b9c1d15525",
+    menuUrl: "https://example.com/wine-list",
+    purchaseMode: "bottle",
+    userPreferences: {
+      preferredStyles: ["crisp whites"],
+      favoriteVarietals: [],
+      choiceStyle: "value",
+    },
+  });
+
+  if (request.pricingContext.currencyCode !== "USD") {
+    throw new Error("Expected default currency code.");
+  }
+});
+
+Deno.test("validateAnalyzeRequest rejects malformed currency codes", () => {
+  try {
+    validateAnalyzeRequest({
+      appUserId: "7e95be64-3a08-4b6f-9943-61b9c1d15525",
+      menuUrl: "https://example.com/wine-list",
+      purchaseMode: "bottle",
+      pricingContext: {
+        localeIdentifier: "en_GB",
+        currencyCode: "GBP1",
+      },
+      userPreferences: {
+        preferredStyles: ["crisp whites"],
+        favoriteVarietals: [],
+        choiceStyle: "value",
+      },
+    });
+  } catch (error) {
+    if (
+      error instanceof RequestError &&
+      error.status === 400 &&
+      error.responseBody.error === "invalid_request"
+    ) {
+      return;
+    }
+
+    throw error;
+  }
+
+  throw new Error("Expected malformed currency code to throw.");
+});
+
 Deno.test("validateAnalyzeRequest rejects unsupported attachment types", () => {
   try {
     validateAnalyzeRequest({

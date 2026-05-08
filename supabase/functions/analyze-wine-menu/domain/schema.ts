@@ -3,6 +3,7 @@ export const modelResponseSchema = {
   additionalProperties: false,
   properties: {
     restaurantName: {type: ["string", "null"]},
+    currencyCode: {type: "string"},
     summary: {
       type: "object",
       additionalProperties: false,
@@ -96,6 +97,7 @@ export const modelResponseSchema = {
   },
   required: [
     "restaurantName",
+    "currencyCode",
     "summary",
     "recommendations",
     "categoryRecommendations",

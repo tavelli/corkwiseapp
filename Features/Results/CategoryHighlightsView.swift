@@ -3,6 +3,7 @@ import SwiftUI
 struct CategoryHighlightsView: View {
     let sections: [RecommendationCategorySection]
     let purchaseMode: PurchaseMode
+    let currencyCode: String
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -16,7 +17,11 @@ struct CategoryHighlightsView: View {
                         )
 
                         ForEach(section.recommendations) { recommendation in
-                            RecommendationCardView(recommendation: recommendation, purchaseMode: purchaseMode)
+                            RecommendationCardView(
+                                recommendation: recommendation,
+                                purchaseMode: purchaseMode,
+                                currencyCode: currencyCode
+                            )
                         }
                     }
                     .padding(.top, 14)
