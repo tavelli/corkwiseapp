@@ -1,103 +1,204 @@
-## Future Feature: Paste Menu URL
+# CorkWise Auth, Entitlement, And Backend Access Plan
 
-Goal: support importing a wine list from a pasted URL without treating this as generic web scraping.
+## Goal
 
-Core product framing:
-- Position this as `Paste menu URL`, not `paste any restaurant URL`.
-- Supported targets should be direct PDF menu links first, then supported HTML menu pages later.
-- If the link does not contain a readable wine menu, return a clear fallback that tells the user to upload a photo or PDF instead.
+Build a no-login access model that lets CorkWise protect expensive wine-analysis
+requests without introducing user accounts.
 
-Recommended architecture:
-1. User pastes a menu URL in the app.
-2. App sends the URL to the backend.
-3. Backend fetches the URL and inspects the response.
-4. Backend decides whether the link is:
-   - a direct PDF
-   - an HTML page with readable menu text
-   - an HTML page linking to a PDF
-   - unsupported
-5. Backend routes the retrieved content into the same wine-analysis pipeline already used for image/PDF uploads.
-6. Backend returns the normal `WineScanResult`.
+The app should use a durable app-level identity, anonymous Supabase Auth for
+Edge Function access, Adapty for paid entitlement, and Supabase database state
+for backend policy decisions. CloudKit and richer usage logging are useful next
+steps, but they should not block the first paid/free access implementation.
 
-Why backend-first:
-- keeps scraping, redirects, parsing, and bot-protection handling out of the iOS app
-- avoids app-side CORS / transport / parsing complexity
-- allows provider-specific parsing improvements without shipping an app update
+## Identity Model
 
-Recommended request shape:
-```ts
-type AnalyzeWineMenuRequest =
-  | {
-      inputType: "attachment";
-      attachment: {
-        base64Data: string;
-        mimeType: string;
-        filename?: string | null;
-      };
-      purchaseMode: "glass" | "bottle";
-      userPreferences: UserPreferencesPayload;
-    }
-  | {
-      inputType: "url";
-      url: string;
-      purchaseMode: "glass" | "bottle";
-      userPreferences: UserPreferencesPayload;
-    };
-```
+- Keychain UUID: durable CorkWise app user id.
+- Supabase anonymous auth: request identity for calling Edge Functions.
+- Adapty: source of truth for paid entitlement.
+- Supabase DB: backend policy state, free scan counts, abuse controls, and
+  optional usage analysis.
+- CloudKit: optional Apple-side sync for user-owned app data, such as scan
+  history and preferences.
 
-MVP scope:
-- support direct PDF URLs only
-- support URLs that redirect to PDFs
-- reject HTML pages for now with a clear unsupported error
+## Primary Build: Anonymous Auth + Backend Entitlement Gate
 
-MVP app work:
-- add `Paste URL` entry flow
-- read from clipboard and/or manual paste
-- validate URL client-side
-- send URL request to backend
-- show loading and clear error states
+### iOS App
 
-MVP backend work:
-- add `inputType: "url"`
-- validate URL
-- fetch with timeout and redirect support
-- inspect `content-type`
-- if PDF:
-  - download PDF
-  - pass PDF directly to Gemini/OpenAI
-- if not PDF:
-  - return unsupported for MVP
+- Add the official Supabase Swift package.
+- Add Supabase anon/publishable key support to app configuration.
+- Create an app identity service that:
+  - loads an existing Keychain UUID
+  - creates and stores a UUID if none exists
+  - exposes the UUID as the CorkWise app user id
+- Create a Supabase auth service that:
+  - creates a Supabase client from the configured URL and anon/publishable key
+  - silently signs in anonymously when no valid session exists
+  - reuses the persisted anonymous session
+  - returns the current access token for scan requests
+- Update Adapty setup so the Keychain UUID is used as Adapty `customerUserId`.
+- Replace the placeholder entitlement manager with real Adapty profile refresh,
+  purchase, restore, and active access-level checks.
+- Update scan requests so `WineAnalysisService` sends:
+  - `Authorization: Bearer <supabase access token>`
+  - the Keychain UUID as `appUserId` in the request body or a dedicated header
+  - the existing scan payload
+- Gate app routing so users without active local Adapty entitlement see the
+  paywall, but still rely on the backend as the final authority before analysis.
 
-Phase 2:
-- support simple HTML menu pages
-- parse readable text from HTML
-- detect links to wine PDFs and prefer those
-- if enough wine-like content exists, analyze the extracted menu text or derived attachment
+### Supabase Backend
 
-Phase 3:
-- provider-specific support for common restaurant/menu platforms
-- examples: Toast, Resy, BentoBox, SevenRooms, dedicated wine list providers
+- Enable anonymous sign-ins in local Supabase config for parity with hosted
+  project settings.
+- Require JWT verification for `analyze-wine-menu`.
+- Add an `app_installations` table keyed by the durable Keychain app user id:
+  - `keychain_app_user_id uuid primary key`
+  - `supabase_user_id uuid null`
+  - `apple_original_transaction_id text null`
+  - `created_at timestamptz not null default now()`
+  - `updated_at timestamptz not null default now()`
+  - `free_scans_used integer not null default 0`
+- On every scan request, the Edge Function should:
+  - verify the Supabase JWT
+  - extract the JWT `sub` as the Supabase anonymous user id
+  - validate the Keychain `appUserId`
+  - upsert the matching `app_installations` row
+  - update `supabase_user_id` to the latest seen Supabase anonymous user id
+  - treat Supabase anonymous auth as the request-access identity
+  - treat the Keychain app user id as the Adapty entitlement identity
+- Add Adapty server API verification in the Edge Function:
+  - store the Adapty secret API key in Supabase secrets only
+  - check the Adapty profile for `customerUserId = appUserId`
+  - require active access level `premium`
+  - store `apple_original_transaction_id` when it is available from trusted
+    Adapty/server-side purchase data
+  - reject unpaid users before calling OpenAI/Gemini
+- Return a structured error for unpaid users:
+  - HTTP status: `402` or `403`
+  - `error: "entitlement_required"`
+  - user-facing message: "An active CorkWise subscription is required to scan."
+  - `retrySuggested: false`
+- Remove full scan-result logging from the Edge Function.
+- Do not return provider debug info in production responses.
 
-Useful backend heuristics:
-- `content-type: application/pdf`
-- URL ends with `.pdf`
-- anchor text like `wine list`, `wine menu`, `drinks`, `beverage`
-- extracted text contains wine signals:
-  - varietals
-  - vintages
-  - producer names
-  - prices
+## Free Scan Policy
 
-Important failure modes:
-- user pastes homepage instead of menu page
-- JS-rendered menu with little or no server HTML
-- anti-bot / WAF blocks
-- image-based menu embedded in HTML
-- giant page with too much irrelevant text
+Initial implementation should support paid gating first.
 
-Recommended error copy:
-- unsupported: `That link didn’t contain a readable wine menu. Try a direct PDF/menu link or upload a screenshot.`
-- ambiguous: `We found the site, but not a clear wine list.`
+If free scans are desired, add them after backend entitlement verification is in
+place:
 
-Implementation note:
-- direct PDF support is the best first target because both Gemini and OpenAI support PDF input, and it avoids lossy HTML scraping as an MVP.
+- If Adapty says the user is paid, allow the scan.
+- If Adapty says the user is not paid, check
+  `app_installations.free_scans_used`.
+- If free scans remain, increment `free_scans_used` and allow the scan.
+- If no free scans remain, return `entitlement_required`.
+
+Recommended first free-scan policy, if enabled later:
+
+- 1 lifetime free scans per Keychain app user id.
+- Count only scan attempts that pass request validation and reach backend policy
+  evaluation.
+- Store free scan usage in `app_installations`, not on device.
+- Increment scans used instead of counting down so the allowed free-scan limit
+  can be changed later without migrating existing rows.
+
+## Backlog: Usage Logging
+
+Add lightweight backend usage logs after the entitlement gate is stable.
+
+Purpose:
+
+- debug why a user was allowed or blocked
+- measure free versus paid scan usage
+- estimate AI cost
+- identify abuse patterns
+- support future rate limits or free scan policy changes
+
+Suggested table fields:
+
+- id
+- created_at
+- supabase_auth_user_id
+- keychain_app_user_id
+- is_paid
+- allowed
+- decision_reason
+- scan_source
+- provider
+- success
+- error_code
+- estimated_cost_usd
+
+Do not store uploaded images, full wine-list text, full scan results, or other
+unnecessary user content in usage logs.
+
+Usage logging can also track Supabase anonymous user id plus Keychain app user id
+pairs for debugging and abuse analysis, but v1 should not hard-bind or reject
+requests solely because those ids changed.
+
+## Backlog: CloudKit Sync
+
+CloudKit should be treated as user data sync, not backend authorization.
+
+Possible CloudKit scope:
+
+- sync scan history across the user's Apple devices
+- sync taste preferences
+- restore local app state after reinstall when the user is signed into iCloud
+
+CloudKit should not be used as the source of truth for:
+
+- paid entitlement
+- free scan counts
+- backend rate limits
+- abuse controls
+
+Those decisions should remain server-side in Adapty and Supabase.
+
+## Testing And Acceptance Criteria
+
+### iOS
+
+- Fresh install creates a Keychain UUID.
+- Relaunch reuses the same Keychain UUID.
+- App silently creates or reuses a Supabase anonymous session.
+- Adapty is identified with the Keychain UUID.
+- Scan requests include a Supabase bearer token and Keychain app user id.
+- Unpaid users are routed to paywall locally.
+- Paid users can reach the scan flow locally.
+- Backend entitlement errors are displayed clearly and do not look like generic
+  scan failures.
+
+### Supabase
+
+- Unauthenticated requests to `analyze-wine-menu` are rejected.
+- Authenticated anonymous requests with a valid Keychain UUID reach the Adapty
+  entitlement check.
+- Valid scan requests upsert an `app_installations` row for the Keychain UUID.
+- The latest Supabase anonymous user id is recorded without enforcing a strict
+  one-to-one binding.
+- Changing the Supabase anonymous user id or Keychain UUID does not create a
+  hard backend identity mismatch in v1.
+- Requests without active Adapty `premium` access are rejected before AI calls.
+- Requests with active Adapty `premium` access continue to analysis.
+- When free scans are enabled, unpaid allowed scans increment
+  `free_scans_used`.
+- When Adapty returns trusted Apple purchase metadata, the backend stores
+  `apple_original_transaction_id`.
+- Existing Deno lint, check, and tests pass.
+
+### Release Readiness
+
+- iOS Release build succeeds.
+- Supabase function deploy succeeds.
+- Adapty secret API key exists only in Supabase secrets.
+- Supabase anon/publishable key is present in app configuration.
+- No service-role keys or Adapty secret keys are bundled in the app.
+
+## Open Decisions
+
+- Confirm the final Adapty access level id. Current planned default: `premium`.
+- Decide whether free scans should ship in the first beta or remain disabled
+  until after paid gating is live.
+- Decide whether `appUserId` should be sent in the JSON body or a dedicated
+  header. Prefer JSON body for explicit request schema and easier tests.

@@ -7,12 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		375DE4FF2FA675A7008D4574 /* winebottle1.svg in Resources */ = {isa = PBXBuildFile; fileRef = 375DE4FE2FA675A7008D4574 /* winebottle1.svg */; };
-		375DE5232FA68901008D4574 /* CorkWise-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 379399DE2FA3D27500246506 /* CorkWise-Info.plist */; };
 		375DE5ED2FA97D83008D4574 /* Adapty in Frameworks */ = {isa = PBXBuildFile; productRef = 375DE5EC2FA97D83008D4574 /* Adapty */; };
 		375DE5EF2FAB9D92008D4574 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 375DE5EE2FAB9D92008D4574 /* Launch Screen.storyboard */; };
-		379399B62FA3CC7400246506 /* PLAN.md in Resources */ = {isa = PBXBuildFile; fileRef = 379399AA2FA3CC7400246506 /* PLAN.md */; };
-		379399B72FA3CC7400246506 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 379399AC2FA3CC7400246506 /* README.md */; };
 		379399B82FA3CC7400246506 /* ScanFailureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399B22FA3CC7400246506 /* ScanFailureView.swift */; };
 		379399B92FA3CC7400246506 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399A62FA3CC7400246506 /* OnboardingView.swift */; };
 		379399BA2FA3CC7400246506 /* SelectedPhoto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399B42FA3CC7400246506 /* SelectedPhoto.swift */; };
@@ -290,11 +286,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				375DE5EF2FAB9D92008D4574 /* Launch Screen.storyboard in Resources */,
-				379399B62FA3CC7400246506 /* PLAN.md in Resources */,
 				379399DD2FA3CF1E00246506 /* Assets.xcassets in Resources */,
-				379399B72FA3CC7400246506 /* README.md in Resources */,
-				375DE5232FA68901008D4574 /* CorkWise-Info.plist in Resources */,
-				375DE4FF2FA675A7008D4574 /* winebottle1.svg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
