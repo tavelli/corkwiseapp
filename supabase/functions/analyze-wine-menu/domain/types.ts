@@ -68,6 +68,7 @@ export type WineScanResult = {
     vintage: number | null;
     varietal: string | null;
     menuPrice: number | null;
+    menuPriceUnit: PurchaseMode;
     estimatedRetail: number | null;
     estimatedMarkup: number | null;
     valueScore: number;
@@ -86,6 +87,7 @@ export type WineScanResult = {
       vintage: number | null;
       varietal: string | null;
       menuPrice: number | null;
+      menuPriceUnit: PurchaseMode;
       estimatedRetail: number | null;
       estimatedMarkup: number | null;
       valueScore: number;

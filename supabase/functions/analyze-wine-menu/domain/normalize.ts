@@ -67,9 +67,10 @@ function normalizeRecommendation(
 
   const candidate = input as Record<string, unknown>;
   const menuPrice = numberOrNull(candidate.menuPrice);
+  const menuPriceUnit = purchaseModeOrDefault(candidate.menuPriceUnit, purchaseMode);
   const estimatedRetail = numberOrNull(candidate.estimatedRetail);
   const derivedMarkup = deriveMarkup({
-    purchaseMode,
+    menuPriceUnit,
     menuPrice,
     estimatedRetail,
   });
@@ -95,6 +96,7 @@ function normalizeRecommendation(
     vintage: vintageOrNull(candidate.vintage),
     varietal,
     menuPrice,
+    menuPriceUnit,
     estimatedRetail,
     estimatedMarkup: derivedMarkup?.value ?? null,
     valueScore: boundedScore(candidate.valueScore),
@@ -216,11 +218,11 @@ function normalizedDisplayValue(value: string): string {
 }
 
 function deriveMarkup(input: {
-  purchaseMode: PurchaseMode;
+  menuPriceUnit: PurchaseMode;
   menuPrice: number | null;
   estimatedRetail: number | null;
 }): {value: number; display: string} | null {
-  const {purchaseMode, menuPrice, estimatedRetail} = input;
+  const {menuPriceUnit, menuPrice, estimatedRetail} = input;
 
   if (
     menuPrice == null ||
@@ -231,7 +233,7 @@ function deriveMarkup(input: {
     return null;
   }
 
-  const isGlassPour = purchaseMode === "glass";
+  const isGlassPour = menuPriceUnit === "glass";
   const costBasis = isGlassPour ? estimatedRetail / 5 : estimatedRetail;
   if (costBasis <= 0) {
     return null;
@@ -244,6 +246,10 @@ function deriveMarkup(input: {
     value,
     display: `~${valueText}x`,
   };
+}
+
+function purchaseModeOrDefault(value: unknown, fallback: PurchaseMode): PurchaseMode {
+  return value === "glass" || value === "bottle" ? value : fallback;
 }
 
 function genericAnalysisFailure(): RequestError {

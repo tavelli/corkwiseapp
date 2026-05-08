@@ -32,6 +32,7 @@ struct RecommendationCardView: View {
 
             RecommendationMetricRow(
                 menuPrice: recommendation.menuPrice,
+                menuPriceUnit: recommendation.menuPriceUnit,
                 estimatedRetail: recommendation.estimatedRetail,
                 purchaseMode: purchaseMode,
                 currencyCode: currencyCode
@@ -88,6 +89,7 @@ struct RecommendationMetricRow: View {
     }
 
     let menuPrice: Double?
+    let menuPriceUnit: PurchaseMode?
     let estimatedRetail: Double?
     let purchaseMode: PurchaseMode
     let currencyCode: String
@@ -133,7 +135,8 @@ struct RecommendationMetricRow: View {
             return nil
         }
 
-        let costBasis = purchaseMode == .glass ? estimatedRetail / 5 : estimatedRetail
+        let effectiveMenuPriceUnit = menuPriceUnit ?? purchaseMode
+        let costBasis = effectiveMenuPriceUnit == .glass ? estimatedRetail / 5 : estimatedRetail
         guard costBasis > 0 else { return nil }
 
         let markup = menuPrice / costBasis

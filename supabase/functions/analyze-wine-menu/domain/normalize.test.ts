@@ -16,6 +16,7 @@ Deno.test("normalizeScanResult derives bottle markup", () => {
           vintage: 2021,
           varietal: "Pinot Noir",
           menuPrice: 72,
+          menuPriceUnit: "bottle",
           estimatedRetail: 36,
           valueScore: 92,
           why: "Balanced markup and strong food versatility.",
@@ -63,5 +64,41 @@ Deno.test("normalizeScanResult defaults missing currency code", () => {
 
   if (result.currencyCode !== "USD") {
     throw new Error(`Expected USD default, got ${result.currencyCode}`);
+  }
+});
+
+Deno.test("normalizeScanResult uses recommendation menu price unit for markup", () => {
+  const result = normalizeScanResult(
+    {
+      summary: {
+        headline: "Best values on the list",
+      },
+      recommendations: [
+        {
+          rank: 1,
+          wineName: "Estate Pinot Noir",
+          extractedText: "Producer Estate Pinot Noir bottle 72",
+          producer: "Producer",
+          region: "Willamette Valley",
+          vintage: 2021,
+          varietal: "Pinot Noir",
+          menuPrice: 72,
+          menuPriceUnit: "bottle",
+          estimatedRetail: 36,
+          valueScore: 92,
+          why: "A bottle value surfaced even though the user asked for glass.",
+        },
+      ],
+    },
+    "glass",
+  );
+
+  const [recommendation] = result.recommendations;
+  if (recommendation.menuPriceUnit !== "bottle") {
+    throw new Error(`Expected bottle price unit, got ${recommendation.menuPriceUnit}`);
+  }
+
+  if (recommendation.estimatedMarkup !== 2) {
+    throw new Error(`Expected 2x markup, got ${recommendation.estimatedMarkup}`);
   }
 });

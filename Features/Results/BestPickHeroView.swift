@@ -47,6 +47,7 @@ struct BestPickHeroView: View {
 
             RecommendationMetricRow(
                 menuPrice: recommendation.menuPrice,
+                menuPriceUnit: recommendation.menuPriceUnit,
                 estimatedRetail: recommendation.estimatedRetail,
                 purchaseMode: purchaseMode,
                 currencyCode: currencyCode,

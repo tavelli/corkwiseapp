@@ -103,6 +103,7 @@ struct WineRecommendation: Codable, Identifiable, Hashable {
     let vintage: Int?
     let varietal: String?
     let menuPrice: Double?
+    let menuPriceUnit: PurchaseMode?
     let estimatedRetail: Double?
     let valueScore: Double
     let why: String
@@ -117,6 +118,7 @@ struct WineRecommendation: Codable, Identifiable, Hashable {
         case vintage
         case varietal
         case menuPrice
+        case menuPriceUnit
         case estimatedRetail
         case estimatedRetailLow
         case estimatedRetailHigh
@@ -134,6 +136,7 @@ struct WineRecommendation: Codable, Identifiable, Hashable {
         vintage: Int? = nil,
         varietal: String? = nil,
         menuPrice: Double?,
+        menuPriceUnit: PurchaseMode? = nil,
         estimatedRetail: Double?,
         valueScore: Double,
         why: String
@@ -147,6 +150,7 @@ struct WineRecommendation: Codable, Identifiable, Hashable {
         self.vintage = vintage
         self.varietal = varietal
         self.menuPrice = menuPrice
+        self.menuPriceUnit = menuPriceUnit
         self.estimatedRetail = estimatedRetail
         self.valueScore = valueScore
         self.why = why
@@ -163,6 +167,7 @@ struct WineRecommendation: Codable, Identifiable, Hashable {
         vintage = try container.decodeIfPresent(Int.self, forKey: .vintage)
         varietal = try container.decodeIfPresent(String.self, forKey: .varietal)
         menuPrice = try container.decodeIfPresent(Double.self, forKey: .menuPrice)
+        menuPriceUnit = try container.decodeIfPresent(PurchaseMode.self, forKey: .menuPriceUnit)
         valueScore = try container.decode(Double.self, forKey: .valueScore)
         why = try container.decode(String.self, forKey: .why)
 
@@ -197,6 +202,7 @@ struct WineRecommendation: Codable, Identifiable, Hashable {
         try container.encodeIfPresent(vintage, forKey: .vintage)
         try container.encodeIfPresent(varietal, forKey: .varietal)
         try container.encodeIfPresent(menuPrice, forKey: .menuPrice)
+        try container.encodeIfPresent(menuPriceUnit, forKey: .menuPriceUnit)
         try container.encodeIfPresent(estimatedRetail, forKey: .estimatedRetail)
         try container.encode(valueScore, forKey: .valueScore)
         try container.encode(why, forKey: .why)
@@ -246,6 +252,7 @@ extension WineScanResult {
                     vintage: 2012,
                     varietal: "Tempranillo",
                     menuPrice: 88,
+                    menuPriceUnit: .bottle,
                     estimatedRetail: 60,
                     valueScore: 9.5,
                     why: "A benchmark producer with bottle age that restaurants often price more aggressively than retail availability would suggest."
@@ -259,6 +266,7 @@ extension WineScanResult {
                     vintage: 2021,
                     varietal: "Melon de Bourgogne",
                     menuPrice: 54,
+                    menuPriceUnit: .bottle,
                     estimatedRetail: 25,
                     valueScore: 8.6,
                     why: "A strong producer in a category that can still offer honest restaurant pricing and food-friendly versatility."
@@ -272,6 +280,7 @@ extension WineScanResult {
                     vintage: 2019,
                     varietal: "Tempranillo",
                     menuPrice: 76,
+                    menuPriceUnit: .bottle,
                     estimatedRetail: 38,
                     valueScore: 7.9,
                     why: "The markup is still reasonable, and the producer quality is meaningfully stronger than some similarly priced alternatives."
@@ -291,6 +300,7 @@ extension WineScanResult {
                             vintage: 2021,
                             varietal: "Melon de Bourgogne",
                             menuPrice: 54,
+                            menuPriceUnit: .bottle,
                             estimatedRetail: 25,
                             valueScore: 8.6,
                             why: "Strong producer quality and honest restaurant pricing make this the clearest value play."
@@ -310,6 +320,7 @@ extension WineScanResult {
                             vintage: 2019,
                             varietal: "Tempranillo",
                             menuPrice: 76,
+                            menuPriceUnit: .bottle,
                             estimatedRetail: 38,
                             valueScore: 7.9,
                             why: "If you want to spend a bit more, this gives a more serious bottle without entering trophy pricing."
@@ -329,6 +340,7 @@ extension WineScanResult {
                             vintage: 2021,
                             varietal: "Melon de Bourgogne",
                             menuPrice: 54,
+                            menuPriceUnit: .bottle,
                             estimatedRetail: 25,
                             valueScore: 8.6,
                             why: "A broad-appeal bottle with strong restaurant utility and low risk."
@@ -348,6 +360,7 @@ extension WineScanResult {
                             vintage: 2012,
                             varietal: "Tempranillo",
                             menuPrice: 88,
+                            menuPriceUnit: .bottle,
                             estimatedRetail: 60,
                             valueScore: 9.5,
                             why: "Age, style, and producer profile make this the most compelling conversation bottle on the list."
@@ -367,6 +380,7 @@ extension WineScanResult {
                             vintage: 2019,
                             varietal: "Tempranillo",
                             menuPrice: 76,
+                            menuPriceUnit: .bottle,
                             estimatedRetail: 38,
                             valueScore: 7.9,
                             why: "A solid wine, but the menu price is less compelling than the stronger values around it."
@@ -386,6 +400,7 @@ extension WineScanResult {
                             vintage: 2021,
                             varietal: "Melon de Bourgogne",
                             menuPrice: 54,
+                            menuPriceUnit: .bottle,
                             estimatedRetail: 25,
                             valueScore: 8.6,
                             why: "A crisp, coastal white that is a more interesting move than the usual by-the-bottle defaults."
