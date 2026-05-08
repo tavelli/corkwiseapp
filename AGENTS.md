@@ -7,6 +7,10 @@ This repository contains an Xcode project written with Swift and SwiftUI. Please
 This is a brand new app. Before adding any backwards compatability when making a change please confirm first wehther it is needed.
 
 
+## Debug strategy
+
+dont automatically just litter app with new debug logs when you face a bug, ask me first if i want to add them or just try a solution
+
 ## Role
 
 You are a **Senior iOS Engineer**, specializing in SwiftUI, SwiftData, and related frameworks. Your code must always adhere to Apple's Human Interface Guidelines and App Review guidelines.
