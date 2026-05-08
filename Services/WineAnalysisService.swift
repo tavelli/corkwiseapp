@@ -2,6 +2,8 @@ import Foundation
 
 enum WineAnalysisServiceError: Error {
     case backendNotConfigured
+    case authorizationFailed
+    case entitlementRequired(WineAnalysisErrorResponse)
     case invalidInput
     case invalidResponse(String?)
     case requestFailed
@@ -20,11 +22,14 @@ struct WineAnalysisService {
             throw WineAnalysisServiceError.backendNotConfigured
         }
 
+        let appUserID = try appUserID()
         guard attachment.base64Data.isEmpty == false else {
             throw WineAnalysisServiceError.invalidInput
         }
 
         let requestBody = AnalyzeWineMenuRequest(
+            appUserId: appUserID,
+            buildConfiguration: BuildChannel.current,
             attachment: attachment,
             menuUrl: nil,
             purchaseMode: purchaseMode,
@@ -47,11 +52,14 @@ struct WineAnalysisService {
             throw WineAnalysisServiceError.backendNotConfigured
         }
 
+        let appUserID = try appUserID()
         guard menuURL.scheme == "http" || menuURL.scheme == "https" else {
             throw WineAnalysisServiceError.invalidInput
         }
 
         let requestBody = AnalyzeWineMenuRequest(
+            appUserId: appUserID,
+            buildConfiguration: BuildChannel.current,
             attachment: nil,
             menuUrl: menuURL.absoluteString,
             purchaseMode: purchaseMode,
@@ -67,6 +75,7 @@ struct WineAnalysisService {
         var request = URLRequest(url: endpoint)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(try await accessToken())", forHTTPHeaderField: "Authorization")
         request.timeoutInterval = 45
         request.httpBody = try JSONEncoder().encode(requestBody)
 
@@ -103,10 +112,36 @@ struct WineAnalysisService {
             }
         }
 
+        if httpResponse.statusCode == 401 {
+            throw WineAnalysisServiceError.authorizationFailed
+        }
+
         if let errorResponse = try? decoder.decode(WineAnalysisErrorResponse.self, from: responseData) {
+            if errorResponse.error == "entitlement_required" {
+                throw WineAnalysisServiceError.entitlementRequired(errorResponse)
+            }
+
             throw WineAnalysisServiceError.serverError(errorResponse)
         }
 
         throw WineAnalysisServiceError.invalidResponse(String(data: responseData, encoding: .utf8))
+    }
+
+    private func appUserID() throws -> String {
+        do {
+            return try AppIdentityService.shared.appUserID()
+        } catch {
+            throw WineAnalysisServiceError.authorizationFailed
+        }
+    }
+
+    private func accessToken() async throws -> String {
+        do {
+            return try await SupabaseAuthService.shared.accessToken()
+        } catch SupabaseAuthServiceError.backendNotConfigured {
+            throw WineAnalysisServiceError.backendNotConfigured
+        } catch {
+            throw WineAnalysisServiceError.authorizationFailed
+        }
     }
 }

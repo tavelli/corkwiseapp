@@ -4,6 +4,14 @@
 <dict>
 	<key>CorkWiseLocalSupabaseBaseURL</key>
 	<string>http://127.0.0.1:54321</string>
+	<key>CorkWiseAdaptyAccessLevelID</key>
+	<string>premium</string>
+	<key>CorkWiseAdaptyPlacementID</key>
+	<string>after-onboard-1</string>
+	<key>CorkWiseAdaptyPublicSDKKey</key>
+	<string>public_live_1IksjAV3.KRPAQyZStUDX5DcevMg3</string>
+	<key>CorkWiseSupabaseAnonKey</key>
+	<string>sb_publishable_TaXSh2b4AFHEc4WD7eIgZw_hYewKx2T</string>
 	<key>CorkWiseSupabaseBaseURL</key>
 	<string>https://kvpsihkqhznapwcwnsgt.supabase.co</string>
 	<key>UILaunchScreen</key>

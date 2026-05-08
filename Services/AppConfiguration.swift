@@ -5,12 +5,21 @@ struct AppConfiguration {
 
     private let productionSupabaseBaseURL: URL?
     private let localSupabaseBaseURL: URL?
+    private let supabaseAnonKey: String?
+    private let adaptyPublicSDKKey: String?
+    private let adaptyAccessLevelID: String
+    private let adaptyPlacementID: String
     private let environment: ProcessInfo
 
     init(bundle: Bundle = .main, environment: ProcessInfo = .processInfo) {
         self.environment = environment
         productionSupabaseBaseURL = Self.urlValue(for: "CorkWiseSupabaseBaseURL", in: bundle)
         localSupabaseBaseURL = Self.urlValue(for: "CorkWiseLocalSupabaseBaseURL", in: bundle)
+        supabaseAnonKey = Self.stringValue(for: "CorkWiseSupabaseAnonKey", in: bundle)
+            ?? Self.stringValue(for: "CorkWiseSupabasePublishableKey", in: bundle)
+        adaptyPublicSDKKey = Self.stringValue(for: "CorkWiseAdaptyPublicSDKKey", in: bundle)
+        adaptyAccessLevelID = Self.stringValue(for: "CorkWiseAdaptyAccessLevelID", in: bundle) ?? "premium"
+        adaptyPlacementID = Self.stringValue(for: "CorkWiseAdaptyPlacementID", in: bundle) ?? "onboarding"
     }
 
     var supabaseBaseURL: URL? {
@@ -42,6 +51,26 @@ struct AppConfiguration {
     var analysisEndpoint: URL? {
         supabaseBaseURL?.appending(path: "functions").appending(path: "v1").appending(path: "analyze-wine-menu")
     }
+
+    var authEndpoint: URL? {
+        supabaseBaseURL?.appending(path: "auth").appending(path: "v1")
+    }
+
+    var supabaseAPIKey: String? {
+        supabaseAnonKey
+    }
+
+    var adaptySDKKey: String? {
+        adaptyPublicSDKKey
+    }
+
+    var paidAccessLevelID: String {
+        adaptyAccessLevelID
+    }
+
+    var adaptyPaywallPlacementID: String {
+        adaptyPlacementID
+    }
 }
 
 private extension AppConfiguration {
@@ -51,6 +80,18 @@ private extension AppConfiguration {
         }
 
         return urlValue(for: rawValue)
+    }
+
+    static func stringValue(for key: String, in bundle: Bundle) -> String? {
+        guard let rawValue = bundle.object(forInfoDictionaryKey: key) as? String else {
+            return nil
+        }
+
+        let trimmedValue = rawValue
+            .removingInvisibleFormatCharacters()
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmedValue.isEmpty == false else { return nil }
+        return trimmedValue
     }
 
     static func urlValue(for rawValue: String?) -> URL? {

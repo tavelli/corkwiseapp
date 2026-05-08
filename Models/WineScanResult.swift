@@ -1,6 +1,8 @@
 import Foundation
 
 struct AnalyzeWineMenuRequest: Codable {
+    let appUserId: String
+    let buildConfiguration: String
     let attachment: AnalyzeWineMenuAttachment?
     let menuUrl: String?
     let purchaseMode: PurchaseMode

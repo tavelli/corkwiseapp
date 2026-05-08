@@ -11,6 +11,10 @@ struct AppRouter: View {
             return .onboarding
         }
 
+        if entitlementManager.isConfigured, entitlementManager.hasActiveEntitlement == false {
+            return .paywall
+        }
+
         return .main
     }
 

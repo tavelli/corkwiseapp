@@ -8,3 +8,4 @@
 .env.*.local
 
 node_modules
+migrations

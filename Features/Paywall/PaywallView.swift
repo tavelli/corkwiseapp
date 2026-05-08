@@ -9,11 +9,8 @@ struct PaywallView: View {
 
             VStack(alignment: .leading, spacing: 22) {
                 titleBlock
+                productBlock
                 featureList
-
-                Text("Placeholder gate until Adapty is integrated.")
-                    .font(.footnote)
-                    .foregroundStyle(Color.wineMutedText.opacity(0.9))
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
 
@@ -23,6 +20,9 @@ struct PaywallView: View {
         .padding(.top, 20)
         .padding(.bottom, 16)
         .background(mainScreenBackground.ignoresSafeArea())
+        .task {
+            await entitlementManager.loadPaywallProducts()
+        }
     }
 
     private var header: some View {
@@ -74,21 +74,88 @@ struct PaywallView: View {
         }
     }
 
+    @ViewBuilder
+    private var productBlock: some View {
+        if let purchaseDisplay = entitlementManager.purchaseDisplay {
+            VStack(alignment: .leading, spacing: 6) {
+                Text(purchaseDisplay.title)
+                    .font(.subheadline.weight(.bold))
+                    .foregroundStyle(Color.wineText)
+
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    Text(purchaseDisplay.price)
+                        .font(.title3.weight(.bold))
+                        .foregroundStyle(Color.wineText)
+
+                    if let period = purchaseDisplay.period {
+                        Text(period)
+                            .font(.footnote)
+                            .foregroundStyle(Color.wineMutedText.opacity(0.9))
+                    }
+                }
+            }
+            .padding(.horizontal, 18)
+            .padding(.vertical, 16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color.white.opacity(0.94))
+            .clipShape(.rect(cornerRadius: 14))
+            .overlay {
+                RoundedRectangle(cornerRadius: 14)
+                    .stroke(Color.wineBorder.opacity(0.9), lineWidth: 1)
+            }
+        }
+    }
+
     private var footer: some View {
         VStack(spacing: 12) {
-            Button("Continue") {
-                entitlementManager.activatePlaceholderEntitlement()
+            if let message = entitlementManager.purchaseErrorMessage {
+                Text(message)
+                    .font(.footnote)
+                    .foregroundStyle(Color.red.opacity(0.82))
+                    .multilineTextAlignment(.center)
+            } else if let message = entitlementManager.purchaseStatusMessage {
+                Text(message)
+                    .font(.footnote)
+                    .foregroundStyle(Color.wineMutedText.opacity(0.9))
+                    .multilineTextAlignment(.center)
+            }
+
+            Button {
+                Task {
+                    await entitlementManager.purchasePrimaryProduct()
+                }
+            } label: {
+                if entitlementManager.isPurchaseInProgress {
+                    ProgressView()
+                        .tint(.white)
+                } else {
+                    Text(primaryButtonTitle)
+                }
             }
             .buttonStyle(PaywallPrimaryButtonStyle())
+            .disabled(entitlementManager.isPurchaseInProgress)
 
             Button("Restore Purchases") {
                 Task {
-                    try? await entitlementManager.restorePurchases()
+                    do {
+                        try await entitlementManager.restorePurchases()
+                    } catch {
+                        entitlementManager.purchaseErrorMessage = "Couldn't restore purchases. Please try again."
+                    }
                 }
             }
             .buttonStyle(PaywallSecondaryButtonStyle())
+            .disabled(entitlementManager.isPurchaseInProgress)
         }
         .padding(.top, 24)
+    }
+
+    private var primaryButtonTitle: String {
+        if let price = entitlementManager.purchaseDisplay?.price {
+            return "Continue - \(price)"
+        }
+
+        return "Continue"
     }
 }
 

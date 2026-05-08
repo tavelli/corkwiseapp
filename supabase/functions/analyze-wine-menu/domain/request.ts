@@ -19,6 +19,8 @@ export function validateAnalyzeRequest(input: unknown): AnalyzeWineMenuRequest {
   }
 
   const candidate = input as Record<string, unknown>;
+  const appUserId = stringOrNull(candidate.appUserId);
+  const buildConfiguration = buildConfigurationOrNull(candidate.buildConfiguration);
   const attachment = attachmentOrNull(candidate.attachment) ??
     legacyImageAttachment(candidate.imageBase64);
   const menuUrl = menuUrlOrNull(candidate.menuUrl) ?? menuUrlOrNull(candidate.url);
@@ -35,6 +37,15 @@ export function validateAnalyzeRequest(input: unknown): AnalyzeWineMenuRequest {
       400,
       "invalid_request",
       "An image, PDF, or menu URL is required.",
+      false,
+    );
+  }
+
+  if (appUserId == null || isUUID(appUserId) === false) {
+    throw new RequestError(
+      400,
+      "invalid_request",
+      "appUserId must be a valid UUID.",
       false,
     );
   }
@@ -102,6 +113,8 @@ export function validateAnalyzeRequest(input: unknown): AnalyzeWineMenuRequest {
   }
 
   return {
+    appUserId,
+    ...(buildConfiguration == null ? {} : {buildConfiguration}),
     source: menuUrl == null
       ? {
         kind: "attachment",
@@ -120,6 +133,11 @@ export function validateAnalyzeRequest(input: unknown): AnalyzeWineMenuRequest {
       tone,
     },
   };
+}
+
+function isUUID(value: string): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+    .test(value);
 }
 
 function stringOrNull(value: unknown): string | null {
@@ -141,6 +159,31 @@ function stringArrayOrNull(value: unknown): string[] | null {
     .map((entry) => entry.trim())
     .filter(Boolean);
   return strings.length === value.length ? strings : null;
+}
+
+function buildConfigurationOrNull(
+  value: unknown,
+): AnalyzeWineMenuRequest["buildConfiguration"] | null {
+  const buildConfiguration = stringOrNull(value);
+  if (buildConfiguration == null) {
+    return null;
+  }
+
+  if (
+    buildConfiguration !== "debug" &&
+    buildConfiguration !== "testflight" &&
+    buildConfiguration !== "appstore" &&
+    buildConfiguration !== "release_unknown"
+  ) {
+    throw new RequestError(
+      400,
+      "invalid_request",
+      "buildConfiguration is invalid.",
+      false,
+    );
+  }
+
+  return buildConfiguration;
 }
 
 function attachmentOrNull(value: unknown): AnalyzeWineMenuAttachment | null {

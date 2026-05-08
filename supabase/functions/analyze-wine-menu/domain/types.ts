@@ -23,6 +23,8 @@ export type AnalyzeWineMenuSource =
     };
 
 export type AnalyzeWineMenuRequest = {
+  appUserId: string;
+  buildConfiguration?: "debug" | "testflight" | "appstore" | "release_unknown";
   source: AnalyzeWineMenuSource;
   purchaseMode: PurchaseMode;
   categoryPreference: WineCategoryPreference;

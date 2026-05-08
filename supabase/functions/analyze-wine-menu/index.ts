@@ -1,7 +1,16 @@
+import {
+  checkFreeScanAllowance,
+  consumeFreeScan,
+  upsertAppInstallation,
+} from "./domain/app-installations.ts";
+import {authenticatedUser} from "./domain/auth.ts";
+import {checkEntitlement} from "./domain/adapty.ts";
 import {MAX_REQUEST_BYTES, validateAnalyzeRequest} from "./domain/request.ts";
 import {normalizeScanResult} from "./domain/normalize.ts";
 import {makeProvider} from "./providers/factory.ts";
 import {RequestError, type WineAnalysisErrorResponse} from "./domain/types.ts";
+
+const FREE_SCAN_LIMIT = Number(Deno.env.get("FREE_SCAN_LIMIT") ?? "0");
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -17,6 +26,7 @@ Deno.serve(async (req) => {
 
   try {
     console.log("analyze-wine-menu invoked", new Date().toISOString());
+    const authUser = authenticatedUser(req);
 
     if (req.method !== "POST") {
       throw new RequestError(
@@ -59,6 +69,41 @@ Deno.serve(async (req) => {
     }
 
     const requestBody = validateAnalyzeRequest(parsedBody);
+    const entitlement = await checkEntitlement(requestBody.appUserId);
+    await upsertAppInstallation(
+      requestBody.appUserId,
+      authUser.id,
+      entitlement.appleOriginalTransactionId,
+      requestBody.buildConfiguration,
+    );
+
+    const shouldConsumeFreeScan = entitlement.isPaid === false;
+
+    if (shouldConsumeFreeScan) {
+      if (FREE_SCAN_LIMIT <= 0) {
+        throw new RequestError(
+          403,
+          "entitlement_required",
+          "An active CorkWise subscription is required to scan.",
+          false,
+        );
+      }
+
+      const freeScanAllowance = await checkFreeScanAllowance(
+        requestBody.appUserId,
+        FREE_SCAN_LIMIT,
+      );
+
+      if (freeScanAllowance.allowed === false) {
+        throw new RequestError(
+          403,
+          "entitlement_required",
+          "An active CorkWise subscription is required to scan.",
+          false,
+        );
+      }
+    }
+
     console.log("request validated", {
       purchaseMode: requestBody.purchaseMode,
       categoryPreference: requestBody.categoryPreference,
@@ -85,18 +130,35 @@ Deno.serve(async (req) => {
       requestBody.purchaseMode,
     );
 
-    normalizedResult.debugInfo = {
-      model: providerResult.model,
-      apiDurationMilliseconds: providerResult.apiDurationMilliseconds,
-      usage: providerResult.usage,
-      totalCostUsd: providerResult.totalCostUsd,
-    };
+    if (Deno.env.get("INCLUDE_DEBUG_INFO") === "true") {
+      normalizedResult.debugInfo = {
+        model: providerResult.model,
+        apiDurationMilliseconds: providerResult.apiDurationMilliseconds,
+        usage: providerResult.usage,
+        totalCostUsd: providerResult.totalCostUsd,
+      };
+    }
+
+    if (shouldConsumeFreeScan) {
+      const freeScanAllowance = await consumeFreeScan(
+        requestBody.appUserId,
+        FREE_SCAN_LIMIT,
+      );
+
+      if (freeScanAllowance.allowed === false) {
+        throw new RequestError(
+          403,
+          "entitlement_required",
+          "An active CorkWise subscription is required to scan.",
+          false,
+        );
+      }
+    }
 
     console.log("analysis complete", {
       provider: providerResult.provider,
       recommendationCount: normalizedResult.recommendations.length,
       restaurantName: normalizedResult.restaurantName,
-      results: normalizedResult,
     });
 
     return Response.json(normalizedResult, {

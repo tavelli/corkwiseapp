@@ -3,6 +3,7 @@ import {RequestError} from "./types.ts";
 
 Deno.test("validateAnalyzeRequest accepts menu URLs", () => {
   const request = validateAnalyzeRequest({
+    appUserId: "7e95be64-3a08-4b6f-9943-61b9c1d15525",
     menuUrl: "https://example.com/wine-list",
     purchaseMode: "bottle",
     userPreferences: {
@@ -21,9 +22,28 @@ Deno.test("validateAnalyzeRequest accepts menu URLs", () => {
   }
 });
 
+Deno.test("validateAnalyzeRequest accepts build configuration metadata", () => {
+  const request = validateAnalyzeRequest({
+    appUserId: "7e95be64-3a08-4b6f-9943-61b9c1d15525",
+    buildConfiguration: "testflight",
+    menuUrl: "https://example.com/wine-list",
+    purchaseMode: "bottle",
+    userPreferences: {
+      preferredStyles: ["crisp whites"],
+      favoriteVarietals: [],
+      choiceStyle: "value",
+    },
+  });
+
+  if (request.buildConfiguration !== "testflight") {
+    throw new Error("Expected build configuration to be preserved.");
+  }
+});
+
 Deno.test("validateAnalyzeRequest rejects unsupported attachment types", () => {
   try {
     validateAnalyzeRequest({
+      appUserId: "7e95be64-3a08-4b6f-9943-61b9c1d15525",
       attachment: {
         base64Data: "abc123",
         mimeType: "image/png",

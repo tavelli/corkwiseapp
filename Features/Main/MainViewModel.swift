@@ -234,6 +234,16 @@ final class MainViewModel {
                     title: "Backend not configured.",
                     message: "Add the Supabase base URL to the app configuration before running live scans."
                 )
+            case .authorizationFailed:
+                return ScanFailureState(
+                    title: "Couldn't verify app access.",
+                    message: "Please try again in a moment."
+                )
+            case .entitlementRequired(let response):
+                return ScanFailureState(
+                    title: "Subscription required.",
+                    message: response.message
+                )
             case .invalidInput:
                 return ScanFailureState(
                     title: "Couldn't prepare that file.",
@@ -278,6 +288,8 @@ final class MainViewModel {
             return "Invalid scan request."
         case "analysis_failed":
             return "Analysis failed."
+        case "entitlement_required":
+            return "Subscription required."
         default:
             return "Scan failed."
         }
