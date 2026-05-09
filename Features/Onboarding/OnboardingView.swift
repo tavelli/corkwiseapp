@@ -13,7 +13,9 @@ struct OnboardingView: View {
         @Bindable var bindableViewModel = viewModel
 
         VStack(alignment: .leading, spacing: 0) {
-            header
+            if viewModel.currentStep > 0 {
+                header
+            }
 
             stepContent(
                 purchaseSelection: $bindableViewModel.selectedUsualPurchasePreference,
@@ -37,7 +39,7 @@ struct OnboardingView: View {
     private var header: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 12) {
-                if viewModel.currentStep > 0 {
+                if viewModel.canGoBack {
                     Button(action: viewModel.goBack) {
                         Image(systemName: "chevron.left")
                             .font(.headline.weight(.semibold))
@@ -49,10 +51,14 @@ struct OnboardingView: View {
                     .frame(width: 32, height: 32)
                 }
 
-                ProgressView(value: Double(viewModel.currentStep + 1), total: 4)
-                    .tint(Color.wineAccent)
-                    .scaleEffect(x: 1, y: 1.35, anchor: .center)
-                    .frame(maxWidth: .infinity)
+                if viewModel.currentStep > 0 {
+                    ProgressView(value: Double(viewModel.currentStep), total: 4)
+                        .tint(Color.wineAccent)
+                        .scaleEffect(x: 1, y: 1.35, anchor: .center)
+                        .frame(maxWidth: .infinity)
+                } else {
+                    Spacer()
+                }
             }
             .frame(height: 32)
             .padding(.bottom, 20)
@@ -62,7 +68,7 @@ struct OnboardingView: View {
                 .scaledToFit()
                 .frame(height: 55)
 
-            Text("Build your taste profile for smarter picks.")
+            Text("Building your taste profile for smarter picks.")
                 .font(.subheadline)
                 .foregroundStyle(Color.wineText.opacity(0.6))
                 .padding(.top, 6)
@@ -71,7 +77,7 @@ struct OnboardingView: View {
     }
 
     private var footer: some View {
-        Button(viewModel.isLastStep ? "Finish" : "Continue") {
+        Button(footerButtonTitle) {
             if viewModel.isLastStep {
                 persistPreferences()
             } else {
@@ -84,6 +90,14 @@ struct OnboardingView: View {
         .padding(.top, 24)
     }
 
+    private var footerButtonTitle: String {
+        if viewModel.currentStep == 0 {
+            return "Stop picking bad wine"
+        }
+
+        return viewModel.isLastStep ? "Finish" : "Continue"
+    }
+
     @ViewBuilder
     private func stepContent(
         purchaseSelection: Binding<UsualPurchasePreference?>,
@@ -93,10 +107,12 @@ struct OnboardingView: View {
     ) -> some View {
         switch viewModel.currentStep {
         case 0:
-            ChoiceStyleQuestionView(selection: choiceSelection, onSelect: handleChoiceStyleSelection)
+            OnboardingIntroStepView()
         case 1:
-            PurchasePreferenceQuestionView(selection: purchaseSelection, onSelect: handlePurchasePreferenceSelection)
+            ChoiceStyleQuestionView(selection: choiceSelection, onSelect: handleChoiceStyleSelection)
         case 2:
+            PurchasePreferenceQuestionView(selection: purchaseSelection, onSelect: handlePurchasePreferenceSelection)
+        case 3:
             StyleQuestionView(
                 selectedStyles: selectedStyles,
                 toggleStyle: viewModel.toggleStyle
@@ -165,6 +181,61 @@ struct OnboardingView: View {
         }
 
         try? modelContext.save()
+    }
+}
+
+private struct OnboardingIntroStepView: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Image("headerlogo4")
+                .resizable()
+                .scaledToFit()
+                .frame(height: 48)
+                .padding(.top, 12)
+
+            Spacer(minLength: 0)
+
+            VStack(alignment: .leading, spacing: 18) {
+                Text("Stop guessing. Start enjoying.")
+                    .font(.largeTitle)
+                    .bold()
+                    .foregroundStyle(Color.wineText)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Text("Whether you are choosing a glass or buying a bottle, CorkWise helps you find the best wines on the list so you can enjoy the moment, not study the menu.")
+                    .font(.body)
+                    .foregroundStyle(Color.wineMutedText)
+                    .lineSpacing(4)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            Spacer(minLength: 28)
+
+            RoundedRectangle(cornerRadius: 28)
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            Color.wineSoftPeach.opacity(0.75),
+                            Color.white.opacity(0.92)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .overlay {
+                    Image(systemName: "wineglass")
+                        .font(.system(size: 54, weight: .semibold))
+                        .foregroundStyle(Color.wineAccent)
+                }
+                .overlay {
+                    RoundedRectangle(cornerRadius: 28)
+                        .stroke(Color.wineBorder.opacity(0.8), lineWidth: 1)
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: 230)
+
+            Spacer(minLength: 0)
+        }
     }
 }
 

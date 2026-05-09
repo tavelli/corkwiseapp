@@ -4,9 +4,25 @@ struct RecommendationCardView: View {
     let recommendation: WineRecommendation
     let purchaseMode: PurchaseMode
     let currencyCode: String
+    var categoryLabel: String?
+    var categorySystemImage: String?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: categoryLabel == nil ? 14 : 16) {
+            if let categoryLabel, let categorySystemImage {
+                HStack(spacing: 8) {
+                    Image(systemName: categorySystemImage)
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(Color.wineAccent)
+                        .frame(width: 18, height: 18)
+
+                    Text(categoryLabel.uppercased())
+                        .font(.caption.weight(.bold))
+                        .tracking(0.5)
+                        .foregroundStyle(Color.wineAccent)
+                }
+            }
+
             HStack(alignment: .center, spacing: 14) {
                 Text(recommendation.valueScore.formatted(.number.precision(.fractionLength(1))))
                     .font(.headline.weight(.bold))

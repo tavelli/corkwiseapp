@@ -10,17 +10,13 @@ struct CategoryHighlightsView: View {
             VStack(alignment: .leading, spacing: 10) {
                 ForEach(displaySections, id: \.key) { section in
                     VStack(alignment: .leading, spacing: 12) {
-                        ResultSectionHeader(
-                            title: section.displayTitle,
-                            systemImage: section.systemImage,
-                            style: .ribbon
-                        )
-
                         ForEach(section.recommendations) { recommendation in
                             RecommendationCardView(
                                 recommendation: recommendation,
                                 purchaseMode: purchaseMode,
-                                currencyCode: currencyCode
+                                currencyCode: currencyCode,
+                                categoryLabel: section.displayTitle,
+                                categorySystemImage: section.systemImage
                             )
                         }
                     }

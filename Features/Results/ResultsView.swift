@@ -47,17 +47,13 @@ struct ResultsContentView: View {
 
                 if remainingRecommendations.isEmpty == false {
                     VStack(alignment: .leading, spacing: 16) {
-                        ResultSectionHeader(
-                            title: "Other Great Picks",
-                            systemImage: "star.circle.fill",
-                            style: .ribbon
-                        )
-
                         ForEach(remainingRecommendations) { recommendation in
                             RecommendationCardView(
                                 recommendation: recommendation,
                                 purchaseMode: purchaseMode,
-                                currencyCode: result.currencyCode
+                                currencyCode: result.currencyCode,
+                                categoryLabel: "Highly Recommended",
+                                categorySystemImage: "star.fill"
                             )
                         }
                     }
@@ -184,7 +180,7 @@ private struct MenuSnapshotView: View {
                     .foregroundStyle(Color.wineAccent)
                     .frame(width: 18, height: 18)
 
-                Text("CELLAR NOTES")
+                Text("What Stands Out")
                     .font(.caption.weight(.bold))
                     .tracking(0.9)
                     .foregroundStyle(Color.wineAccent)
@@ -208,93 +204,5 @@ private struct MenuSnapshotView: View {
                 .stroke(Color.wineBorder.opacity(0.85), lineWidth: 1)
         }
         .shadow(color: Color.black.opacity(0.035), radius: 12, y: 6)
-    }
-}
-
-struct ResultSectionHeader: View {
-    enum Style {
-        case plain
-        case ribbon
-    }
-
-    let title: String
-    let systemImage: String
-    var style: Style = .plain
-
-    var body: some View {
-        switch style {
-        case .plain:
-            HStack(spacing: 10) {
-                Image(systemName: systemImage)
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(Color.resultScoreTint)
-                    .frame(width: 28, height: 28)
-                    .background(Color.resultScoreTint.opacity(0.12))
-                    .clipShape(.rect(cornerRadius: 10))
-
-                Text(title)
-                    .font(.system(size: 20, weight: .bold, design: .serif))
-                    .foregroundStyle(Color.wineText)
-            }
-        case .ribbon:
-            HStack(spacing: 0) {
-                ZStack {
-                    Circle()
-                        .fill(Color.resultCardBackground)
-                    Circle()
-                        .stroke(Color.wineAccent.opacity(0.75), lineWidth: 1.2)
-
-                    Image(systemName: systemImage)
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(Color.wineAccent)
-                }
-                .frame(width: 38, height: 38)
-                .zIndex(1)
-
-                HStack(spacing: 0) {
-                    Text(title.uppercased())
-                        .font(.caption.weight(.bold))
-                        .tracking(0.9)
-                        .foregroundStyle(.white)
-                        .lineLimit(1)
-                        .fixedSize(horizontal: true, vertical: false)
-                        .padding(.leading, 18)
-                        .padding(.trailing, 22)
-                        .frame(height: 26)
-                        .background(Color.wineAccent)
-                        .overlay(alignment: .trailing) {
-                            RibbonNotch()
-                                .fill(Color.wineAccent)
-                                .frame(width: 16, height: 26)
-                                .offset(x: 14)
-                        }
-
-                    ZStack(alignment: .trailing) {
-                        Rectangle()
-                            .fill(Color.wineAccent.opacity(0.55))
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 1.2)
-
-                        Circle()
-                            .fill(Color.wineAccent)
-                            .frame(width: 6, height: 6)
-                            .offset(x: 3)
-                    }
-                }
-                .offset(x: -8)
-            }
-        }
-    }
-}
-
-private struct RibbonNotch: Shape {
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        path.move(to: CGPoint(x: 0, y: 0))
-        path.addLine(to: CGPoint(x: rect.width, y: 0))
-        path.addLine(to: CGPoint(x: rect.width * 0.45, y: rect.height))
-        path.addLine(to: CGPoint(x: 0, y: rect.height))
-        path.closeSubpath()
-        return path
     }
 }

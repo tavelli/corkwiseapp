@@ -9,7 +9,7 @@ struct BestPickHeroView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
             HStack(spacing: 8) {
-                Image(systemName: "star.fill")
+                Image(systemName: "crown.fill")
                     .font(.caption.weight(.bold))
                     .foregroundStyle(Color.resultHeroIvory)
                     .frame(width: 22, height: 22)
