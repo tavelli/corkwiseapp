@@ -6,21 +6,16 @@ struct CategoryHighlightsView: View {
     let currencyCode: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            VStack(alignment: .leading, spacing: 10) {
-                ForEach(displaySections, id: \.key) { section in
-                    VStack(alignment: .leading, spacing: 12) {
-                        ForEach(section.recommendations) { recommendation in
-                            RecommendationCardView(
-                                recommendation: recommendation,
-                                purchaseMode: purchaseMode,
-                                currencyCode: currencyCode,
-                                categoryLabel: section.displayTitle,
-                                categorySystemImage: section.systemImage
-                            )
-                        }
-                    }
-                    .padding(.top, 14)
+        VStack(alignment: .leading, spacing: 16) {
+            ForEach(displaySections, id: \.key) { section in
+                ForEach(section.recommendations) { recommendation in
+                    RecommendationCardView(
+                        recommendation: recommendation,
+                        purchaseMode: purchaseMode,
+                        currencyCode: currencyCode,
+                        categoryLabel: section.displayTitle,
+                        categorySystemImage: section.systemImage
+                    )
                 }
             }
         }

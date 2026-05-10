@@ -55,9 +55,9 @@ struct RecommendationCardView: View {
             )
 
             VStack(alignment: .leading, spacing: 8) {
-                Text("Why I like it")
-                    .font(.subheadline.weight(.bold))
-                    .foregroundStyle(Color.wineAccent)
+//                Text("Why I like it")
+//                    .font(.subheadline.weight(.bold))
+//                    .foregroundStyle(Color.wineAccent)
                 Text(recommendation.why)
                     .font(.subheadline)
                     .foregroundStyle(Color.wineText)

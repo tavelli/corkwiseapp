@@ -77,25 +77,29 @@ struct OnboardingView: View {
     }
 
     private var footer: some View {
-        Button(footerButtonTitle) {
+        Button {
             if viewModel.isLastStep {
                 persistPreferences()
             } else {
                 viewModel.goForward()
+            }
+        } label: {
+            if viewModel.currentStep == 0 {
+                HStack(spacing: 12) {
+                    Spacer(minLength: 0)
+                    Text("Start ordering better wine")
+                    Spacer(minLength: 0)
+                    Image(systemName: "arrow.right")
+                        .font(.title3)
+                }
+            } else {
+                Text(viewModel.isLastStep ? "Finish" : "Continue")
             }
         }
         .buttonStyle(OnboardingPrimaryButtonStyle())
         .disabled(viewModel.canContinue == false)
         .frame(maxWidth: .infinity)
         .padding(.top, 24)
-    }
-
-    private var footerButtonTitle: String {
-        if viewModel.currentStep == 0 {
-            return "Stop picking bad wine"
-        }
-
-        return viewModel.isLastStep ? "Finish" : "Continue"
     }
 
     @ViewBuilder
@@ -185,57 +189,119 @@ struct OnboardingView: View {
 }
 
 private struct OnboardingIntroStepView: View {
+    @ScaledMetric(relativeTo: .largeTitle) private var headlineFontSize = 42
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(spacing: 0) {
             Image("headerlogo4")
                 .resizable()
                 .scaledToFit()
-                .frame(height: 48)
-                .padding(.top, 12)
-
-            Spacer(minLength: 0)
-
-            VStack(alignment: .leading, spacing: 18) {
-                Text("Stop guessing. Start enjoying.")
-                    .font(.largeTitle)
-                    .bold()
-                    .foregroundStyle(Color.wineText)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                Text("Whether you are choosing a glass or buying a bottle, CorkWise helps you find the best wines on the list so you can enjoy the moment, not study the menu.")
-                    .font(.body)
-                    .foregroundStyle(Color.wineMutedText)
-                    .lineSpacing(4)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
+                .frame(height: 44)
+                .padding(.top, 8)
 
             Spacer(minLength: 28)
 
-            RoundedRectangle(cornerRadius: 28)
-                .fill(
-                    LinearGradient(
-                        colors: [
-                            Color.wineSoftPeach.opacity(0.75),
-                            Color.white.opacity(0.92)
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-                .overlay {
-                    Image(systemName: "wineglass")
-                        .font(.system(size: 54, weight: .semibold))
+            VStack(spacing: 18) {
+                Text("Stop overpaying\nfor bad wine.")
+                    .font(.system(size: headlineFontSize, weight: .semibold))
+                    .dynamicTypeSize(.large ... .accessibility1)
+                    .foregroundStyle(Color.wineText)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Text("Scan any wine list and instantly see what's worth ordering - and what to avoid.")
+                    .font(.body)
+                    .foregroundStyle(Color.wineMutedText)
+                    .lineSpacing(4)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .frame(maxWidth: .infinity)
+
+            Spacer(minLength: 34)
+
+            VStack(spacing: 12) {
+                HStack(spacing: 20) {
+                    Text("ON YOUR OWN")
+                        .font(.caption)
+                        .bold()
                         .foregroundStyle(Color.wineAccent)
+                        .frame(maxWidth: .infinity)
+
+                    Text("USING CORKWISE")
+                        .font(.caption)
+                        .bold()
+                        .foregroundStyle(Color(red: 0.18, green: 0.34, blue: 0.16))
+                        .frame(maxWidth: .infinity)
                 }
-                .overlay {
-                    RoundedRectangle(cornerRadius: 28)
-                        .stroke(Color.wineBorder.opacity(0.8), lineWidth: 1)
+
+                HStack(alignment: .center, spacing: 20) {
+                    IntroComparisonCard(
+                        tint: Color.wineDeep.opacity(0.78),
+                        background: Color.wineAccent.opacity(0.06),
+                        systemImage: "xmark",
+                        items: [
+                            "Overpaying for wine",
+                            "Playing it safe",
+                            "Staring at the menu",
+                            "Disappointing pours"
+                        ]
+                    )
+
+                    IntroComparisonCard(
+                        tint: Color(red: 0.28, green: 0.36, blue: 0.20).opacity(0.88),
+                        background: Color(red: 0.18, green: 0.34, blue: 0.16).opacity(0.07),
+                        systemImage: "checkmark",
+                        items: [
+                            "Hidden value picks",
+                            "Confident new finds",
+                            "Enjoying the moment",
+                            "Wine worth ordering"
+                        ]
+                    )
                 }
-                .frame(maxWidth: .infinity)
-                .frame(height: 230)
+            }
 
             Spacer(minLength: 0)
         }
+    }
+}
+
+private struct IntroComparisonCard: View {
+    let tint: Color
+    let background: Color
+    let systemImage: String
+    let items: [String]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            ForEach(items, id: \.self) { item in
+                HStack(alignment: .center, spacing: 10) {
+                    Circle()
+                        .strokeBorder(tint, lineWidth: 1.2)
+                        .background(
+                            Circle()
+                                .fill(systemImage == "checkmark" ? tint.opacity(0.95) : Color.clear)
+                        )
+                        .frame(width: 23, height: 23)
+                        .overlay {
+                            Image(systemName: systemImage)
+                                .font(.system(size: 11, weight: .semibold))
+                                .foregroundStyle(systemImage == "checkmark" ? Color.white : tint)
+                        }
+
+                    Text(item)
+                        .font(.caption)
+                        .foregroundStyle(Color.wineText)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 24)
+        .frame(maxWidth: .infinity, minHeight: 260, alignment: .topLeading)
+        .background(background)
+        .clipShape(.rect(cornerRadius: 24))
     }
 }
 

@@ -52,7 +52,7 @@ struct ResultsContentView: View {
                                 recommendation: recommendation,
                                 purchaseMode: purchaseMode,
                                 currencyCode: result.currencyCode,
-                                categoryLabel: "Highly Recommended",
+                                categoryLabel: "Highly Recommend",
                                 categorySystemImage: "star.fill"
                             )
                         }
