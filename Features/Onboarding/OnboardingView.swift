@@ -243,8 +243,8 @@ private struct OnboardingIntroStepView: View {
                         items: [
                             "Overpaying for wine",
                             "Playing it safe",
-                            "Staring at the menu",
-                            "Disappointing pours"
+                            "Disappointing pours",
+                            "Staring at the menu"
                         ]
                     )
 
@@ -254,9 +254,9 @@ private struct OnboardingIntroStepView: View {
                         systemImage: "checkmark",
                         items: [
                             "Hidden value picks",
-                            "Confident new finds",
-                            "Enjoying the moment",
-                            "Wine worth ordering"
+                            "Discover new favoritess",
+                            "Wine worth ordering",
+                            "Enjoying the moment"
                         ]
                     )
                 }
