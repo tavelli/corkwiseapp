@@ -389,8 +389,11 @@ struct MainView: View {
 //                            .foregroundStyle(Color.wineSoftPeach)
 //                    }
                 
-                Image(systemName: "document.viewfinder.fill")
-                    .font(.system(size: 60))
+                Image("winemenuscan")
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 60, height: 60)
                     .foregroundStyle(Color.wineSoftPeach)
 
                 Text("Scan Wine List")
