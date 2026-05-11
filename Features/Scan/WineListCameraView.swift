@@ -38,10 +38,14 @@ struct WineListCameraView: View {
     var body: some View {
         ZStack {
             if let previewBackgroundImage {
-                Image(uiImage: previewBackgroundImage)
-                    .resizable()
-                    .scaledToFill()
-                    .ignoresSafeArea()
+                GeometryReader { proxy in
+                    Image(uiImage: previewBackgroundImage)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: proxy.size.width, height: proxy.size.height)
+                        .clipped()
+                }
+                .ignoresSafeArea()
             } else {
                 CameraPreviewView(session: cameraModel.session)
                     .ignoresSafeArea()
@@ -49,6 +53,22 @@ struct WineListCameraView: View {
 
             Color.black.opacity(0.18)
                 .ignoresSafeArea()
+
+            VStack {
+                Spacer()
+
+                LinearGradient(
+                    colors: [
+                        .clear,
+                        .black.opacity(0.22),
+                        .black.opacity(0.5),
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 320)
+            }
+            .ignoresSafeArea()
 
             VStack(spacing: 0) {
                 topBar
@@ -105,7 +125,7 @@ struct WineListCameraView: View {
                 }
                 .labelStyle(.iconOnly)
                 .font(.headline)
-                .foregroundStyle(cameraModel.flashMode.tint)
+                .foregroundStyle(.white)
                 .frame(width: 44, height: 44)
                 .background(.black.opacity(0.42))
                 .clipShape(.circle)
@@ -143,7 +163,7 @@ struct WineListCameraView: View {
 
             HStack(alignment: .center) {
                 Color.clear
-                    .frame(width: 104, height: 52)
+                    .frame(width: 112, height: 52)
 
                 Spacer()
 
@@ -156,7 +176,7 @@ struct WineListCameraView: View {
                         .transition(.opacity.combined(with: .move(edge: .trailing)))
                 } else {
                     Color.clear
-                        .frame(width: 104, height: 52)
+                        .frame(width: 112, height: 52)
                 }
             }
             .animation(.easeOut(duration: 0.18), value: cameraModel.canAnalyze)
@@ -184,20 +204,25 @@ struct WineListCameraView: View {
     }
 
     private var analyzeButton: some View {
-        Button("Analyze") {
+        Button {
             let images = cameraModel.capturedPages.map(\.image)
             dismiss()
             onAnalyze(images)
+        } label: {
+            HStack(spacing: 7) {
+                Text("Analyze")
+                    .font(.headline.bold())
+
+                Image(systemName: "chevron.right")
+                    .font(.subheadline.bold())
+            }
+            .foregroundStyle(Color.wineSoftPeach)
+            .frame(width: 112, height: 52)
+            .background(Color.wineAccent)
+            .clipShape(.rect(cornerRadius: 16))
+            .shadow(color: .black.opacity(0.18), radius: 6, y: 3)
         }
-        .font(.headline.bold())
-        .foregroundStyle(Color.wineSoftPeach)
-        .frame(width: 104, height: 52)
-        .background(Color.wineAccent)
-        .clipShape(.rect(cornerRadius: 16))
-        .overlay {
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.wineSoftPeach.opacity(0.34), lineWidth: 1)
-        }
+        .buttonStyle(.plain)
         .accessibilityLabel("Analyze captured pages")
     }
 
@@ -311,15 +336,6 @@ private enum WineListFlashMode: CaseIterable {
             "bolt.fill"
         case .off:
             "bolt.slash.fill"
-        }
-    }
-
-    var tint: Color {
-        switch self {
-        case .auto, .on:
-            Color.wineSoftPeach
-        case .off:
-            .white
         }
     }
 
@@ -555,7 +571,7 @@ private final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegat
     )
 }
 
-#Preview("Two photos captured") {
+#Preview("Two photos captured", traits: .fixedLayout(width: 393, height: 852)) {
     WineListCameraView(
         previewCapturedImages: WineListCameraPreviewImages.twoPages,
         previewBackgroundImage: WineListCameraPreviewImages.cameraBackground,
@@ -566,7 +582,7 @@ private final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegat
 
 private enum WineListCameraPreviewImages {
     static var cameraBackground: UIImage? {
-        UIImage(contentsOfFile: "/Users/dan/Downloads/PXL_20260509_001111784.jpg")
+        UIImage(contentsOfFile: "/Users/dan/Documents/PXL_20260509_001111784.jpg")
     }
 
     static var twoPages: [UIImage] {
@@ -575,6 +591,7 @@ private enum WineListCameraPreviewImages {
             samplePage(title: "Reds", tint: UIColor(red: 0.45, green: 0.07, blue: 0.09, alpha: 1)),
         ]
     }
+
 
     private static func samplePage(title: String, tint: UIColor) -> UIImage {
         let size = CGSize(width: 420, height: 560)
