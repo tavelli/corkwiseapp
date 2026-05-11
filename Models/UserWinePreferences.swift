@@ -50,13 +50,13 @@ enum ChoiceStyle: String, Codable, CaseIterable, Identifiable {
     var description: String {
         switch self {
         case .bestValue:
-            return "Find the smartest pick for the price."
+            return "Comparing prices and looking for the best deal."
         case .safeChoice:
-            return "Stick with something reliable and easy to like."
+            return "Sticking with familiar or reliable picks."
         case .interesting:
-            return "Explore interesting or less obvious wines."
+            return "Trying something new or less obvious."
         case .premium:
-            return "Willing to spend more for a standout bottle."
+            return "Willing to spend more for something special."
         }
     }
 }
@@ -64,7 +64,6 @@ enum ChoiceStyle: String, Codable, CaseIterable, Identifiable {
 enum UsualPurchasePreference: String, Codable, CaseIterable, Identifiable {
     case glass
     case bottle
-    case mix
 
     var id: String { rawValue }
 
@@ -74,19 +73,15 @@ enum UsualPurchasePreference: String, Codable, CaseIterable, Identifiable {
             return "By the glass"
         case .bottle:
             return "By the bottle"
-        case .mix:
-            return "A mix"
         }
     }
 
     var description: String {
         switch self {
         case .glass:
-            return "Ordering for yourself. Looking for a solid pick, fast."
+            return "Usually ordering for myself."
         case .bottle:
-            return "Choosing for the table. Want to get it right for everyone."
-        case .mix:
-            return "Depends on the situation."
+            return "Trying to choose something worth sharing."
         }
     }
 
@@ -96,8 +91,6 @@ enum UsualPurchasePreference: String, Codable, CaseIterable, Identifiable {
             return .glass
         case .bottle:
             return .bottle
-        case .mix:
-            return nil
         }
     }
 }
@@ -337,10 +330,10 @@ extension UserWinePreferences {
 
     var usualPurchasePreferenceValue: UsualPurchasePreference {
         guard let usualPurchasePreference else {
-            return .mix
+            return .glass
         }
 
-        return UsualPurchasePreference(rawValue: usualPurchasePreference) ?? .mix
+        return UsualPurchasePreference(rawValue: usualPurchasePreference) ?? .glass
     }
 
     var toneValue: TonePreference {

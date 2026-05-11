@@ -4,6 +4,7 @@ import SwiftUI
 
 struct PaywallView: View {
     @Environment(EntitlementManager.self) private var entitlementManager
+    let preferences: UserWinePreferences?
 
     var body: some View {
         Group {
@@ -38,7 +39,7 @@ struct PaywallView: View {
         }
         .background(mainScreenBackground.ignoresSafeArea())
         .task {
-            await entitlementManager.loadPaywallConfiguration()
+            await entitlementManager.loadPaywallConfiguration(preferences: preferences)
         }
     }
 
@@ -58,7 +59,7 @@ struct PaywallView: View {
 
                 Button("Try Again") {
                     Task {
-                        await entitlementManager.loadPaywallConfiguration()
+                        await entitlementManager.loadPaywallConfiguration(preferences: preferences)
                     }
                 }
                 .buttonStyle(PaywallRetryButtonStyle())
@@ -86,6 +87,6 @@ private struct PaywallRetryButtonStyle: ButtonStyle {
 }
 
 #Preview {
-    PaywallView()
+    PaywallView(preferences: nil)
         .environment(EntitlementManager())
 }

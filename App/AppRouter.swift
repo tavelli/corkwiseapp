@@ -30,7 +30,7 @@ struct AppRouter: View {
                     case .onboarding:
                         OnboardingView(existingPreferences: preferenceRecords.first)
                     case .paywall:
-                        PaywallView()
+                        PaywallView(preferences: preferenceRecords.first)
                     case .main:
                         MainView(preferences: preferenceRecords.first)
                     }

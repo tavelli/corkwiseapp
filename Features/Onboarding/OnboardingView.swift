@@ -294,7 +294,8 @@ private struct IntroComparisonCard: View {
                         .font(.caption)
                         .foregroundStyle(Color.wineText)
                         .fixedSize(horizontal: false, vertical: true)
-                }
+                }.frame(minHeight: 40, alignment: .leading)
+
             }
         }
         .padding(.horizontal, 14)

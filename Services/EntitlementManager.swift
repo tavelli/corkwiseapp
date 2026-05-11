@@ -15,6 +15,7 @@ final class EntitlementManager {
     var purchaseStatusMessage: String?
     var purchaseErrorMessage: String?
     private var hasActivatedAdaptyUI = false
+    private var loadedPaywallTags: [String: String]?
 
     func configure() async {
         isLoading = true
@@ -75,9 +76,13 @@ final class EntitlementManager {
         isLoading = false
     }
 
-    func loadPaywallConfiguration() async {
+    func loadPaywallConfiguration(preferences: UserWinePreferences? = nil) async {
         guard isConfigured else { return }
-        guard paywallConfiguration == nil else { return }
+
+        let tagResolver = Self.paywallTags(for: preferences)
+        if paywallConfiguration != nil, loadedPaywallTags == tagResolver {
+            return
+        }
 
         purchaseErrorMessage = nil
 
@@ -97,10 +102,13 @@ final class EntitlementManager {
             }
             #endif
             paywallConfiguration = try await AdaptyUI.getPaywallConfiguration(
-                forPaywall: paywall
+                forPaywall: paywall,
+                tagResolver: tagResolver
             )
+            loadedPaywallTags = tagResolver
         } catch {
             paywallConfiguration = nil
+            loadedPaywallTags = nil
             Self.logPaywallError(error, context: "load paywall \(AppConfiguration.shared.adaptyPaywallPlacementID)")
             #if DEBUG
             purchaseErrorMessage = "Couldn't load paywall \(AppConfiguration.shared.adaptyPaywallPlacementID): \(Self.debugDescription(for: error))"
@@ -177,6 +185,15 @@ final class EntitlementManager {
 
     private static func hasActiveEntitlement(in profile: AdaptyProfile) -> Bool {
         profile.accessLevels[AppConfiguration.shared.paidAccessLevelID]?.isActive == true
+    }
+
+    private static func paywallTags(for preferences: UserWinePreferences?) -> [String: String] {
+        guard let preferences else { return [:] }
+
+        return [
+            "ONBOARDING_CHOICE_STYLE": preferences.choiceStyleValue.title,
+            "ONBOARDING_PURCHASE_PREFERENCE": preferences.usualPurchasePreferenceValue.title,
+        ]
     }
 
     private static func debugDescription(for error: Error) -> String {
