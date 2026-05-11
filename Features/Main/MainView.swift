@@ -12,7 +12,6 @@ struct MainView: View {
     @State private var isShowingCamera = false
     @State private var isShowingPhotoPicker = false
     @State private var isShowingFileImporter = false
-    @State private var isShowingUploadOptions = false
     @State private var isShowingURLImporter = false
     @State private var menuURLText = ""
     @State private var selectedPhotoItems: [PhotosPickerItem] = []
@@ -57,19 +56,6 @@ struct MainView: View {
                 }
         }
         .navigationBarBackButtonHidden()
-        .confirmationDialog("Upload Wine List", isPresented: $isShowingUploadOptions, titleVisibility: .visible) {
-            Button("Photo Library") {
-                isShowingPhotoPicker = true
-            }
-
-            Button("Browse Files") {
-                isShowingFileImporter = true
-            }
-
-            Button("Cancel", role: .cancel) {}
-        } message: {
-            Text("Choose a photo from your library or browse image and PDF files.")
-        }
         .sheet(item: $bindableViewModel.failure) { failure in
             ScanFailureView(
                 title: failure.title,
@@ -80,7 +66,7 @@ struct MainView: View {
                 },
                 uploadAction: {
                     viewModel.clearFailure()
-                    isShowingUploadOptions = true
+                    isShowingPhotoPicker = true
                 }
             )
             .presentationDetents([.medium])
@@ -413,7 +399,7 @@ struct MainView: View {
                                 .foregroundStyle(Color.wineAccent)
                         }
 
-                    Text("SCAN WINE LIST")
+                    Text("Scan wine list")
                         .font(.system(size: 28, weight: .medium, design: .default))
                         .tracking(1.2)
                         .foregroundStyle(Color.wineSoftPeach)
@@ -432,7 +418,7 @@ struct MainView: View {
                     .fill(Color.wineDivider)
                     .frame(height: 1)
 
-                Text("Other ways to scan")
+                Text("other ways to scan")
                     .font(.caption.weight(.semibold))
                     .tracking(1.2)
                     .foregroundStyle(.secondary)
@@ -443,17 +429,31 @@ struct MainView: View {
                     .frame(height: 1)
             }
 
-            HStack(spacing: 14) {
+            HStack(spacing: 8) {
                 optionButton(
-                    title: "Upload",
+                    title: "PDF",
                     subtitle: "PDF or photo",
-                    systemImage: "square.and.arrow.up"
+                    systemImage: "text.document"
                 ) {
-                    isShowingUploadOptions = true
+                    isShowingFileImporter = true
                 }
 
                 optionButton(
-                    title: "Paste URL",
+                    title: "Gallery",
+                    subtitle: "PDF or photo",
+                    systemImage: "photo.on.rectangle"
+                ) {
+                    isShowingPhotoPicker = true
+                }
+//                optionButton(
+//                    title: "QR",
+//                    subtitle: "Menu link",
+//                    systemImage: "qrcode"
+//                ) {
+//                    isShowingURLImporter = true
+//                }
+                optionButton(
+                    title: "URL",
                     subtitle: "Menu link",
                     systemImage: "link"
                 ) {
@@ -470,27 +470,20 @@ struct MainView: View {
         action: @escaping () -> Void
     ) -> some View {
         Button(action: action) {
-            HStack(spacing: 14) {
+            VStack(spacing: 8) {
                 Image(systemName: systemImage)
                     .font(.title3.weight(.semibold))
                     .foregroundStyle(Color.wineAccent)
-                    .frame(width: 16)
+                    .frame(width: 22, height: 22)
 
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(title)
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(Color.wineText)
-
-                    Text(subtitle)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-
-                Spacer()
+                Text(title)
+                    .font(.subheadline.weight(.regular))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                    .foregroundStyle(Color.wineText)
             }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 14)
             .frame(maxWidth: .infinity)
+            .frame(height: 70)
             .background(Color.wineOptionBackground)
             .clipShape(.rect(cornerRadius: 18))
             .overlay {
