@@ -8,12 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		375DE5ED2FA97D83008D4574 /* Adapty in Frameworks */ = {isa = PBXBuildFile; productRef = 375DE5EC2FA97D83008D4574 /* Adapty */; };
-		375DE5FB2FAE74E9008D4574 /* AdaptyUI in Frameworks */ = {isa = PBXBuildFile; productRef = 375DE5FA2FAE74E9008D4574 /* AdaptyUI */; };
 		375DE5EF2FAB9D92008D4574 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 375DE5EE2FAB9D92008D4574 /* Launch Screen.storyboard */; };
 		375DE5F32FAE2729008D4574 /* Auth in Frameworks */ = {isa = PBXBuildFile; productRef = 375DE5F22FAE2729008D4574 /* Auth */; };
 		375DE5F52FAE4094008D4574 /* AppIdentityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375DE5F42FAE4094008D4574 /* AppIdentityService.swift */; };
 		375DE5F72FAE4094008D4574 /* SupabaseAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375DE5F62FAE4094008D4574 /* SupabaseAuthService.swift */; };
 		375DE5F92FAE4E16008D4574 /* BuildChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375DE5F82FAE4E16008D4574 /* BuildChannel.swift */; };
+		375DE5FB2FAE74E9008D4574 /* AdaptyUI in Frameworks */ = {isa = PBXBuildFile; productRef = 375DE5FA2FAE74E9008D4574 /* AdaptyUI */; };
+		37915F0C2FB21FB2003B43A8 /* WineListCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37915F0B2FB21FB2003B43A8 /* WineListCameraView.swift */; };
 		379399B82FA3CC7400246506 /* ScanFailureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399B22FA3CC7400246506 /* ScanFailureView.swift */; };
 		379399B92FA3CC7400246506 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399A62FA3CC7400246506 /* OnboardingView.swift */; };
 		379399BA2FA3CC7400246506 /* SelectedPhoto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399B42FA3CC7400246506 /* SelectedPhoto.swift */; };
@@ -50,10 +51,11 @@
 /* Begin PBXFileReference section */
 		375DE4FE2FA675A7008D4574 /* winebottle1.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = winebottle1.svg; sourceTree = "<group>"; };
 		375DE5EE2FAB9D92008D4574 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
+		375DE5F02FAC2097008D4574 /* AGENTS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = AGENTS.md; sourceTree = "<group>"; };
 		375DE5F42FAE4094008D4574 /* AppIdentityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIdentityService.swift; sourceTree = "<group>"; };
 		375DE5F62FAE4094008D4574 /* SupabaseAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseAuthService.swift; sourceTree = "<group>"; };
 		375DE5F82FAE4E16008D4574 /* BuildChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildChannel.swift; sourceTree = "<group>"; };
-		375DE5F02FAC2097008D4574 /* AGENTS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = AGENTS.md; sourceTree = "<group>"; };
+		37915F0B2FB21FB2003B43A8 /* WineListCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WineListCameraView.swift; sourceTree = "<group>"; };
 		379399A22FA3CC7400246506 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		379399A32FA3CC7400246506 /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
 		379399A62FA3CC7400246506 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
@@ -202,6 +204,7 @@
 				379399B32FA3CC7400246506 /* ScanLoadingView.swift */,
 				379399B42FA3CC7400246506 /* SelectedPhoto.swift */,
 				379399FC2FA3F10000246506 /* CameraPicker.swift */,
+				37915F0B2FB21FB2003B43A8 /* WineListCameraView.swift */,
 			);
 			path = Scan;
 			sourceTree = "<group>";
@@ -329,6 +332,7 @@
 				375DE5F52FAE4094008D4574 /* AppIdentityService.swift in Sources */,
 				375DE5F92FAE4E16008D4574 /* BuildChannel.swift in Sources */,
 				379399E02FA3D9AE00246506 /* Color+Theme.swift in Sources */,
+				37915F0C2FB21FB2003B43A8 /* WineListCameraView.swift in Sources */,
 				379399E22FA4EFFE00246506 /* AllScansView.swift in Sources */,
 				379399D22FA3CD3F00246506 /* AppState.swift in Sources */,
 				379399D32FA3CD3F00246506 /* AppRouter.swift in Sources */,
@@ -598,15 +602,15 @@
 			package = 375DE5EB2FA97D83008D4574 /* XCRemoteSwiftPackageReference "AdaptySDK-iOS" */;
 			productName = Adapty;
 		};
-		375DE5FA2FAE74E9008D4574 /* AdaptyUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 375DE5EB2FA97D83008D4574 /* XCRemoteSwiftPackageReference "AdaptySDK-iOS" */;
-			productName = AdaptyUI;
-		};
 		375DE5F22FAE2729008D4574 /* Auth */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 375DE5F12FAE2729008D4574 /* XCRemoteSwiftPackageReference "supabase-swift" */;
 			productName = Auth;
+		};
+		375DE5FA2FAE74E9008D4574 /* AdaptyUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 375DE5EB2FA97D83008D4574 /* XCRemoteSwiftPackageReference "AdaptySDK-iOS" */;
+			productName = AdaptyUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

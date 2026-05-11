@@ -3,12 +3,15 @@ import {
   consumeFreeScan,
   upsertAppInstallation,
 } from "./domain/app-installations.ts";
-import {authenticatedUser} from "./domain/auth.ts";
-import {checkEntitlement} from "./domain/adapty.ts";
-import {MAX_REQUEST_BYTES, validateAnalyzeRequest} from "./domain/request.ts";
-import {normalizeScanResult} from "./domain/normalize.ts";
-import {makeProvider} from "./providers/factory.ts";
-import {RequestError, type WineAnalysisErrorResponse} from "./domain/types.ts";
+import { authenticatedUser } from "./domain/auth.ts";
+import { checkEntitlement } from "./domain/adapty.ts";
+import { MAX_REQUEST_BYTES, validateAnalyzeRequest } from "./domain/request.ts";
+import { normalizeScanResult } from "./domain/normalize.ts";
+import { makeProvider } from "./providers/factory.ts";
+import {
+  RequestError,
+  type WineAnalysisErrorResponse,
+} from "./domain/types.ts";
 
 const FREE_SCAN_LIMIT = Number(Deno.env.get("FREE_SCAN_LIMIT") ?? "0");
 
@@ -21,7 +24,7 @@ const corsHeaders = {
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
-    return new Response("ok", {headers: corsHeaders});
+    return new Response("ok", { headers: corsHeaders });
   }
 
   try {
@@ -110,18 +113,22 @@ Deno.serve(async (req) => {
       pricingLocale: requestBody.pricingContext.localeIdentifier,
       currencyCode: requestBody.pricingContext.currencyCode,
       sourceKind: requestBody.source.kind,
-      attachmentMimeType:
-        requestBody.source.kind === "attachment"
-          ? requestBody.source.attachment.mimeType
-          : null,
-      attachmentBase64Length:
-        requestBody.source.kind === "attachment"
-          ? requestBody.source.attachment.base64Data.length
-          : null,
-      menuUrlHost:
-        requestBody.source.kind === "url"
-          ? new URL(requestBody.source.menuUrl).host
-          : null,
+      attachmentMimeTypes: requestBody.source.kind === "attachment"
+        ? requestBody.source.attachments.map((attachment) =>
+          attachment.mimeType
+        )
+        : null,
+      attachmentCount: requestBody.source.kind === "attachment"
+        ? requestBody.source.attachments.length
+        : null,
+      attachmentBase64Lengths: requestBody.source.kind === "attachment"
+        ? requestBody.source.attachments.map((attachment) =>
+          attachment.base64Data.length
+        )
+        : null,
+      menuUrlHost: requestBody.source.kind === "url"
+        ? new URL(requestBody.source.menuUrl).host
+        : null,
       preferredStylesCount: requestBody.userPreferences.preferredStyles.length,
     });
 

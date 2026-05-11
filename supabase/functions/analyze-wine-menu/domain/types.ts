@@ -14,13 +14,13 @@ export type AnalyzeWineMenuAttachment = {
 
 export type AnalyzeWineMenuSource =
   | {
-      kind: "attachment";
-      attachment: AnalyzeWineMenuAttachment;
-    }
+    kind: "attachment";
+    attachments: AnalyzeWineMenuAttachment[];
+  }
   | {
-      kind: "url";
-      menuUrl: string;
-    };
+    kind: "url";
+    menuUrl: string;
+  };
 
 export type AnalyzeWineMenuRequest = {
   appUserId: string;
@@ -132,6 +132,6 @@ export class RequestError extends Error {
   ) {
     super(message);
     this.status = status;
-    this.responseBody = {error, message, retrySuggested};
+    this.responseBody = { error, message, retrySuggested };
   }
 }

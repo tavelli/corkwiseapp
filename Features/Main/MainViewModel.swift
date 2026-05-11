@@ -22,14 +22,14 @@ final class MainViewModel {
     var failure: ScanFailureState?
     var selectedPreviewImage: UIImage?
     var canRetryLastScan: Bool {
-        pendingAttachment != nil
+        pendingAttachments?.isEmpty == false
     }
 
     private let analysisService = WineAnalysisService()
     private let imagePreparationService = ImagePreparationService()
     private var loadingTask: Task<Void, Never>?
     private var scanTask: Task<Void, Never>?
-    private var pendingAttachment: AnalyzeWineMenuAttachment?
+    private var pendingAttachments: [AnalyzeWineMenuAttachment]?
     private var hasConfiguredInitialCategoryPreference = false
 
     func configureInitialCategoryPreference(
@@ -61,11 +61,25 @@ final class MainViewModel {
         modelContext: ModelContext,
         onResult: @escaping (WineScanResult) -> Void
     ) {
+        startScan(
+            images: [image],
+            preferences: preferences,
+            modelContext: modelContext,
+            onResult: onResult
+        )
+    }
+
+    func startScan(
+        images: [UIImage],
+        preferences: UserWinePreferences,
+        modelContext: ModelContext,
+        onResult: @escaping (WineScanResult) -> Void
+    ) {
         do {
-            let attachment = try imagePreparationService.prepareAttachment(for: image)
-            selectedPreviewImage = image
+            let attachments = try imagePreparationService.prepareAttachments(for: images)
+            selectedPreviewImage = images.first
             startScan(
-                attachment: attachment,
+                attachments: attachments,
                 preferences: preferences,
                 modelContext: modelContext,
                 onResult: onResult
@@ -76,7 +90,7 @@ final class MainViewModel {
     }
 
     func startScan(
-        attachment: AnalyzeWineMenuAttachment,
+        attachments: [AnalyzeWineMenuAttachment],
         preferences: UserWinePreferences,
         modelContext: ModelContext,
         onResult: @escaping (WineScanResult) -> Void
@@ -84,12 +98,12 @@ final class MainViewModel {
         scanTask?.cancel()
         scanTask = Task {
             do {
-                pendingAttachment = attachment
+                pendingAttachments = attachments
                 isScanning = true
                 startLoadingMessages()
 
                 let result = try await analysisService.analyzeMenu(
-                    attachment: attachment,
+                    attachments: attachments,
                     purchaseMode: purchaseMode,
                     bottleContext: effectiveBottleContext,
                     categoryPreference: categoryPreference,
@@ -121,7 +135,7 @@ final class MainViewModel {
         scanTask?.cancel()
         scanTask = Task {
             do {
-                pendingAttachment = nil
+                pendingAttachments = nil
                 isScanning = true
                 startLoadingMessages()
 
@@ -154,10 +168,10 @@ final class MainViewModel {
         modelContext: ModelContext,
         onResult: @escaping (WineScanResult) -> Void
     ) {
-        guard let pendingAttachment else { return }
+        guard let pendingAttachments else { return }
         clearFailure()
         startScan(
-            attachment: pendingAttachment,
+            attachments: pendingAttachments,
             preferences: preferences,
             modelContext: modelContext,
             onResult: onResult

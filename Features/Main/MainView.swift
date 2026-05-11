@@ -12,10 +12,9 @@ struct MainView: View {
     @State private var isShowingCamera = false
     @State private var isShowingPhotoPicker = false
     @State private var isShowingFileImporter = false
-    @State private var isShowingUploadOptions = false
     @State private var isShowingURLImporter = false
     @State private var menuURLText = ""
-    @State private var selectedPhotoItem: PhotosPickerItem?
+    @State private var selectedPhotoItems: [PhotosPickerItem] = []
     @State private var activeScanID: UUID?
 
     let preferences: UserWinePreferences?
@@ -57,19 +56,6 @@ struct MainView: View {
                 }
         }
         .navigationBarBackButtonHidden()
-        .confirmationDialog("Upload Wine List", isPresented: $isShowingUploadOptions, titleVisibility: .visible) {
-            Button("Photo Library") {
-                isShowingPhotoPicker = true
-            }
-
-            Button("Browse Files") {
-                isShowingFileImporter = true
-            }
-
-            Button("Cancel", role: .cancel) {}
-        } message: {
-            Text("Choose a photo from your library or browse image and PDF files.")
-        }
         .sheet(item: $bindableViewModel.failure) { failure in
             ScanFailureView(
                 title: failure.title,
@@ -80,16 +66,20 @@ struct MainView: View {
                 },
                 uploadAction: {
                     viewModel.clearFailure()
-                    isShowingUploadOptions = true
+                    isShowingPhotoPicker = true
                 }
             )
             .presentationDetents([.medium])
         }
-        .sheet(isPresented: $isShowingCamera) {
-            CameraPicker { image in
-                processSelectedImage(image)
+        .fullScreenCover(isPresented: $isShowingCamera) {
+            WineListCameraView { images in
+                processSelectedImages(images)
+            } onUnavailable: {
+                viewModel.failure = ScanFailureState(
+                    title: "Camera unavailable.",
+                    message: "This device doesn't currently expose a camera. Upload a photo instead."
+                )
             }
-            .ignoresSafeArea()
         }
         .sheet(isPresented: $isShowingURLImporter) {
             MenuURLImportSheet(urlText: $menuURLText) { menuURL in
@@ -98,25 +88,18 @@ struct MainView: View {
             .presentationDetents([.height(300)])
             .presentationDragIndicator(.visible)
         }
-        .task(id: selectedPhotoItem) {
-            guard let selectedPhotoItem else { return }
+        .onChange(of: selectedPhotoItems) { _, photoItems in
+            guard photoItems.isEmpty == false else { return }
 
-            do {
-                guard let selectedPhoto = try await selectedPhotoItem.loadTransferable(type: SelectedPhoto.self) else {
-                    return
-                }
-                processSelectedImage(selectedPhoto.image)
-                self.selectedPhotoItem = nil
-            } catch {
-                viewModel.failure = ScanFailureState(
-                    title: "Couldn't load that photo.",
-                    message: "Try selecting a different image from your library."
-                )
+            Task {
+                await processSelectedPhotoItems(photoItems)
             }
         }
         .photosPicker(
             isPresented: $isShowingPhotoPicker,
-            selection: $selectedPhotoItem,
+            selection: $selectedPhotoItems,
+            maxSelectionCount: 4,
+            selectionBehavior: .ordered,
             matching: .images,
             preferredItemEncoding: .current
         )
@@ -160,11 +143,41 @@ struct MainView: View {
     }
 
     private func processSelectedImage(_ image: UIImage) {
-        guard let preferences else { return }
+        processSelectedImages([image])
+    }
+
+    private func processSelectedImages(_ images: [UIImage]) {
+        guard let preferences, images.isEmpty == false else { return }
 
         let scanID = beginScanProgress()
-        viewModel.startScan(image: image, preferences: preferences, modelContext: modelContext) { result in
+        viewModel.startScan(images: images, preferences: preferences, modelContext: modelContext) { result in
             completeScanProgress(id: scanID, result: result)
+        }
+    }
+
+    private func processSelectedPhotoItems(_ photoItems: [PhotosPickerItem]) async {
+        do {
+            var images: [UIImage] = []
+            for photoItem in photoItems.prefix(4) {
+                guard let selectedPhoto = try await photoItem.loadTransferable(type: SelectedPhoto.self) else {
+                    continue
+                }
+                images.append(selectedPhoto.image)
+            }
+
+            selectedPhotoItems = []
+
+            guard images.isEmpty == false else {
+                throw WineAnalysisServiceError.invalidInput
+            }
+
+            processSelectedImages(images)
+        } catch {
+            selectedPhotoItems = []
+            viewModel.failure = ScanFailureState(
+                title: "Couldn't load those photos.",
+                message: "Try selecting different images from your library."
+            )
         }
     }
 
@@ -207,7 +220,7 @@ struct MainView: View {
 
             let attachment = try ImagePreparationService().prepareAttachment(from: fileURL)
             let scanID = beginScanProgress()
-            viewModel.startScan(attachment: attachment, preferences: preferences, modelContext: modelContext) { result in
+            viewModel.startScan(attachments: [attachment], preferences: preferences, modelContext: modelContext) { result in
                 completeScanProgress(id: scanID, result: result)
             }
         } catch {
@@ -365,37 +378,24 @@ struct MainView: View {
     }
 
     private var heroScanCard: some View {
-        Button(action: openCamera) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 30)
-                    .fill(
-                        LinearGradient(
-                            colors: [Color.wineDeep, Color.wineAccent],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
+        return Button(action: openCamera) {
+            VStack(spacing: 4) {
+                Image("winemenuscan")
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 80, height: 80)
+                    .foregroundStyle(Color.wineSoftPeach)
 
-                VStack(spacing: 10) {
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(Color.wineSoftPeach)
-                        .frame(width: 74, height: 74)
-                        .overlay {
-                            Image(systemName: "camera.fill")
-                                .font(.system(size: 34))
-                                .foregroundStyle(Color.wineAccent)
-                        }
-
-                    Text("SCAN WINE LIST")
-                        .font(.system(size: 28, weight: .medium, design: .default))
-                        .tracking(1.2)
-                        .foregroundStyle(Color.wineSoftPeach)
-
-                }
+                Text("Scan wine list")
+                    .font(.system(size: 28, weight: .semibold, design: .default))
+                    .tracking(1.2)
+                    .foregroundStyle(Color.wineSoftPeach)
             }
-            .frame(height: 200)
+            .frame(maxWidth: .infinity)
+            .frame(height: 180)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(ScanHeroButtonStyle())
     }
 
     private var sourceOptions: some View {
@@ -405,7 +405,7 @@ struct MainView: View {
                     .fill(Color.wineDivider)
                     .frame(height: 1)
 
-                Text("Other ways to scan")
+                Text("other ways to scan")
                     .font(.caption.weight(.semibold))
                     .tracking(1.2)
                     .foregroundStyle(.secondary)
@@ -416,17 +416,33 @@ struct MainView: View {
                     .frame(height: 1)
             }
 
-            HStack(spacing: 14) {
+            HStack(spacing: 8) {
+                
                 optionButton(
-                    title: "Upload",
+                    title: "Gallery",
                     subtitle: "PDF or photo",
-                    systemImage: "square.and.arrow.up"
+                    systemImage: "photo.on.rectangle"
                 ) {
-                    isShowingUploadOptions = true
+                    isShowingPhotoPicker = true
+                }
+                
+                optionButton(
+                    title: "PDF",
+                    subtitle: "PDF or photo",
+                    systemImage: "text.document"
+                ) {
+                    isShowingFileImporter = true
                 }
 
+//                optionButton(
+//                    title: "QR",
+//                    subtitle: "Menu link",
+//                    systemImage: "qrcode"
+//                ) {
+//                    isShowingURLImporter = true
+//                }
                 optionButton(
-                    title: "Paste URL",
+                    title: "Link",
                     subtitle: "Menu link",
                     systemImage: "link"
                 ) {
@@ -443,27 +459,20 @@ struct MainView: View {
         action: @escaping () -> Void
     ) -> some View {
         Button(action: action) {
-            HStack(spacing: 14) {
+            VStack(spacing: 8) {
                 Image(systemName: systemImage)
-                    .font(.title3.weight(.semibold))
+                    .font(.title3.weight(.regular))
                     .foregroundStyle(Color.wineAccent)
-                    .frame(width: 16)
+                    .frame(width: 22, height: 22)
 
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(title)
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(Color.wineText)
-
-                    Text(subtitle)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-
-                Spacer()
+                Text(title)
+                    .font(.subheadline.weight(.regular))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                    .foregroundStyle(Color.wineText)
             }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 14)
             .frame(maxWidth: .infinity)
+            .frame(height: 78)
             .background(Color.wineOptionBackground)
             .clipShape(.rect(cornerRadius: 18))
             .overlay {
@@ -515,6 +524,62 @@ struct MainView: View {
                 .buttonStyle(.plain)
             }
         }
+    }
+}
+
+private struct ScanHeroButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .background {
+                LinearGradient(
+                    colors: [
+                        Color.wineAccent.opacity(configuration.isPressed ? 0.9 : 1),
+                        Color.wineDeep.opacity(configuration.isPressed ? 0.9 : 1)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+
+                ScanHeroGrainTexture()
+                    .blendMode(.overlay)
+                    .opacity(configuration.isPressed ? 0.45 : 0.55)
+            }
+            .clipShape(.rect(cornerRadius: 22))
+            .shadow(
+                color: Color.wineDeep.opacity(0.14),
+                radius: configuration.isPressed ? 8 : 14,
+                y: configuration.isPressed ? 4 : 8
+            )
+            .scaleEffect(configuration.isPressed ? 0.995 : 1)
+            .animation(.easeOut(duration: 0.18), value: configuration.isPressed)
+    }
+}
+
+private struct ScanHeroGrainTexture: View {
+    var body: some View {
+        Canvas { context, size in
+            let speckCount = max(240, Int((size.width * size.height) / 78))
+
+            for index in 0..<speckCount {
+                let x = unitNoise(index * 17 + 11) * size.width
+                let y = unitNoise(index * 29 + 23) * size.height
+                let brightness = unitNoise(index * 41 + 37)
+                let opacity = 0.018 + unitNoise(index * 53 + 47) * 0.024
+                let diameter = 0.55 + unitNoise(index * 67 + 59) * 0.75
+                let color = brightness > 0.52
+                    ? Color.white.opacity(opacity)
+                    : Color.black.opacity(opacity * 0.82)
+
+                let rect = CGRect(x: x, y: y, width: diameter, height: diameter)
+                context.fill(Path(ellipseIn: rect), with: .color(color))
+            }
+        }
+        .allowsHitTesting(false)
+    }
+
+    private func unitNoise(_ seed: Int) -> Double {
+        let value = sin(Double(seed) * 12.9898) * 43758.5453
+        return value - floor(value)
     }
 }
 
