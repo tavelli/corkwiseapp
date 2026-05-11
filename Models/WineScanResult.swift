@@ -3,7 +3,7 @@ import Foundation
 struct AnalyzeWineMenuRequest: Codable {
     let appUserId: String
     let buildConfiguration: String
-    let attachment: AnalyzeWineMenuAttachment?
+    let attachments: [AnalyzeWineMenuAttachment]?
     let menuUrl: String?
     let purchaseMode: PurchaseMode
     let bottleContext: BottleContext?

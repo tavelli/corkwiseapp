@@ -15,7 +15,7 @@ struct MainView: View {
     @State private var isShowingUploadOptions = false
     @State private var isShowingURLImporter = false
     @State private var menuURLText = ""
-    @State private var selectedPhotoItem: PhotosPickerItem?
+    @State private var selectedPhotoItems: [PhotosPickerItem] = []
     @State private var activeScanID: UUID?
 
     let preferences: UserWinePreferences?
@@ -85,11 +85,15 @@ struct MainView: View {
             )
             .presentationDetents([.medium])
         }
-        .sheet(isPresented: $isShowingCamera) {
-            CameraPicker { image in
-                processSelectedImage(image)
+        .fullScreenCover(isPresented: $isShowingCamera) {
+            WineListCameraView { images in
+                processSelectedImages(images)
+            } onUnavailable: {
+                viewModel.failure = ScanFailureState(
+                    title: "Camera unavailable.",
+                    message: "This device doesn't currently expose a camera. Upload a photo instead."
+                )
             }
-            .ignoresSafeArea()
         }
         .sheet(isPresented: $isShowingURLImporter) {
             MenuURLImportSheet(urlText: $menuURLText) { menuURL in
@@ -98,25 +102,18 @@ struct MainView: View {
             .presentationDetents([.height(300)])
             .presentationDragIndicator(.visible)
         }
-        .task(id: selectedPhotoItem) {
-            guard let selectedPhotoItem else { return }
+        .onChange(of: selectedPhotoItems) { _, photoItems in
+            guard photoItems.isEmpty == false else { return }
 
-            do {
-                guard let selectedPhoto = try await selectedPhotoItem.loadTransferable(type: SelectedPhoto.self) else {
-                    return
-                }
-                processSelectedImage(selectedPhoto.image)
-                self.selectedPhotoItem = nil
-            } catch {
-                viewModel.failure = ScanFailureState(
-                    title: "Couldn't load that photo.",
-                    message: "Try selecting a different image from your library."
-                )
+            Task {
+                await processSelectedPhotoItems(photoItems)
             }
         }
         .photosPicker(
             isPresented: $isShowingPhotoPicker,
-            selection: $selectedPhotoItem,
+            selection: $selectedPhotoItems,
+            maxSelectionCount: 4,
+            selectionBehavior: .ordered,
             matching: .images,
             preferredItemEncoding: .current
         )
@@ -160,11 +157,41 @@ struct MainView: View {
     }
 
     private func processSelectedImage(_ image: UIImage) {
-        guard let preferences else { return }
+        processSelectedImages([image])
+    }
+
+    private func processSelectedImages(_ images: [UIImage]) {
+        guard let preferences, images.isEmpty == false else { return }
 
         let scanID = beginScanProgress()
-        viewModel.startScan(image: image, preferences: preferences, modelContext: modelContext) { result in
+        viewModel.startScan(images: images, preferences: preferences, modelContext: modelContext) { result in
             completeScanProgress(id: scanID, result: result)
+        }
+    }
+
+    private func processSelectedPhotoItems(_ photoItems: [PhotosPickerItem]) async {
+        do {
+            var images: [UIImage] = []
+            for photoItem in photoItems.prefix(4) {
+                guard let selectedPhoto = try await photoItem.loadTransferable(type: SelectedPhoto.self) else {
+                    continue
+                }
+                images.append(selectedPhoto.image)
+            }
+
+            selectedPhotoItems = []
+
+            guard images.isEmpty == false else {
+                throw WineAnalysisServiceError.invalidInput
+            }
+
+            processSelectedImages(images)
+        } catch {
+            selectedPhotoItems = []
+            viewModel.failure = ScanFailureState(
+                title: "Couldn't load those photos.",
+                message: "Try selecting different images from your library."
+            )
         }
     }
 
@@ -207,7 +234,7 @@ struct MainView: View {
 
             let attachment = try ImagePreparationService().prepareAttachment(from: fileURL)
             let scanID = beginScanProgress()
-            viewModel.startScan(attachment: attachment, preferences: preferences, modelContext: modelContext) { result in
+            viewModel.startScan(attachments: [attachment], preferences: preferences, modelContext: modelContext) { result in
                 completeScanProgress(id: scanID, result: result)
             }
         } catch {

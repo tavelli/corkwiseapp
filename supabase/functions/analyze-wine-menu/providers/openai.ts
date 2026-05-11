@@ -1,9 +1,9 @@
-import {buildSystemPrompt} from "../domain/prompt.ts";
-import {modelResponseSchema} from "../domain/schema.ts";
+import { buildSystemPrompt } from "../domain/prompt.ts";
+import { modelResponseSchema } from "../domain/schema.ts";
 import {
-  RequestError,
   type AnalyzeWineMenuRequest,
   type ProviderAnalysisResult,
+  RequestError,
   type TokenUsage,
   type WineModelProvider,
 } from "../domain/types.ts";
@@ -94,9 +94,9 @@ export class OpenAIProvider implements WineModelProvider {
             content: [
               {
                 type: "input_text",
-                text: "Analyze this restaurant wine list attachment and return only the requested JSON.",
+                text: menuInstructionText(requestBody),
               },
-              userAttachmentPart(requestBody),
+              ...userAttachmentParts(requestBody),
             ],
           },
         ],
@@ -223,9 +223,21 @@ function extractUsage(
   };
 }
 
-function userAttachmentPart(
+function menuInstructionText(requestBody: AnalyzeWineMenuRequest): string {
+  if (requestBody.source.kind !== "attachment") {
+    return "Analyze this restaurant wine list attachment and return only the requested JSON.";
+  }
+
+  if (requestBody.source.attachments.length > 1) {
+    return "Analyze these ordered restaurant wine list page photos as one continuous wine list and return only the requested JSON.";
+  }
+
+  return "Analyze this restaurant wine list attachment and return only the requested JSON.";
+}
+
+function userAttachmentParts(
   requestBody: AnalyzeWineMenuRequest,
-): Record<string, unknown> {
+): Array<Record<string, unknown>> {
   if (requestBody.source.kind !== "attachment") {
     throw new RequestError(
       400,
@@ -235,15 +247,35 @@ function userAttachmentPart(
     );
   }
 
-  const attachment = requestBody.source.attachment;
+  const { attachments } = requestBody.source;
+  if (attachments.length > 1) {
+    return attachments.flatMap((attachment, index) => [
+      {
+        type: "input_text",
+        text: `Page ${index + 1} of ${attachments.length}:`,
+      },
+      imageAttachmentPart(attachment),
+    ]);
+  }
+
+  const attachment = attachments[0];
   if (attachment.mimeType === "application/pdf") {
-    return {
+    return [{
       type: "input_file",
       filename: attachment.filename ?? "wine-list.pdf",
       file_data: attachment.base64Data,
-    };
+    }];
   }
 
+  return [imageAttachmentPart(attachment)];
+}
+
+function imageAttachmentPart(
+  attachment: {
+    base64Data: string;
+    mimeType: "image/jpeg" | "application/pdf";
+  },
+): Record<string, unknown> {
   return {
     type: "input_image",
     image_url: `data:${attachment.mimeType};base64,${attachment.base64Data}`,

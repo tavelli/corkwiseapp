@@ -1,11 +1,12 @@
 import {
-  RequestError,
   type AnalyzeWineMenuAttachment,
   type AnalyzeWineMenuRequest,
+  RequestError,
 } from "./types.ts";
 
 export const MAX_REQUEST_BYTES = 8_000_000;
 const MAX_ATTACHMENT_BASE64_LENGTH = 7_000_000;
+const MAX_ATTACHMENT_COUNT = 4;
 const MAX_MENU_URL_LENGTH = 2_000;
 
 export function validateAnalyzeRequest(input: unknown): AnalyzeWineMenuRequest {
@@ -20,10 +21,11 @@ export function validateAnalyzeRequest(input: unknown): AnalyzeWineMenuRequest {
 
   const candidate = input as Record<string, unknown>;
   const appUserId = stringOrNull(candidate.appUserId);
-  const buildConfiguration = buildConfigurationOrNull(candidate.buildConfiguration);
-  const attachment = attachmentOrNull(candidate.attachment) ??
-    legacyImageAttachment(candidate.imageBase64);
-  const menuUrl = menuUrlOrNull(candidate.menuUrl) ?? menuUrlOrNull(candidate.url);
+  const buildConfiguration = buildConfigurationOrNull(
+    candidate.buildConfiguration,
+  );
+  const attachments = attachmentsOrNull(candidate.attachments);
+  const menuUrl = menuUrlOrNull(candidate.menuUrl);
   const purchaseMode = stringOrNull(candidate.purchaseMode);
   const categoryPreference = stringOrNull(candidate.categoryPreference) ??
     "anything";
@@ -31,13 +33,22 @@ export function validateAnalyzeRequest(input: unknown): AnalyzeWineMenuRequest {
   const userPreferences = candidate.userPreferences;
 
   if (
-    (attachment == null || attachment.base64Data.length === 0) &&
+    (attachments == null || attachments.length === 0) &&
     menuUrl == null
   ) {
     throw new RequestError(
       400,
       "invalid_request",
       "An image, PDF, or menu URL is required.",
+      false,
+    );
+  }
+
+  if (attachments != null && menuUrl != null) {
+    throw new RequestError(
+      400,
+      "invalid_request",
+      "Provide either attachments or menuUrl, not both.",
       false,
     );
   }
@@ -51,17 +62,7 @@ export function validateAnalyzeRequest(input: unknown): AnalyzeWineMenuRequest {
     );
   }
 
-  if (
-    attachment != null &&
-    attachment.base64Data.length > MAX_ATTACHMENT_BASE64_LENGTH
-  ) {
-    throw new RequestError(
-      413,
-      "image_too_large",
-      "The selected file is too large. Please try again with a smaller image or PDF.",
-      true,
-    );
-  }
+  validateAttachments(attachments);
 
   if (purchaseMode !== "glass" && purchaseMode !== "bottle") {
     throw new RequestError(
@@ -99,7 +100,8 @@ export function validateAnalyzeRequest(input: unknown): AnalyzeWineMenuRequest {
   const choiceStyle = stringOrNull(preferences.choiceStyle);
   const tone = stringOrNull(preferences.tone) ?? "standard";
   const preferredStyles = stringArrayOrNull(preferences.preferredStyles);
-  const favoriteVarietals = stringArrayOrNull(preferences.favoriteVarietals) ?? [];
+  const favoriteVarietals = stringArrayOrNull(preferences.favoriteVarietals) ??
+    [];
 
   if (
     choiceStyle == null ||
@@ -115,11 +117,11 @@ export function validateAnalyzeRequest(input: unknown): AnalyzeWineMenuRequest {
 
   return {
     appUserId,
-    ...(buildConfiguration == null ? {} : {buildConfiguration}),
+    ...(buildConfiguration == null ? {} : { buildConfiguration }),
     source: menuUrl == null
       ? {
         kind: "attachment",
-        attachment: attachment!,
+        attachments: attachments!,
       }
       : {
         kind: "url",
@@ -135,6 +137,48 @@ export function validateAnalyzeRequest(input: unknown): AnalyzeWineMenuRequest {
       tone,
     },
   };
+}
+
+function validateAttachments(
+  attachments: AnalyzeWineMenuAttachment[] | null,
+): void {
+  if (attachments == null) {
+    return;
+  }
+
+  if (
+    attachments.some((attachment) =>
+      attachment.base64Data.length > MAX_ATTACHMENT_BASE64_LENGTH
+    )
+  ) {
+    throw new RequestError(
+      413,
+      "image_too_large",
+      "The selected file is too large. Please try again with a smaller image or PDF.",
+      true,
+    );
+  }
+
+  if (attachments.length > MAX_ATTACHMENT_COUNT) {
+    throw new RequestError(
+      413,
+      "image_too_large",
+      "Please scan no more than 4 pages at a time.",
+      true,
+    );
+  }
+
+  if (
+    attachments.length > 1 &&
+    attachments.some((attachment) => attachment.mimeType !== "image/jpeg")
+  ) {
+    throw new RequestError(
+      400,
+      "invalid_request",
+      "Multiple attachments must all be JPEG images.",
+      false,
+    );
+  }
 }
 
 function pricingContextOrDefault(
@@ -160,7 +204,9 @@ function pricingContextOrDefault(
   const localeIdentifier = stringOrNull(candidate.localeIdentifier);
   const currencyCode = stringOrNull(candidate.currencyCode)?.toUpperCase();
 
-  if (localeIdentifier == null || isLocaleIdentifier(localeIdentifier) === false) {
+  if (
+    localeIdentifier == null || isLocaleIdentifier(localeIdentifier) === false
+  ) {
     throw new RequestError(
       400,
       "invalid_request",
@@ -273,6 +319,44 @@ function attachmentOrNull(value: unknown): AnalyzeWineMenuAttachment | null {
   };
 }
 
+function attachmentsOrNull(value: unknown): AnalyzeWineMenuAttachment[] | null {
+  if (value == null) {
+    return null;
+  }
+
+  if (Array.isArray(value) === false) {
+    throw new RequestError(
+      400,
+      "invalid_request",
+      "attachments must be an array.",
+      false,
+    );
+  }
+
+  if (value.length === 0) {
+    throw new RequestError(
+      400,
+      "invalid_request",
+      "attachments must include at least one image or PDF.",
+      false,
+    );
+  }
+
+  return value.map((entry, index) => {
+    const attachment = attachmentOrNull(entry);
+    if (attachment == null) {
+      throw new RequestError(
+        400,
+        "invalid_request",
+        `attachments[${index}] must include base64Data and mimeType.`,
+        false,
+      );
+    }
+
+    return attachment;
+  });
+}
+
 function menuUrlOrNull(value: unknown): string | null {
   const menuUrl = stringOrNull(value);
   if (menuUrl == null) {
@@ -310,19 +394,6 @@ function menuUrlOrNull(value: unknown): string | null {
   }
 
   return parsedUrl.href;
-}
-
-function legacyImageAttachment(value: unknown): AnalyzeWineMenuAttachment | null {
-  const imageBase64 = stringOrNull(value);
-  if (imageBase64 == null) {
-    return null;
-  }
-
-  return {
-    base64Data: imageBase64,
-    mimeType: "image/jpeg",
-    filename: null,
-  };
 }
 
 function optionalStringOrNull(value: unknown): string | null {

@@ -1,9 +1,9 @@
-import {buildSystemPrompt} from "../domain/prompt.ts";
-import {modelResponseSchema} from "../domain/schema.ts";
+import { buildSystemPrompt } from "../domain/prompt.ts";
+import { modelResponseSchema } from "../domain/schema.ts";
 import {
-  RequestError,
   type AnalyzeWineMenuRequest,
   type ProviderAnalysisResult,
+  RequestError,
   type TokenUsage,
   type WineModelProvider,
 } from "../domain/types.ts";
@@ -59,7 +59,7 @@ export class GeminiProvider implements WineModelProvider {
                 text: buildSystemPrompt(requestBody),
               },
               menuInstructionPart(requestBody),
-              menuSourcePart(requestBody),
+              ...menuSourceParts(requestBody),
             ],
           },
         ],
@@ -193,28 +193,50 @@ function menuInstructionPart(
 ): Record<string, unknown> {
   if (requestBody.source.kind === "url") {
     return {
-      text: "Analyze the restaurant wine list available at the provided URL and return only the requested JSON.",
+      text:
+        "Analyze the restaurant wine list available at the provided URL and return only the requested JSON.",
     };
   }
 
   return {
-    text: "Analyze this restaurant wine list attachment and return only the requested JSON.",
+    text: requestBody.source.attachments.length > 1
+      ? "Analyze these ordered restaurant wine list page photos as one continuous wine list and return only the requested JSON."
+      : "Analyze this restaurant wine list attachment and return only the requested JSON.",
   };
 }
 
-function menuSourcePart(
+function menuSourceParts(
   requestBody: AnalyzeWineMenuRequest,
-): Record<string, unknown> {
+): Array<Record<string, unknown>> {
   if (requestBody.source.kind === "url") {
-    return {
+    return [{
       text: `Menu URL: ${requestBody.source.menuUrl}`,
-    };
+    }];
   }
 
+  const { attachments } = requestBody.source;
+  if (attachments.length > 1) {
+    return attachments.flatMap((attachment, index) => [
+      {
+        text: `Page ${index + 1} of ${attachments.length}:`,
+      },
+      attachmentPart(attachment),
+    ]);
+  }
+
+  return [attachmentPart(attachments[0])];
+}
+
+function attachmentPart(
+  attachment: {
+    base64Data: string;
+    mimeType: "image/jpeg" | "application/pdf";
+  },
+): Record<string, unknown> {
   return {
     inline_data: {
-      mime_type: requestBody.source.attachment.mimeType,
-      data: requestBody.source.attachment.base64Data,
+      mime_type: attachment.mimeType,
+      data: attachment.base64Data,
     },
   };
 }

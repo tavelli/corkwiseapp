@@ -12,7 +12,7 @@ enum WineAnalysisServiceError: Error {
 
 struct WineAnalysisService {
     func analyzeMenu(
-        attachment: AnalyzeWineMenuAttachment,
+        attachments: [AnalyzeWineMenuAttachment],
         purchaseMode: PurchaseMode,
         bottleContext: BottleContext?,
         categoryPreference: WineCategoryPreference,
@@ -22,15 +22,15 @@ struct WineAnalysisService {
             throw WineAnalysisServiceError.backendNotConfigured
         }
 
-        let appUserID = try appUserID()
-        guard attachment.base64Data.isEmpty == false else {
+        guard validate(attachments: attachments) else {
             throw WineAnalysisServiceError.invalidInput
         }
 
+        let appUserID = try appUserID()
         let requestBody = AnalyzeWineMenuRequest(
             appUserId: appUserID,
             buildConfiguration: BuildChannel.current,
-            attachment: attachment,
+            attachments: attachments,
             menuUrl: nil,
             purchaseMode: purchaseMode,
             bottleContext: purchaseMode == .bottle ? bottleContext : nil,
@@ -61,7 +61,7 @@ struct WineAnalysisService {
         let requestBody = AnalyzeWineMenuRequest(
             appUserId: appUserID,
             buildConfiguration: BuildChannel.current,
-            attachment: nil,
+            attachments: nil,
             menuUrl: menuURL.absoluteString,
             purchaseMode: purchaseMode,
             bottleContext: purchaseMode == .bottle ? bottleContext : nil,
@@ -130,6 +130,17 @@ struct WineAnalysisService {
         }
 
         throw WineAnalysisServiceError.invalidResponse(String(data: responseData, encoding: .utf8))
+    }
+
+    func validate(attachments: [AnalyzeWineMenuAttachment]) -> Bool {
+        guard (1...4).contains(attachments.count) else { return false }
+        guard attachments.allSatisfy({ $0.base64Data.isEmpty == false }) else { return false }
+
+        if attachments.count > 1 {
+            return attachments.allSatisfy { $0.mimeType == "image/jpeg" }
+        }
+
+        return true
     }
 
     private func appUserID() throws -> String {

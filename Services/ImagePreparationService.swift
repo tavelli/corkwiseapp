@@ -6,13 +6,23 @@ struct ImagePreparationService {
     private let maxDimension: CGFloat = 2_000
     private let compressionQuality: CGFloat = 0.82
 
-    func prepareAttachment(for image: UIImage) throws -> AnalyzeWineMenuAttachment {
+    func prepareAttachment(for image: UIImage, filename: String = "wine-list.jpg") throws -> AnalyzeWineMenuAttachment {
         let imageData = try prepareForUpload(image)
         return AnalyzeWineMenuAttachment(
             base64Data: imageData.base64EncodedString(),
             mimeType: "image/jpeg",
-            filename: "wine-list.jpg"
+            filename: filename
         )
+    }
+
+    func prepareAttachments(for images: [UIImage]) throws -> [AnalyzeWineMenuAttachment] {
+        guard (1...4).contains(images.count) else {
+            throw WineAnalysisServiceError.invalidInput
+        }
+
+        return try images.enumerated().map { index, image in
+            try prepareAttachment(for: image, filename: "wine-list-page-\(index + 1).jpg")
+        }
     }
 
     func prepareAttachment(from fileURL: URL) throws -> AnalyzeWineMenuAttachment {
