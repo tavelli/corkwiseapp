@@ -85,12 +85,12 @@ struct OnboardingView: View {
             }
         } label: {
             if viewModel.currentStep == 0 {
-                HStack(spacing: 12) {
+                HStack(spacing: 18) {
                     Spacer(minLength: 0)
                     Text("Start ordering better wine")
                     Spacer(minLength: 0)
                     Image(systemName: "arrow.right")
-                        .font(.title3)
+                        .font(.title3.weight(.regular))
                 }
             } else {
                 Text(viewModel.isLastStep ? "Finish" : "Continue")
@@ -477,23 +477,47 @@ private struct OnboardingPrimaryButtonStyle: ButtonStyle {
 
         var body: some View {
             configuration.label
-                .font(.subheadline.weight(.semibold))
+                .font(.subheadline.weight(.medium))
                 .foregroundStyle(isEnabled ? Color.white : Color.wineMutedText.opacity(0.85))
                 .frame(maxWidth: .infinity)
-                .padding(.horizontal, 20)
-                .padding(.vertical, 12)
-                .background(backgroundColor)
-                .clipShape(.rect(cornerRadius: 14))
+                .padding(.horizontal, 22)
+                .padding(.vertical, 15)
+                .background(background)
+                .clipShape(.rect(cornerRadius: 18))
+                .shadow(
+                    color: shadowColor,
+                    radius: configuration.isPressed ? 8 : 14,
+                    y: configuration.isPressed ? 4 : 8
+                )
                 .scaleEffect(isEnabled ? 1 : 0.985)
                 .animation(.easeOut(duration: 0.18), value: isEnabled)
         }
 
-        private var backgroundColor: Color {
+        private var background: LinearGradient {
             guard isEnabled else {
-                return Color.wineBorder.opacity(0.75)
+                return LinearGradient(
+                    colors: [
+                        Color.wineBorder.opacity(0.75),
+                        Color.wineBorder.opacity(0.66)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
             }
 
-            return Color.wineAccent.opacity(configuration.isPressed ? 0.88 : 1)
+            let opacity = configuration.isPressed ? 0.9 : 1
+            return LinearGradient(
+                colors: [
+                    Color.wineAccent.opacity(opacity),
+                    Color.wineDeep.opacity(opacity)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        }
+
+        private var shadowColor: Color {
+            isEnabled ? Color.wineDeep.opacity(0.14) : Color.clear
         }
     }
 }

@@ -50,13 +50,13 @@ enum ChoiceStyle: String, Codable, CaseIterable, Identifiable {
     var description: String {
         switch self {
         case .bestValue:
-            return "Comparing prices and looking for the best deal."
+            return "I compare prices and try to find the best deal."
         case .safeChoice:
-            return "Sticking with familiar or reliable picks."
+            return "I stick to wines I already know."
         case .interesting:
-            return "Trying something new or less obvious."
+            return "I like trying unfamiliar wines."
         case .premium:
-            return "Willing to spend more for something special."
+            return "I spend more hoping for something special."
         }
     }
 }
