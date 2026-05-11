@@ -379,36 +379,29 @@ struct MainView: View {
 
     private var heroScanCard: some View {
         Button(action: openCamera) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 30)
-                    .fill(
-                        LinearGradient(
-                            colors: [Color.wineDeep, Color.wineAccent],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
+            VStack(spacing: 10) {
+//                RoundedRectangle(cornerRadius: 16)
+//                    .fill(Color.none)
+//                    .frame(width: 74, height: 74)
+//                    .overlay {
+//                        Image(systemName: "camera.viewfinder")
+//                            .font(.system(size: 60))
+//                            .foregroundStyle(Color.wineSoftPeach)
+//                    }
+                
+                Image(systemName: "document.viewfinder.fill")
+                    .font(.system(size: 60))
+                    .foregroundStyle(Color.wineSoftPeach)
 
-                VStack(spacing: 10) {
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(Color.wineSoftPeach)
-                        .frame(width: 74, height: 74)
-                        .overlay {
-                            Image(systemName: "camera.fill")
-                                .font(.system(size: 34))
-                                .foregroundStyle(Color.wineAccent)
-                        }
-
-                    Text("Scan wine list")
-                        .font(.system(size: 28, weight: .medium, design: .default))
-                        .tracking(1.2)
-                        .foregroundStyle(Color.wineSoftPeach)
-
-                }
+                Text("Scan Wine List")
+                    .font(.system(size: 28, weight: .medium, design: .default))
+                    .tracking(1.2)
+                    .foregroundStyle(Color.wineSoftPeach)
             }
+            .frame(maxWidth: .infinity)
             .frame(height: 200)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(ScanHeroButtonStyle())
     }
 
     private var sourceOptions: some View {
@@ -430,6 +423,15 @@ struct MainView: View {
             }
 
             HStack(spacing: 8) {
+                
+                optionButton(
+                    title: "Gallery",
+                    subtitle: "PDF or photo",
+                    systemImage: "photo.on.rectangle"
+                ) {
+                    isShowingPhotoPicker = true
+                }
+                
                 optionButton(
                     title: "PDF",
                     subtitle: "PDF or photo",
@@ -438,13 +440,6 @@ struct MainView: View {
                     isShowingFileImporter = true
                 }
 
-                optionButton(
-                    title: "Gallery",
-                    subtitle: "PDF or photo",
-                    systemImage: "photo.on.rectangle"
-                ) {
-                    isShowingPhotoPicker = true
-                }
 //                optionButton(
 //                    title: "QR",
 //                    subtitle: "Menu link",
@@ -472,7 +467,7 @@ struct MainView: View {
         Button(action: action) {
             VStack(spacing: 8) {
                 Image(systemName: systemImage)
-                    .font(.title3.weight(.semibold))
+                    .font(.title3.weight(.regular))
                     .foregroundStyle(Color.wineAccent)
                     .frame(width: 22, height: 22)
 
@@ -535,6 +530,30 @@ struct MainView: View {
                 .buttonStyle(.plain)
             }
         }
+    }
+}
+
+private struct ScanHeroButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .background(
+                LinearGradient(
+                    colors: [
+                        Color.wineAccent.opacity(configuration.isPressed ? 0.9 : 1),
+                        Color.wineDeep.opacity(configuration.isPressed ? 0.9 : 1)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
+            .clipShape(.rect(cornerRadius: 22))
+            .shadow(
+                color: Color.wineDeep.opacity(0.14),
+                radius: configuration.isPressed ? 8 : 14,
+                y: configuration.isPressed ? 4 : 8
+            )
+            .scaleEffect(configuration.isPressed ? 0.995 : 1)
+            .animation(.easeOut(duration: 0.18), value: configuration.isPressed)
     }
 }
 
