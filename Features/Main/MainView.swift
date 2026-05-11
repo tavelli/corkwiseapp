@@ -388,7 +388,7 @@ struct MainView: View {
                     .foregroundStyle(Color.wineSoftPeach)
 
                 Text("Scan wine list")
-                    .font(.system(size: 28, weight: .medium, design: .default))
+                    .font(.system(size: 28, weight: .semibold, design: .default))
                     .tracking(1.2)
                     .foregroundStyle(Color.wineSoftPeach)
             }
@@ -442,7 +442,7 @@ struct MainView: View {
 //                    isShowingURLImporter = true
 //                }
                 optionButton(
-                    title: "URL",
+                    title: "Link",
                     subtitle: "Menu link",
                     systemImage: "link"
                 ) {
@@ -472,7 +472,7 @@ struct MainView: View {
                     .foregroundStyle(Color.wineText)
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 70)
+            .frame(height: 78)
             .background(Color.wineOptionBackground)
             .clipShape(.rect(cornerRadius: 18))
             .overlay {
@@ -530,7 +530,7 @@ struct MainView: View {
 private struct ScanHeroButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .background(
+            .background {
                 LinearGradient(
                     colors: [
                         Color.wineAccent.opacity(configuration.isPressed ? 0.9 : 1),
@@ -539,7 +539,11 @@ private struct ScanHeroButtonStyle: ButtonStyle {
                     startPoint: .top,
                     endPoint: .bottom
                 )
-            )
+
+                ScanHeroGrainTexture()
+                    .blendMode(.overlay)
+                    .opacity(configuration.isPressed ? 0.45 : 0.55)
+            }
             .clipShape(.rect(cornerRadius: 22))
             .shadow(
                 color: Color.wineDeep.opacity(0.14),
@@ -548,6 +552,34 @@ private struct ScanHeroButtonStyle: ButtonStyle {
             )
             .scaleEffect(configuration.isPressed ? 0.995 : 1)
             .animation(.easeOut(duration: 0.18), value: configuration.isPressed)
+    }
+}
+
+private struct ScanHeroGrainTexture: View {
+    var body: some View {
+        Canvas { context, size in
+            let speckCount = max(240, Int((size.width * size.height) / 78))
+
+            for index in 0..<speckCount {
+                let x = unitNoise(index * 17 + 11) * size.width
+                let y = unitNoise(index * 29 + 23) * size.height
+                let brightness = unitNoise(index * 41 + 37)
+                let opacity = 0.018 + unitNoise(index * 53 + 47) * 0.024
+                let diameter = 0.55 + unitNoise(index * 67 + 59) * 0.75
+                let color = brightness > 0.52
+                    ? Color.white.opacity(opacity)
+                    : Color.black.opacity(opacity * 0.82)
+
+                let rect = CGRect(x: x, y: y, width: diameter, height: diameter)
+                context.fill(Path(ellipseIn: rect), with: .color(color))
+            }
+        }
+        .allowsHitTesting(false)
+    }
+
+    private func unitNoise(_ seed: Int) -> Double {
+        let value = sin(Double(seed) * 12.9898) * 43758.5453
+        return value - floor(value)
     }
 }
 
