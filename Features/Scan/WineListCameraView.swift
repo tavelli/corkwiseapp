@@ -8,6 +8,7 @@ struct WineListCameraView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var cameraModel: WineListCameraModel
     @State private var showingDiscardConfirmation = false
+    @State private var showingPageTray = false
 
     let onAnalyze: ([UIImage]) -> Void
     let onUnavailable: () -> Void
@@ -91,6 +92,20 @@ struct WineListCameraView: View {
         .onDisappear {
             cameraModel.stop()
         }
+        .sheet(isPresented: $showingPageTray) {
+            CapturedPagesTray(
+                pages: cameraModel.capturedPages,
+                deletePage: { pageID in
+                    cameraModel.deletePage(id: pageID)
+                    if cameraModel.capturedPages.isEmpty {
+                        showingPageTray = false
+                    }
+                }
+            )
+            .presentationDetents([.height(280)])
+            .presentationDragIndicator(.hidden)
+            .presentationBackground(Color.black.opacity(0.94))
+        }
         .confirmationDialog(
             "Discard captured pages?",
             isPresented: $showingDiscardConfirmation,
@@ -139,19 +154,22 @@ struct WineListCameraView: View {
 
     private var bottomControls: some View {
         VStack(spacing: 16) {
-            if cameraModel.capturedPages.isEmpty == false {
-                if cameraModel.hasReachedPageLimit {
-                    Text("Maximum 4 pages")
-                        .font(.caption.bold())
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 7)
-                        .background(.black.opacity(0.46))
-                        .clipShape(.capsule)
-                }
-
-                thumbnailStrip
-            } else {
+            if cameraModel.hasReachedPageLimit {
+                Text("Maximum of 4 pages per scan")
+                    .font(.caption.bold())
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 7)
+                    .background(.black.opacity(0.46))
+                    .clipShape(.capsule)
+//                Text("Keeps analysis fast and accurate.")
+//                    .font(.caption.bold())
+//                    .foregroundStyle(.white)
+//                    .padding(.horizontal, 12)
+//                    .padding(.vertical, 7)
+//                    .background(.black.opacity(0.46))
+//                    .clipShape(.capsule)
+            } else if cameraModel.capturedPages.isEmpty {
                 Text("Snap each page")
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.white.opacity(0.92))
@@ -162,8 +180,13 @@ struct WineListCameraView: View {
             }
 
             HStack(alignment: .center) {
-                Color.clear
-                    .frame(width: 112, height: 52)
+                if cameraModel.capturedPages.isEmpty {
+                    Color.clear
+                        .frame(width: 112, height: 52)
+                } else {
+                    pageStackButton
+                        .transition(.opacity.combined(with: .move(edge: .leading)))
+                }
 
                 Spacer()
 
@@ -183,24 +206,15 @@ struct WineListCameraView: View {
         }
     }
 
-    private var thumbnailStrip: some View {
-        ScrollView(.horizontal) {
-            HStack(spacing: 10) {
-                ForEach(cameraModel.capturedPages.enumerated(), id: \.element.id) { index, page in
-                    CapturedPageThumbnail(
-                        page: page,
-                        number: index + 1,
-                        deleteAction: {
-                            cameraModel.deletePage(id: page.id)
-                        }
-                    )
-                }
-            }
-            .padding(.horizontal, 2)
-            .padding(.top, 8)
+    private var pageStackButton: some View {
+        Button {
+            showingPageTray = true
+        } label: {
+            CapturedPageStackPreview(pages: cameraModel.capturedPages)
+                .frame(width: 112, height: 86, alignment: .leading)
         }
-        .scrollIndicators(.hidden)
-        .frame(height: 100)
+        .buttonStyle(.plain)
+        .accessibilityLabel("Review captured pages")
     }
 
     private var analyzeButton: some View {
@@ -213,7 +227,7 @@ struct WineListCameraView: View {
                 Text("Analyze")
                     .font(.headline.bold())
 
-                Image(systemName: "chevron.right")
+                Image(systemName: "arrow.right")
                     .font(.subheadline.bold())
             }
             .foregroundStyle(Color.wineSoftPeach)
@@ -254,7 +268,124 @@ struct WineListCameraView: View {
     }
 }
 
-private struct CapturedPageThumbnail: View {
+private struct CapturedPageStackPreview: View {
+    let pages: [CapturedWineListPage]
+
+    private var latestPage: CapturedWineListPage? {
+        pages.last
+    }
+
+    var body: some View {
+        ZStack(alignment: .topTrailing) {
+            ZStack(alignment: .bottomLeading) {
+                ForEach(0..<min(pages.count, 3), id: \.self) { index in
+                    RoundedRectangle(cornerRadius: 13)
+                        .stroke(Color.wineSoftPeach.opacity(0.86), lineWidth: 1.5)
+                        .frame(width: 62, height: 80)
+                        .offset(x: CGFloat(index) * 8, y: CGFloat(index) * -4.5)
+                }
+
+                if let latestPage {
+                    Image(uiImage: latestPage.image)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 62, height: 80)
+                        .clipShape(.rect(cornerRadius: 13))
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color.wineSoftPeach.opacity(0.86), lineWidth: 1.5)
+                        }
+                        .offset(x: CGFloat(max(min(pages.count, 3) - 1, 0)) * 8, y: CGFloat(max(min(pages.count, 3) - 1, 0)) * -4.5)
+                }
+            }
+            .frame(width: 90, height: 92, alignment: .bottomLeading)
+            .shadow(color: .black.opacity(0.2), radius: 5, y: 3)
+
+            Text("\(pages.count)")
+                .font(.caption.bold())
+                .foregroundStyle(.white.opacity(0.92))
+                .frame(width: 26, height: 26)
+                .background(.black.opacity(0.76))
+                .clipShape(.circle)
+                .offset(x: 1, y: -1)
+        }
+    }
+}
+
+private struct CapturedPagesTray: View {
+    @Environment(\.dismiss) private var dismiss
+
+    let pages: [CapturedWineListPage]
+    let deletePage: (UUID) -> Void
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Capsule()
+                .fill(.white.opacity(0.24))
+                .frame(width: 38, height: 5)
+                .padding(.top, 8)
+                .padding(.bottom, 16)
+
+            VStack(alignment: .leading, spacing: 18) {
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack(spacing: 8) {
+                            Text("Captured pages")
+                                .font(.headline.bold())
+                                .foregroundStyle(.white)
+
+                            Text("\(pages.count)")
+                                .font(.caption.bold())
+                                .foregroundStyle(.white.opacity(0.9))
+                                .frame(width: 22, height: 22)
+                                .background(.white.opacity(0.14))
+                                .clipShape(.circle)
+                        }
+
+                        Text("Tap a thumbnail to view")
+                            .font(.caption)
+                            .foregroundStyle(.white.opacity(0.54))
+                    }
+
+                    Spacer()
+
+                    Button("Done") {
+                        dismiss()
+                    }
+                    .font(.subheadline.bold())
+                    .foregroundStyle(Color.wineSoftPeach)
+                    .padding(.horizontal, 18)
+                    .frame(height: 38)
+                    .background(.white.opacity(0.07))
+                    .clipShape(.capsule)
+                }
+                .padding(.horizontal, 22)
+
+                ScrollView(.horizontal) {
+                    HStack(spacing: 14) {
+                        ForEach(pages.enumerated(), id: \.element.id) { index, page in
+                            CapturedPageTrayThumbnail(
+                                page: page,
+                                number: index + 1,
+                                deleteAction: {
+                                    deletePage(page.id)
+                                }
+                            )
+                        }
+                    }
+                    .padding(.top, 4)
+                    .padding(.horizontal, 22)
+                    .padding(.bottom, 8)
+                }
+                .scrollIndicators(.hidden)
+            }
+            .padding(.bottom, 22)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+    }
+}
+
+private struct CapturedPageTrayThumbnail: View {
     let page: CapturedWineListPage
     let number: Int
     let deleteAction: () -> Void
@@ -264,26 +395,34 @@ private struct CapturedPageThumbnail: View {
             Image(uiImage: page.image)
                 .resizable()
                 .scaledToFill()
-                .frame(width: 64, height: 82)
-                .clipShape(.rect(cornerRadius: 8))
+                .frame(width: 116, height: 164)
+                .clipShape(.rect(cornerRadius: 10))
                 .overlay {
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(.white.opacity(0.68), lineWidth: 1)
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.wineSoftPeach.opacity(0.86), lineWidth: 1.5)
                 }
+
+//            Text("\(number)")
+//                .font(.caption.bold())
+//                .foregroundStyle(.white.opacity(0.94))
+//                .frame(width: 24, height: 24)
+//                .background(.black.opacity(0.58))
+//                .clipShape(.circle)
+//                .offset(x: -84, y: 8)
 
             Button(action: deleteAction) {
                 Image(systemName: "xmark")
-                    .font(.caption.weight(.bold))
-                    .foregroundStyle(.white.opacity(0.92))
-                    .frame(width: 24, height: 24)
-                    .background(.black.opacity(0.48))
+                    .font(.caption.bold())
+                    .foregroundStyle(.white.opacity(0.94))
+                    .frame(width: 26, height: 26)
+                    .background(.black.opacity(0.5))
                     .clipShape(.circle)
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Delete page \(number)")
-            .offset(x: 7, y: -7)
+            .offset(x: -8, y: 8)
         }
-        .frame(width: 76, height: 92, alignment: .bottom)
+        .frame(width: 116, height: 164)
     }
 }
 
@@ -587,6 +726,8 @@ private enum WineListCameraPreviewImages {
 
     static var twoPages: [UIImage] {
         [
+            samplePage(title: "By the Glass", tint: UIColor(red: 0.98, green: 0.77, blue: 0.63, alpha: 1)),
+            samplePage(title: "By the Glass", tint: UIColor(red: 0.98, green: 0.77, blue: 0.63, alpha: 1)),
             samplePage(title: "By the Glass", tint: UIColor(red: 0.98, green: 0.77, blue: 0.63, alpha: 1)),
             samplePage(title: "Reds", tint: UIColor(red: 0.45, green: 0.07, blue: 0.09, alpha: 1)),
         ]
