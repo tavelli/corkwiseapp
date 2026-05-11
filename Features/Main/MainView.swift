@@ -378,31 +378,22 @@ struct MainView: View {
     }
 
     private var heroScanCard: some View {
-        Button(action: openCamera) {
-            VStack(spacing: 10) {
-//                RoundedRectangle(cornerRadius: 16)
-//                    .fill(Color.none)
-//                    .frame(width: 74, height: 74)
-//                    .overlay {
-//                        Image(systemName: "camera.viewfinder")
-//                            .font(.system(size: 60))
-//                            .foregroundStyle(Color.wineSoftPeach)
-//                    }
-                
+        return Button(action: openCamera) {
+            VStack(spacing: 4) {
                 Image("winemenuscan")
                     .renderingMode(.template)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 60, height: 60)
+                    .frame(width: 80, height: 80)
                     .foregroundStyle(Color.wineSoftPeach)
 
-                Text("Scan Wine List")
+                Text("Scan wine list")
                     .font(.system(size: 28, weight: .medium, design: .default))
                     .tracking(1.2)
                     .foregroundStyle(Color.wineSoftPeach)
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 200)
+            .frame(height: 180)
         }
         .buttonStyle(ScanHeroButtonStyle())
     }
