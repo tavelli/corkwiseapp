@@ -11,7 +11,9 @@ struct AppRouter: View {
             return .onboarding
         }
 
-        if entitlementManager.isConfigured, entitlementManager.hasActiveEntitlement == false {
+        if entitlementManager.isConfigured,
+           entitlementManager.isLoading == false,
+           entitlementManager.hasActiveEntitlement == false {
             return .paywall
         }
 
@@ -23,17 +25,13 @@ struct AppRouter: View {
 
         NavigationStack(path: $bindableAppState.navigationPath) {
             Group {
-                if entitlementManager.isLoading {
-                    ProgressView("Checking access…")
-                } else {
-                    switch currentRoute {
-                    case .onboarding:
-                        OnboardingView(existingPreferences: preferenceRecords.first)
-                    case .paywall:
-                        PaywallView(preferences: preferenceRecords.first)
-                    case .main:
-                        MainView(preferences: preferenceRecords.first)
-                    }
+                switch currentRoute {
+                case .onboarding:
+                    OnboardingView(existingPreferences: preferenceRecords.first)
+                case .paywall:
+                    PaywallView(preferences: preferenceRecords.first)
+                case .main:
+                    MainView(preferences: preferenceRecords.first)
                 }
             }
             .navigationDestination(for: AppDestination.self) { destination in

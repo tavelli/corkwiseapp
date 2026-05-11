@@ -22,8 +22,8 @@ final class EntitlementManager {
         defer { isLoading = false }
 
         if isConfigured {
-            await refreshEntitlement()
-            await loadPaywallConfiguration()
+            await refreshEntitlement(updatesLoadingState: false)
+            await loadPaywallConfigurationIfNeeded()
             return
         }
 
@@ -46,8 +46,8 @@ final class EntitlementManager {
                 hasActivatedAdaptyUI = true
             }
             isConfigured = true
-            await refreshEntitlement()
-            await loadPaywallConfiguration()
+            await refreshEntitlement(updatesLoadingState: false)
+            await loadPaywallConfigurationIfNeeded()
         } catch {
             isConfigured = false
             hasActiveEntitlement = false
@@ -61,8 +61,20 @@ final class EntitlementManager {
     }
 
     func refreshEntitlement() async {
+        await refreshEntitlement(updatesLoadingState: true)
+    }
+
+    private func refreshEntitlement(updatesLoadingState: Bool) async {
+        if updatesLoadingState {
+            isLoading = true
+        }
+        defer {
+            if updatesLoadingState {
+                isLoading = false
+            }
+        }
+
         guard isConfigured else {
-            isLoading = false
             return
         }
 
@@ -72,8 +84,6 @@ final class EntitlementManager {
         } catch {
             hasActiveEntitlement = false
         }
-
-        isLoading = false
     }
 
     func loadPaywallConfiguration(preferences: UserWinePreferences? = nil) async {
@@ -116,6 +126,12 @@ final class EntitlementManager {
             purchaseErrorMessage = "Couldn't load the paywall. Please try again."
             #endif
         }
+    }
+
+    private func loadPaywallConfigurationIfNeeded() async {
+        guard hasActiveEntitlement == false else { return }
+
+        await loadPaywallConfiguration()
     }
 
     func restorePurchases() async throws {
