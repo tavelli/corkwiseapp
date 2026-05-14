@@ -57,7 +57,20 @@ struct AppConfiguration {
     }
 
     var supabaseAPIKey: String? {
-        supabaseAnonKey
+        let environmentValues = Self.normalizedEnvironment(environment.environment)
+        if let overrideKey = Self.stringValue(for: environmentValues["CORKWISE_SUPABASE_API_KEY_OVERRIDE"]) {
+            return overrideKey
+        }
+
+        return supabaseAnonKey
+    }
+
+    var authStorageKey: String {
+        let baseValue = supabaseBaseURL?.absoluteString ?? "unconfigured"
+        let normalizedValue = baseValue
+            .unicodeScalars
+            .map { CharacterSet.alphanumerics.contains($0) ? Character($0) : "_" }
+        return "corkwise.supabase.auth.\(String(normalizedValue))"
     }
 
     var adaptySDKKey: String? {
@@ -86,6 +99,12 @@ private extension AppConfiguration {
         guard let rawValue = bundle.object(forInfoDictionaryKey: key) as? String else {
             return nil
         }
+
+        return stringValue(for: rawValue)
+    }
+
+    static func stringValue(for rawValue: String?) -> String? {
+        guard let rawValue else { return nil }
 
         let trimmedValue = rawValue
             .removingInvisibleFormatCharacters()

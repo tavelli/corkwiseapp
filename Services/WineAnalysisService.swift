@@ -74,6 +74,12 @@ struct WineAnalysisService {
     }
 
     private func send(_ requestBody: AnalyzeWineMenuRequest, to endpoint: URL) async throws -> WineScanResult {
+        
+        
+        #if DEBUG
+        print("WineAnalysisService request URL: \(endpoint.absoluteString)")
+        #endif
+        
         var request = URLRequest(url: endpoint)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -99,7 +105,6 @@ struct WineAnalysisService {
 
         #if DEBUG
         let responseText = String(data: responseData, encoding: .utf8) ?? "<non-utf8 response>"
-        print("WineAnalysisService request URL: \(endpoint.absoluteString)")
         print("WineAnalysisService response status: \(httpResponse.statusCode)")
         print("WineAnalysisService response body: \(responseText)")
         #endif

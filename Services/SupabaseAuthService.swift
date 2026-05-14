@@ -40,7 +40,7 @@ final class SupabaseAuthService {
                 "apikey": apiKey,
                 "Authorization": "Bearer \(apiKey)",
             ],
-            storageKey: "corkwise.supabase.auth",
+            storageKey: AppConfiguration.shared.authStorageKey,
             localStorage: AuthClient.Configuration.defaultLocalStorage
         )
         authClient = client
