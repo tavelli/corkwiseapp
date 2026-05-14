@@ -256,7 +256,7 @@ struct WineListCameraView: View {
         }
         .buttonStyle(.plain)
         .disabled(cameraModel.canCapture == false)
-        .accessibilityLabel(cameraModel.capturedPages.count >= wineListCameraPageLimit ? "Page limit reached" : "Capture page")
+        .accessibilityLabel(cameraModel.capturedPages.count >= wineListCameraPageLimit ? String(localized: "Page limit reached") : String(localized: "Capture page"))
     }
 
     private func close() {
@@ -419,7 +419,7 @@ private struct CapturedPageTrayThumbnail: View {
                     .clipShape(.circle)
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Delete page \(number)")
+            .accessibilityLabel(String(localized: "Delete page \(number)"))
             .offset(x: -8, y: 8)
         }
         .frame(width: 116, height: 164)
@@ -481,11 +481,11 @@ private enum WineListFlashMode: CaseIterable {
     var accessibilityLabel: String {
         switch self {
         case .auto:
-            "Flash auto"
+            String(localized: "Flash auto")
         case .on:
-            "Flash on"
+            String(localized: "Flash on")
         case .off:
-            "Flash off"
+            String(localized: "Flash off")
         }
     }
 

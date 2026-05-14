@@ -50,17 +50,17 @@ struct CategoryHighlightsView: View {
     private static func displayTitle(for section: RecommendationCategorySection) -> String {
         switch section.key {
         case "best_value":
-            return "Best Value"
+            return String(localized: "Best Value")
         case "worth_the_splurge":
-            return "Worth the Splurge"
+            return String(localized: "Worth the Splurge")
         case "crowd_pleaser":
-            return "Crowd Pleaser"
+            return String(localized: "Crowd Pleaser")
         case "hidden_gem":
-            return "Hidden Gem"
+            return String(localized: "Hidden Gem")
         case "overpriced_here":
-            return "Overpriced Here"
+            return String(localized: "Overpriced Here")
         case "try_something_new":
-            return "Try Something New"
+            return String(localized: "Try Something New")
         default:
             return section.title
         }

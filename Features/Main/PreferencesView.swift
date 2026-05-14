@@ -226,7 +226,7 @@ struct PreferencesView: View {
 }
 
 private struct PreferenceSection<Content: View>: View {
-    let title: String
+    let title: LocalizedStringKey
     @ViewBuilder let content: Content
 
     var body: some View {

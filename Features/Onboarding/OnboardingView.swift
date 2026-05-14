@@ -93,7 +93,7 @@ struct OnboardingView: View {
                         .font(.title3.weight(.regular))
                 }
             } else {
-                Text(viewModel.isLastStep ? "Finish" : "Continue")
+                Text(viewModel.isLastStep ? String(localized: "Finish") : String(localized: "Continue"))
             }
         }
         .buttonStyle(OnboardingPrimaryButtonStyle())
@@ -241,10 +241,10 @@ private struct OnboardingIntroStepView: View {
                         background: Color.wineAccent.opacity(0.06),
                         systemImage: "xmark",
                         items: [
-                            "Hesitating over expensive options",
-                            "Guessing under pressure",
-                            "Defaulting to familiar picks",
-                            "Studying the wine list"
+                            String(localized: "Hesitating over expensive options"),
+                            String(localized: "Guessing under pressure"),
+                            String(localized: "Defaulting to familiar picks"),
+                            String(localized: "Studying the wine list")
                         ]
                     )
 
@@ -253,10 +253,10 @@ private struct OnboardingIntroStepView: View {
                         background: Color(red: 0.18, green: 0.34, blue: 0.16).opacity(0.07),
                         systemImage: "checkmark",
                         items: [
-                            "Finding wines worth ordering",
-                            "Ordering with confidence",
-                            "Discovering standout bottles",
-                            "Enjoying the moment"
+                            String(localized: "Finding wines worth ordering"),
+                            String(localized: "Ordering with confidence"),
+                            String(localized: "Discovering standout bottles"),
+                            String(localized: "Enjoying the moment")
                         ]
                     )
                 }
@@ -413,7 +413,7 @@ private struct VarietalQuestionView: View {
 }
 
 private struct QuestionSection<Content: View>: View {
-    let title: String
+    let title: LocalizedStringKey
     @ViewBuilder let content: Content
 
     var body: some View {

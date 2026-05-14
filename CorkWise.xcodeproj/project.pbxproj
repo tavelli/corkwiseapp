@@ -14,6 +14,8 @@
 		375DE5F72FAE4094008D4574 /* SupabaseAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375DE5F62FAE4094008D4574 /* SupabaseAuthService.swift */; };
 		375DE5F92FAE4E16008D4574 /* BuildChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375DE5F82FAE4E16008D4574 /* BuildChannel.swift */; };
 		375DE5FB2FAE74E9008D4574 /* AdaptyUI in Frameworks */ = {isa = PBXBuildFile; productRef = 375DE5FA2FAE74E9008D4574 /* AdaptyUI */; };
+		376100002FB54F0000000000 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 376100012FB54F0000000000 /* Localizable.xcstrings */; };
+		376100022FB54F0000000000 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 376100032FB54F0000000000 /* InfoPlist.xcstrings */; };
 		37915F0C2FB21FB2003B43A8 /* WineListCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37915F0B2FB21FB2003B43A8 /* WineListCameraView.swift */; };
 		379399B82FA3CC7400246506 /* ScanFailureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399B22FA3CC7400246506 /* ScanFailureView.swift */; };
 		379399B92FA3CC7400246506 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399A62FA3CC7400246506 /* OnboardingView.swift */; };
@@ -46,6 +48,7 @@
 		37939A032FA3F10000246506 /* CameraPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399FC2FA3F10000246506 /* CameraPicker.swift */; };
 		37939A042FA3F10000246506 /* BestPickHeroView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399FD2FA3F10000246506 /* BestPickHeroView.swift */; };
 		37939A052FA3F10000246506 /* CategoryHighlightsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399FE2FA3F10000246506 /* CategoryHighlightsView.swift */; };
+		37FDAFAD2FB60F21002F91C0 /* CorkwiseStorekitConfig.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 37FDAFAC2FB60F21002F91C0 /* CorkwiseStorekitConfig.storekit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -55,6 +58,8 @@
 		375DE5F42FAE4094008D4574 /* AppIdentityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIdentityService.swift; sourceTree = "<group>"; };
 		375DE5F62FAE4094008D4574 /* SupabaseAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseAuthService.swift; sourceTree = "<group>"; };
 		375DE5F82FAE4E16008D4574 /* BuildChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildChannel.swift; sourceTree = "<group>"; };
+		376100012FB54F0000000000 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		376100032FB54F0000000000 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 		37915F0B2FB21FB2003B43A8 /* WineListCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WineListCameraView.swift; sourceTree = "<group>"; };
 		379399A22FA3CC7400246506 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		379399A32FA3CC7400246506 /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
@@ -91,6 +96,7 @@
 		379399FC2FA3F10000246506 /* CameraPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPicker.swift; sourceTree = "<group>"; };
 		379399FD2FA3F10000246506 /* BestPickHeroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BestPickHeroView.swift; sourceTree = "<group>"; };
 		379399FE2FA3F10000246506 /* CategoryHighlightsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryHighlightsView.swift; sourceTree = "<group>"; };
+		37FDAFAC2FB60F21002F91C0 /* CorkwiseStorekitConfig.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = CorkwiseStorekitConfig.storekit; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -212,8 +218,11 @@
 		3796344A2FA3AEBC00E30EAA = {
 			isa = PBXGroup;
 			children = (
+				37FDAFAC2FB60F21002F91C0 /* CorkwiseStorekitConfig.storekit */,
 				375DE5F02FAC2097008D4574 /* AGENTS.md */,
+				376100032FB54F0000000000 /* InfoPlist.xcstrings */,
 				375DE5EE2FAB9D92008D4574 /* Launch Screen.storyboard */,
+				376100012FB54F0000000000 /* Localizable.xcstrings */,
 				379399DE2FA3D27500246506 /* CorkWise-Info.plist */,
 				379399A42FA3CC7400246506 /* Models */,
 				379399AA2FA3CC7400246506 /* PLAN.md */,
@@ -281,6 +290,8 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				"en-GB",
+				"en-AU",
 				Base,
 			);
 			mainGroup = 3796344A2FA3AEBC00E30EAA;
@@ -304,8 +315,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				376100022FB54F0000000000 /* InfoPlist.xcstrings in Resources */,
 				375DE5EF2FAB9D92008D4574 /* Launch Screen.storyboard in Resources */,
 				379399DD2FA3CF1E00246506 /* Assets.xcassets in Resources */,
+				376100002FB54F0000000000 /* Localizable.xcstrings in Resources */,
+				37FDAFAD2FB60F21002F91C0 /* CorkwiseStorekitConfig.storekit in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -53,9 +53,9 @@ final class EntitlementManager {
             hasActiveEntitlement = false
             Self.logPaywallError(error, context: "configure")
             #if DEBUG
-            purchaseErrorMessage = "Paywall setup failed: \(Self.debugDescription(for: error))"
+            purchaseErrorMessage = String(localized: "Paywall setup failed: \(Self.debugDescription(for: error))")
             #else
-            purchaseErrorMessage = "Paywall is unavailable right now. Please try again later."
+            purchaseErrorMessage = String(localized: "Paywall is unavailable right now. Please try again later.")
             #endif
         }
     }
@@ -124,9 +124,9 @@ final class EntitlementManager {
             loadedPaywallCustomAttributes = nil
             Self.logPaywallError(error, context: "load paywall \(AppConfiguration.shared.adaptyPaywallPlacementID)")
             #if DEBUG
-            purchaseErrorMessage = "Couldn't load paywall \(AppConfiguration.shared.adaptyPaywallPlacementID): \(Self.debugDescription(for: error))"
+            purchaseErrorMessage = String(localized: "Couldn't load paywall \(AppConfiguration.shared.adaptyPaywallPlacementID): \(Self.debugDescription(for: error))")
             #else
-            purchaseErrorMessage = "Couldn't load the paywall. Please try again."
+            purchaseErrorMessage = String(localized: "Couldn't load the paywall. Please try again.")
             #endif
         }
     }
@@ -147,9 +147,9 @@ final class EntitlementManager {
         hasActiveEntitlement = Self.hasActiveEntitlement(in: profile)
 
         if hasActiveEntitlement {
-            purchaseStatusMessage = "Purchases restored."
+            purchaseStatusMessage = String(localized: "Purchases restored.")
         } else {
-            purchaseErrorMessage = "No active subscription was found for this Apple ID."
+            purchaseErrorMessage = String(localized: "No active subscription was found for this Apple ID.")
         }
     }
 
@@ -171,7 +171,7 @@ final class EntitlementManager {
                 }
             }
         case .pending:
-            purchaseStatusMessage = "Purchase pending approval."
+            purchaseStatusMessage = String(localized: "Purchase pending approval.")
         case .userCancelled:
             break
         }
@@ -179,7 +179,7 @@ final class EntitlementManager {
 
     func failPurchase() {
         isPurchaseInProgress = false
-        purchaseErrorMessage = "Purchase couldn't be completed. Please try again."
+        purchaseErrorMessage = String(localized: "Purchase couldn't be completed. Please try again.")
     }
 
     func finishRestore(_ profile: AdaptyProfile) {
@@ -187,19 +187,19 @@ final class EntitlementManager {
         hasActiveEntitlement = Self.hasActiveEntitlement(in: profile)
 
         if hasActiveEntitlement {
-            purchaseStatusMessage = "Purchases restored."
+            purchaseStatusMessage = String(localized: "Purchases restored.")
         } else {
-            purchaseErrorMessage = "No active subscription was found for this Apple ID."
+            purchaseErrorMessage = String(localized: "No active subscription was found for this Apple ID.")
         }
     }
 
     func failRestore() {
         isPurchaseInProgress = false
-        purchaseErrorMessage = "Couldn't restore purchases. Please try again."
+        purchaseErrorMessage = String(localized: "Couldn't restore purchases. Please try again.")
     }
 
     func failRendering() {
-        purchaseErrorMessage = "Couldn't render the paywall. Please try again."
+        purchaseErrorMessage = String(localized: "Couldn't render the paywall. Please try again.")
     }
 
     private static func hasActiveEntitlement(in profile: AdaptyProfile) -> Bool {

@@ -18,7 +18,7 @@ final class MainViewModel {
     var bottleContext: BottleContext = .forMe
     var categoryPreference: WineCategoryPreference = .anything
     var isScanning = false
-    var loadingMessage = "Reading the wine list…"
+    var loadingMessage = String(localized: "Reading the wine list…")
     var failure: ScanFailureState?
     var selectedPreviewImage: UIImage?
     var canRetryLastScan: Bool {
@@ -215,13 +215,13 @@ final class MainViewModel {
 
     private func startLoadingMessages() {
         loadingTask?.cancel()
-        loadingMessage = "Reading the wine list…"
+        loadingMessage = String(localized: "Reading the wine list…")
 
         loadingTask = Task { @MainActor in
             let messages = [
-                "Estimating value…",
-                "Comparing producer quality…",
-                "Ranking the best picks…",
+                String(localized: "Estimating value…"),
+                String(localized: "Comparing producer quality…"),
+                String(localized: "Ranking the best picks…"),
             ]
 
             for message in messages {
@@ -237,7 +237,7 @@ final class MainViewModel {
         loadingTask = nil
         scanTask = nil
         isScanning = false
-        loadingMessage = "Reading the wine list…"
+        loadingMessage = String(localized: "Reading the wine list…")
     }
 
     private func failureState(for error: Error) -> ScanFailureState {
@@ -245,23 +245,23 @@ final class MainViewModel {
             switch serviceError {
             case .backendNotConfigured:
                 return ScanFailureState(
-                    title: "Backend not configured.",
-                    message: "Add the Supabase base URL to the app configuration before running live scans."
+                    title: String(localized: "Backend not configured."),
+                    message: String(localized: "Add the Supabase base URL to the app configuration before running live scans.")
                 )
             case .authorizationFailed:
                 return ScanFailureState(
-                    title: "Couldn't verify app access.",
-                    message: "Please try again in a moment."
+                    title: String(localized: "Couldn't verify app access."),
+                    message: String(localized: "Please try again in a moment.")
                 )
             case .entitlementRequired(let response):
                 return ScanFailureState(
-                    title: "Subscription required.",
+                    title: String(localized: "Subscription required."),
                     message: response.message
                 )
             case .invalidInput:
                 return ScanFailureState(
-                    title: "Couldn't prepare that file.",
-                    message: "Try another image or PDF with a readable wine list."
+                    title: String(localized: "Couldn't prepare that file."),
+                    message: String(localized: "Try another image or PDF with a readable wine list.")
                 )
             case .serverError(let response):
                 return ScanFailureState(
@@ -271,41 +271,41 @@ final class MainViewModel {
             case .invalidResponse(let responseBody):
                 let details = responseBody?.isEmpty == false
                     ? responseBody!
-                    : "The wine analysis service returned data the app couldn't read."
+                    : String(localized: "The wine analysis service returned data the app couldn't read.")
                 return ScanFailureState(
-                    title: "Unexpected response from the server.",
+                    title: String(localized: "Unexpected response from the server."),
                     message: details
                 )
             case .requestFailed:
                 return ScanFailureState(
-                    title: "Network request failed.",
-                    message: "Check your connection and try the scan again."
+                    title: String(localized: "Network request failed."),
+                    message: String(localized: "Check your connection and try the scan again.")
                 )
             }
         }
 
         return ScanFailureState(
-            title: "Couldn't read enough of the wine list.",
-            message: "Try taking the photo again in better light, or upload a clearer image."
+            title: String(localized: "Couldn't read enough of the wine list."),
+            message: String(localized: "Try taking the photo again in better light, or upload a clearer image.")
         )
     }
 
     private func title(for errorCode: String) -> String {
         switch errorCode {
         case "menu_unreadable":
-            return "Couldn't read enough of the wine list."
+            return String(localized: "Couldn't read enough of the wine list.")
         case "no_wines_detected":
-            return "No wines detected."
+            return String(localized: "No wines detected.")
         case "image_too_large":
-            return "Image too large."
+            return String(localized: "Image too large.")
         case "invalid_request":
-            return "Invalid scan request."
+            return String(localized: "Invalid scan request.")
         case "analysis_failed":
-            return "Analysis failed."
+            return String(localized: "Analysis failed.")
         case "entitlement_required":
-            return "Subscription required."
+            return String(localized: "Subscription required.")
         default:
-            return "Scan failed."
+            return String(localized: "Scan failed.")
         }
     }
 

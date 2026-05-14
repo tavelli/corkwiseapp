@@ -70,7 +70,7 @@ struct ScanHistoryCard: View {
 //                }
 
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(scan.restaurantName ?? "Wine List")
+                    Text(scan.restaurantName ?? String(localized: "Wine List"))
                         .font(.headline.weight(.bold))
                         .foregroundStyle(Color.wineText)
 
@@ -122,7 +122,7 @@ struct ScanHistoryCard: View {
             let result = try? JSONDecoder().decode(WineScanResult.self, from: data),
             let topRecommendation = result.recommendations.first
         else {
-            return "Unknown"
+            return String(localized: "Unknown")
         }
 
         return topRecommendation.displayTitle

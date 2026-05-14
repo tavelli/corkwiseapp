@@ -10,7 +10,7 @@ struct ResultsView: View {
         let displayName = if let restaurantName, restaurantName.isEmpty == false {
             restaurantName
         } else {
-            "Wine List"
+            String(localized: "Wine List")
         }
         let formattedDate = viewedAt.formatted(date: .abbreviated, time: .omitted)
 
@@ -52,7 +52,7 @@ struct ResultsContentView: View {
                                 recommendation: recommendation,
                                 purchaseMode: purchaseMode,
                                 currencyCode: result.currencyCode,
-                                categoryLabel: "Highly Recommend",
+                                categoryLabel: String(localized: "Highly Recommend"),
                                 categorySystemImage: "star.fill"
                             )
                         }

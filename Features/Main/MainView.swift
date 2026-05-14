@@ -76,8 +76,8 @@ struct MainView: View {
                 processSelectedImages(images)
             } onUnavailable: {
                 viewModel.failure = ScanFailureState(
-                    title: "Camera unavailable.",
-                    message: "This device doesn't currently expose a camera. Upload a photo instead."
+                    title: String(localized: "Camera unavailable."),
+                    message: String(localized: "This device doesn't currently expose a camera. Upload a photo instead.")
                 )
             }
         }
@@ -175,8 +175,8 @@ struct MainView: View {
         } catch {
             selectedPhotoItems = []
             viewModel.failure = ScanFailureState(
-                title: "Couldn't load those photos.",
-                message: "Try selecting different images from your library."
+                title: String(localized: "Couldn't load those photos."),
+                message: String(localized: "Try selecting different images from your library.")
             )
         }
     }
@@ -204,8 +204,8 @@ struct MainView: View {
             isShowingCamera = true
         } else {
             viewModel.failure = ScanFailureState(
-                title: "Camera unavailable.",
-                message: "This device doesn't currently expose a camera. Upload a photo instead."
+                title: String(localized: "Camera unavailable."),
+                message: String(localized: "This device doesn't currently expose a camera. Upload a photo instead.")
             )
         }
     }
@@ -225,8 +225,8 @@ struct MainView: View {
             }
         } catch {
             viewModel.failure = ScanFailureState(
-                title: "Couldn't import that file.",
-                message: "Choose a photo or a PDF with a readable wine list and try again."
+                title: String(localized: "Couldn't import that file."),
+                message: String(localized: "Choose a photo or a PDF with a readable wine list and try again.")
             )
         }
     }
@@ -453,8 +453,8 @@ struct MainView: View {
     }
 
     private func optionButton(
-        title: String,
-        subtitle: String,
+        title: LocalizedStringKey,
+        subtitle: LocalizedStringKey,
         systemImage: String,
         action: @escaping () -> Void
     ) -> some View {
@@ -687,7 +687,7 @@ private struct MenuURLImportSheet: View {
 
     private func submit() {
         guard let menuURL = Self.normalizedURL(from: urlText) else {
-            validationMessage = "Enter a valid menu link."
+            validationMessage = String(localized: "Enter a valid menu link.")
             return
         }
 

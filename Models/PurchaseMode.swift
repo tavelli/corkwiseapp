@@ -9,9 +9,9 @@ enum PurchaseMode: String, Codable, CaseIterable, Identifiable, Hashable {
     var title: String {
         switch self {
         case .glass:
-            return "Glass"
+            return String(localized: "Glass")
         case .bottle:
-            return "Bottle"
+            return String(localized: "Bottle")
         }
     }
 }
@@ -27,13 +27,13 @@ enum WineCategoryPreference: String, Codable, CaseIterable, Identifiable, Hashab
     var title: String {
         switch self {
         case .anything:
-            return "Anything"
+            return String(localized: "Anything")
         case .reds:
-            return "Reds"
+            return String(localized: "Reds")
         case .whites:
-            return "Whites"
+            return String(localized: "Whites")
         case .sparkling:
-            return "Sparkling"
+            return String(localized: "Sparkling")
         }
     }
 
@@ -68,18 +68,18 @@ enum BottleContext: String, Codable, CaseIterable, Identifiable, Hashable {
     var title: String {
         switch self {
         case .forMe:
-            return "For Me"
+            return String(localized: "For Me")
         case .forGroup:
-            return "For a Group"
+            return String(localized: "For a Group")
         }
     }
 
     var shortTitle: String {
         switch self {
         case .forMe:
-            return "For Me"
+            return String(localized: "For Me")
         case .forGroup:
-            return "For Group"
+            return String(localized: "For Group")
         }
     }
 }

@@ -36,13 +36,13 @@ struct ScanProgressResultsView: View {
 
     private var pageTitle: String {
         guard isOverlayVisible == false else { return "" }
-        guard let result else { return "Analyzing Wine List" }
+        guard let result else { return String(localized: "Analyzing Wine List") }
 
         let restaurantName = result.restaurantName?.trimmingCharacters(in: .whitespacesAndNewlines)
         let displayName = if let restaurantName, restaurantName.isEmpty == false {
             restaurantName
         } else {
-            "Wine List"
+            String(localized: "Wine List")
         }
 
         return "\(displayName) - \(viewedAt.formatted(date: .abbreviated, time: .omitted)) "
@@ -207,10 +207,10 @@ private struct ScanProgressModal: View {
     let cancelAction: () -> Void
 
     private let steps = [
-        "Scanning menu",
-        "Reading wine list",
-        "Evaluating quality & value",
-        "Curating recommendations",
+        String(localized: "Scanning menu"),
+        String(localized: "Reading wine list"),
+        String(localized: "Evaluating quality & value"),
+        String(localized: "Curating recommendations"),
     ]
 
     private var activeStepIndex: Int {
@@ -229,19 +229,19 @@ private struct ScanProgressModal: View {
     }
 
     private var footerText: String {
-        guard isCompleting == false else { return "Finishing up..." }
-        guard elapsedSeconds < 20 else { return "Finishing up..." }
+        guard isCompleting == false else { return String(localized: "Finishing up...") }
+        guard elapsedSeconds < 20 else { return String(localized: "Finishing up...") }
 
         let remaining = max(1, Int(ceil(20 - elapsedSeconds)))
-        return "~\(remaining) sec remaining"
+        return String(localized: "~\(remaining) sec remaining")
     }
 
     private var titleText: String {
         switch purchaseMode {
         case .glass:
-            return "Finding the best pours"
+            return String(localized: "Finding the best pours")
         case .bottle:
-            return "Finding the best bottles"
+            return String(localized: "Finding the best bottles")
         }
     }
 
