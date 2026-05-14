@@ -9,9 +9,9 @@ enum PurchaseMode: String, Codable, CaseIterable, Identifiable, Hashable {
     var title: String {
         switch self {
         case .glass:
-            return String(localized: "Glass")
+            return String(localized: .purchaseModeGlassTitle)
         case .bottle:
-            return String(localized: "Bottle")
+            return String(localized: .purchaseModeBottleTitle)
         }
     }
 }
@@ -27,13 +27,13 @@ enum WineCategoryPreference: String, Codable, CaseIterable, Identifiable, Hashab
     var title: String {
         switch self {
         case .anything:
-            return String(localized: "Anything")
+            return String(localized: .wineCategoryAnythingTitle)
         case .reds:
-            return String(localized: "Reds")
+            return String(localized: .wineCategoryRedsTitle)
         case .whites:
-            return String(localized: "Whites")
+            return String(localized: .wineCategoryWhitesTitle)
         case .sparkling:
-            return String(localized: "Sparkling")
+            return String(localized: .wineCategorySparklingTitle)
         }
     }
 
@@ -68,18 +68,18 @@ enum BottleContext: String, Codable, CaseIterable, Identifiable, Hashable {
     var title: String {
         switch self {
         case .forMe:
-            return String(localized: "For Me")
+            return String(localized: .bottleContextForMeTitle)
         case .forGroup:
-            return String(localized: "For a Group")
+            return String(localized: .bottleContextForGroupTitle)
         }
     }
 
     var shortTitle: String {
         switch self {
         case .forMe:
-            return String(localized: "For Me")
+            return String(localized: .bottleContextForMeTitle)
         case .forGroup:
-            return String(localized: "For Group")
+            return String(localized: .bottleContextForGroupShortTitle)
         }
     }
 }

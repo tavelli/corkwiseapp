@@ -9,7 +9,7 @@ struct AllScansView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 18) {
                 if scans.isEmpty {
-                    Text("No scans yet. Your scan history will appear here once you analyze a wine list.")
+                    Text(.historyEmptyAll)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .padding(20)
@@ -26,7 +26,7 @@ struct AllScansView: View {
             }
             .padding(20)
         }
-        .navigationTitle("All Scans")
+        .navigationTitle(String(localized: .historyAllTitle))
         .navigationBarTitleDisplayMode(.inline)
         .background(mainScreenBackground.ignoresSafeArea())
     }

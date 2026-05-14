@@ -57,14 +57,14 @@ struct PaywallView: View {
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 24)
 
-                Button("Try Again") {
+                Button(String(localized: .paywallTryAgain)) {
                     Task {
                         await entitlementManager.loadPaywallConfiguration(preferences: preferences)
                     }
                 }
                 .buttonStyle(PaywallRetryButtonStyle())
             } else {
-                ProgressView("Loading subscription options...")
+                ProgressView(String(localized: .paywallLoadingSubscriptionOptions))
                     .font(.footnote)
                     .foregroundStyle(Color.wineMutedText.opacity(0.9))
             }

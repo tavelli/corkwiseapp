@@ -8,20 +8,20 @@ struct RecentScansView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
             HStack {
-                Text("Recent Scans")
+                Text(.historyRecentTitle)
                     .font(.system(size: 22, weight: .semibold, design: .serif))
 
                 Spacer()
 
                 if scans.isEmpty == false {
-                    Button("See All", action: showAllScans)
+                    Button(String(localized: .historySeeAll), action: showAllScans)
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(Color.wineAccent)
                 }
             }
 
             if scans.isEmpty {
-                Text("No scans yet. Run a scan to start building local history.")
+                Text(.historyEmptyRecent)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .padding(20)
@@ -70,7 +70,7 @@ struct ScanHistoryCard: View {
 //                }
 
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(scan.restaurantName ?? String(localized: "Wine List"))
+                    Text(scan.restaurantName ?? String(localized: .commonWineList))
                         .font(.headline.weight(.bold))
                         .foregroundStyle(Color.wineText)
 
@@ -78,7 +78,7 @@ struct ScanHistoryCard: View {
                         .font(.caption.weight(.medium))
                         .foregroundStyle(.secondary)
 
-                    Text("Top pick: \(topPickName)")
+                    Text(.historyTopPick(topPickName))
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(Color.wineAccent)
                         .lineLimit(2)
@@ -122,7 +122,7 @@ struct ScanHistoryCard: View {
             let result = try? JSONDecoder().decode(WineScanResult.self, from: data),
             let topRecommendation = result.recommendations.first
         else {
-            return String(localized: "Unknown")
+            return String(localized: .commonUnknown)
         }
 
         return topRecommendation.displayTitle

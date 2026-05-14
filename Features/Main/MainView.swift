@@ -76,8 +76,8 @@ struct MainView: View {
                 processSelectedImages(images)
             } onUnavailable: {
                 viewModel.failure = ScanFailureState(
-                    title: String(localized: "Camera unavailable."),
-                    message: String(localized: "This device doesn't currently expose a camera. Upload a photo instead.")
+                    title: String(localized: .mainFailureCameraUnavailableTitle),
+                    message: String(localized: .mainFailureCameraUnavailableMessage)
                 )
             }
         }
@@ -175,8 +175,8 @@ struct MainView: View {
         } catch {
             selectedPhotoItems = []
             viewModel.failure = ScanFailureState(
-                title: String(localized: "Couldn't load those photos."),
-                message: String(localized: "Try selecting different images from your library.")
+                title: String(localized: .mainFailurePhotosLoadTitle),
+                message: String(localized: .mainFailurePhotosLoadMessage)
             )
         }
     }
@@ -204,8 +204,8 @@ struct MainView: View {
             isShowingCamera = true
         } else {
             viewModel.failure = ScanFailureState(
-                title: String(localized: "Camera unavailable."),
-                message: String(localized: "This device doesn't currently expose a camera. Upload a photo instead.")
+                title: String(localized: .mainFailureCameraUnavailableTitle),
+                message: String(localized: .mainFailureCameraUnavailableMessage)
             )
         }
     }
@@ -225,8 +225,8 @@ struct MainView: View {
             }
         } catch {
             viewModel.failure = ScanFailureState(
-                title: String(localized: "Couldn't import that file."),
-                message: String(localized: "Choose a photo or a PDF with a readable wine list and try again.")
+                title: String(localized: .mainFailureFileImportTitle),
+                message: String(localized: .mainFailureFileImportMessage)
             )
         }
     }
@@ -387,7 +387,7 @@ struct MainView: View {
                     .frame(width: 80, height: 80)
                     .foregroundStyle(Color.wineSoftPeach)
 
-                Text("Analyze wine list")
+                Text(.mainScanAnalyzeWineList)
                     .font(.system(size: 28, weight: .semibold, design: .default))
                     .tracking(1.2)
                     .foregroundStyle(Color.wineSoftPeach)
@@ -405,7 +405,7 @@ struct MainView: View {
                     .fill(Color.wineDivider)
                     .frame(height: 1)
 
-                Text("other ways to import")
+                Text(.mainImportOtherWays)
                     .font(.caption.weight(.semibold))
                     .tracking(1.2)
                     .foregroundStyle(.secondary)
@@ -419,16 +419,16 @@ struct MainView: View {
             HStack(spacing: 8) {
                 
                 optionButton(
-                    title: "Gallery",
-                    subtitle: "PDF or photo",
+                    title: .mainImportGalleryTitle,
+                    subtitle: .mainImportPdfOrPhotoSubtitle,
                     systemImage: "photo.on.rectangle"
                 ) {
                     isShowingPhotoPicker = true
                 }
                 
                 optionButton(
-                    title: "PDF",
-                    subtitle: "PDF or photo",
+                    title: .mainImportPdfTitle,
+                    subtitle: .mainImportPdfOrPhotoSubtitle,
                     systemImage: "text.document"
                 ) {
                     isShowingFileImporter = true
@@ -436,14 +436,14 @@ struct MainView: View {
 
 //                optionButton(
 //                    title: "QR",
-//                    subtitle: "Menu link",
+//                    subtitle: .mainImportMenuLinkSubtitle,
 //                    systemImage: "qrcode"
 //                ) {
 //                    isShowingURLImporter = true
 //                }
                 optionButton(
-                    title: "Link",
-                    subtitle: "Menu link",
+                    title: .mainImportLinkTitle,
+                    subtitle: .mainImportMenuLinkSubtitle,
                     systemImage: "link"
                 ) {
                     isShowingURLImporter = true
@@ -453,8 +453,8 @@ struct MainView: View {
     }
 
     private func optionButton(
-        title: LocalizedStringKey,
-        subtitle: LocalizedStringKey,
+        title: LocalizedStringResource,
+        subtitle: LocalizedStringResource,
         systemImage: String,
         action: @escaping () -> Void
     ) -> some View {
@@ -594,11 +594,11 @@ private struct MenuURLImportSheet: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
             VStack(alignment: .leading, spacing: 7) {
-                Text("Analyze from link")
+                Text(.mainUrlImportTitle)
                     .font(.title3.weight(.semibold))
                     .foregroundStyle(Color.wineText)
 
-                Text("Enter a link to the restaurant menu page.")
+                Text(.mainUrlImportMessage)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
@@ -632,7 +632,7 @@ private struct MenuURLImportSheet: View {
                                 .frame(width: 34, height: 34)
                         }
                         .buttonStyle(.plain)
-                        .accessibilityLabel("Clear URL")
+                        .accessibilityLabel(String(localized: .mainUrlImportClearURLAccessibilityLabel))
                     }
                 }
                 .padding(.horizontal, 14)
@@ -652,7 +652,7 @@ private struct MenuURLImportSheet: View {
             }
 
             Button(action: submit) {
-                Text("Analyze Menu")
+                Text(.mainUrlImportAnalyzeMenu)
                     .font(.headline.weight(.semibold))
                     .foregroundStyle(Color.white)
                     .frame(maxWidth: .infinity)
@@ -663,7 +663,7 @@ private struct MenuURLImportSheet: View {
             .buttonStyle(.plain)
             .disabled(canSubmit == false)
 
-            Button("Cancel", role: .cancel) {
+            Button(String(localized: .commonActionCancel), role: .cancel) {
                 dismiss()
             }
             .font(.subheadline.weight(.semibold))
@@ -687,7 +687,7 @@ private struct MenuURLImportSheet: View {
 
     private func submit() {
         guard let menuURL = Self.normalizedURL(from: urlText) else {
-            validationMessage = String(localized: "Enter a valid menu link.")
+            validationMessage = String(localized: .mainUrlImportInvalidURLMessage)
             return
         }
 

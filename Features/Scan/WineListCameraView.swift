@@ -107,21 +107,21 @@ struct WineListCameraView: View {
             .presentationBackground(Color.black.opacity(0.94))
         }
         .confirmationDialog(
-            "Discard captured pages?",
+            String(localized: .cameraDiscardConfirmationTitle),
             isPresented: $showingDiscardConfirmation,
             titleVisibility: .visible
         ) {
-            Button("Discard Pages", role: .destructive) {
+            Button(String(localized: .cameraDiscardConfirmationDiscardPages), role: .destructive) {
                 dismiss()
             }
 
-            Button("Keep Capturing", role: .cancel) {}
+            Button(String(localized: .cameraDiscardConfirmationKeepCapturing), role: .cancel) {}
         }
     }
 
     private var topBar: some View {
         HStack {
-            Button("Close", systemImage: "xmark") {
+            Button(String(localized: .cameraClose), systemImage: "xmark") {
                 close()
             }
             .labelStyle(.iconOnly)
@@ -130,7 +130,7 @@ struct WineListCameraView: View {
             .frame(width: 44, height: 44)
             .background(.black.opacity(0.42))
             .clipShape(.circle)
-            .accessibilityLabel("Close camera")
+            .accessibilityLabel(String(localized: .cameraCloseAccessibilityLabel))
 
             Spacer()
 
@@ -155,7 +155,7 @@ struct WineListCameraView: View {
     private var bottomControls: some View {
         VStack(spacing: 16) {
             if cameraModel.hasReachedPageLimit {
-                Text("Maximum of 4 pages per scan")
+                Text(.cameraPageLimitMessage)
                     .font(.caption.bold())
                     .foregroundStyle(.white)
                     .padding(.horizontal, 12)
@@ -170,7 +170,7 @@ struct WineListCameraView: View {
 //                    .background(.black.opacity(0.46))
 //                    .clipShape(.capsule)
             } else if cameraModel.capturedPages.isEmpty {
-                Text("Snap each page")
+                Text(.cameraCaptureHint)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.white.opacity(0.92))
                     .padding(.horizontal, 14)
@@ -214,7 +214,7 @@ struct WineListCameraView: View {
                 .frame(width: 112, height: 86, alignment: .leading)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("Review captured pages")
+        .accessibilityLabel(String(localized: .cameraReviewPagesAccessibilityLabel))
     }
 
     private var analyzeButton: some View {
@@ -224,7 +224,7 @@ struct WineListCameraView: View {
             onAnalyze(images)
         } label: {
             HStack(spacing: 7) {
-                Text("Analyze")
+                Text(.cameraAnalyze)
                     .font(.headline.bold())
 
                 Image(systemName: "arrow.right")
@@ -237,7 +237,7 @@ struct WineListCameraView: View {
             .shadow(color: .black.opacity(0.18), radius: 6, y: 3)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("Analyze captured pages")
+        .accessibilityLabel(String(localized: .cameraAnalyzePagesAccessibilityLabel))
     }
 
     private var shutterButton: some View {
@@ -256,7 +256,7 @@ struct WineListCameraView: View {
         }
         .buttonStyle(.plain)
         .disabled(cameraModel.canCapture == false)
-        .accessibilityLabel(cameraModel.capturedPages.count >= wineListCameraPageLimit ? String(localized: "Page limit reached") : String(localized: "Capture page"))
+        .accessibilityLabel(cameraModel.capturedPages.count >= wineListCameraPageLimit ? String(localized: .cameraPageLimitAccessibilityLabel) : String(localized: .cameraCapturePageAccessibilityLabel))
     }
 
     private func close() {
@@ -330,7 +330,7 @@ private struct CapturedPagesTray: View {
                 HStack(alignment: .top) {
                     VStack(alignment: .leading, spacing: 4) {
                         HStack(spacing: 8) {
-                            Text("Captured pages")
+                            Text(.cameraTrayTitle)
                                 .font(.headline.bold())
                                 .foregroundStyle(.white)
 
@@ -342,14 +342,14 @@ private struct CapturedPagesTray: View {
                                 .clipShape(.circle)
                         }
 
-                        Text("Tap a thumbnail to view")
+                        Text(.cameraTrayHint)
                             .font(.caption)
                             .foregroundStyle(.white.opacity(0.54))
                     }
 
                     Spacer()
 
-                    Button("Done") {
+                    Button(String(localized: .cameraTrayDone)) {
                         dismiss()
                     }
                     .font(.subheadline.bold())
@@ -419,7 +419,7 @@ private struct CapturedPageTrayThumbnail: View {
                     .clipShape(.circle)
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(String(localized: "Delete page \(number)"))
+            .accessibilityLabel(String(localized: .cameraDeletePageAccessibilityLabel(number)))
             .offset(x: -8, y: 8)
         }
         .frame(width: 116, height: 164)
@@ -481,11 +481,11 @@ private enum WineListFlashMode: CaseIterable {
     var accessibilityLabel: String {
         switch self {
         case .auto:
-            String(localized: "Flash auto")
+            String(localized: .cameraFlashAutoAccessibilityLabel)
         case .on:
-            String(localized: "Flash on")
+            String(localized: .cameraFlashOnAccessibilityLabel)
         case .off:
-            String(localized: "Flash off")
+            String(localized: .cameraFlashOffAccessibilityLabel)
         }
     }
 

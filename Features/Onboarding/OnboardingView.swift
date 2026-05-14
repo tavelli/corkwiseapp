@@ -68,7 +68,7 @@ struct OnboardingView: View {
                 .scaledToFit()
                 .frame(height: 55)
 
-            Text("Building your taste profile for smarter picks.")
+            Text(.onboardingHeaderSubtitle)
                 .font(.footnote)
                 .foregroundStyle(Color.wineText.opacity(0.6))
                 .padding(.top, 6)
@@ -87,13 +87,13 @@ struct OnboardingView: View {
             if viewModel.currentStep == 0 {
                 HStack(spacing: 18) {
                     Spacer(minLength: 0)
-                    Text("Start ordering better wine")
+                    Text(.onboardingCtaStart)
                     Spacer(minLength: 0)
                     Image(systemName: "arrow.right")
                         .font(.title3.weight(.regular))
                 }
             } else {
-                Text(viewModel.isLastStep ? String(localized: "Finish") : String(localized: "Continue"))
+                Text(viewModel.isLastStep ? .onboardingCtaFinish : .onboardingCtaContinue)
             }
         }
         .buttonStyle(OnboardingPrimaryButtonStyle())
@@ -202,14 +202,14 @@ private struct OnboardingIntroStepView: View {
             Spacer(minLength: 28)
 
             VStack(spacing: 18) {
-                Text("Stop overpaying\nfor mediocre wine.")
+                Text(.onboardingIntroHeadline)
                     .font(.system(size: headlineFontSize, weight: .semibold))
                     .dynamicTypeSize(.large ... .accessibility1)
                     .foregroundStyle(Color.wineText)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
 
-                Text("Scan any wine list to spot standout values, trusted producers, and exceptional wines.")
+                Text(.onboardingIntroBody)
                     .font(.body)
                     .foregroundStyle(Color.wineMutedText)
                     .lineSpacing(4)
@@ -222,29 +222,29 @@ private struct OnboardingIntroStepView: View {
 
             VStack(spacing: 12) {
                 HStack(spacing: 20) {
-                    Text("ON YOUR OWN")
+                    Text(.onboardingIntroBeforeHeader)
                         .font(.caption)
                         .bold()
                         .foregroundStyle(Color.wineAccent)
                         .frame(maxWidth: .infinity)
 
-                    Text("WITH CORKWISE")
+                    Text(.onboardingIntroAfterHeader)
                         .font(.caption)
                         .bold()
                         .foregroundStyle(Color(red: 0.18, green: 0.34, blue: 0.16))
                         .frame(maxWidth: .infinity)
                 }
 
-                HStack(alignment: .center, spacing: 20) {
+                HStack(alignment: .top, spacing: 20) {
                     IntroComparisonCard(
                         tint: Color.wineDeep.opacity(0.78),
                         background: Color.wineAccent.opacity(0.06),
                         systemImage: "xmark",
                         items: [
-                            String(localized: "Hesitating over expensive options"),
-                            String(localized: "Guessing under pressure"),
-                            String(localized: "Defaulting to familiar picks"),
-                            String(localized: "Studying the wine list")
+                            .onboardingIntroBeforeExpensiveOptions,
+                            .onboardingIntroBeforeGuessing,
+                            .onboardingIntroBeforeFamiliarPicks,
+                            .onboardingIntroBeforeStudyingList
                         ]
                     )
 
@@ -253,13 +253,14 @@ private struct OnboardingIntroStepView: View {
                         background: Color(red: 0.18, green: 0.34, blue: 0.16).opacity(0.07),
                         systemImage: "checkmark",
                         items: [
-                            String(localized: "Finding wines worth ordering"),
-                            String(localized: "Ordering with confidence"),
-                            String(localized: "Discovering standout bottles"),
-                            String(localized: "Enjoying the moment")
+                            .onboardingIntroAfterWorthOrdering,
+                            .onboardingIntroAfterConfidence,
+                            .onboardingIntroAfterStandoutBottles,
+                            .onboardingIntroAfterEnjoyMoment
                         ]
                     )
                 }
+                .fixedSize(horizontal: false, vertical: true)
             }
 
             Spacer(minLength: 0)
@@ -271,11 +272,11 @@ private struct IntroComparisonCard: View {
     let tint: Color
     let background: Color
     let systemImage: String
-    let items: [String]
+    let items: [LocalizedStringResource]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
-            ForEach(items, id: \.self) { item in
+            ForEach(items.indices, id: \.self) { index in
                 HStack(alignment: .center, spacing: 10) {
                     Circle()
                         .strokeBorder(tint, lineWidth: 1.2)
@@ -290,7 +291,7 @@ private struct IntroComparisonCard: View {
                                 .foregroundStyle(systemImage == "checkmark" ? Color.white : tint)
                         }
 
-                    Text(item)
+                    Text(items[index])
                         .font(.caption)
                         .foregroundStyle(Color.wineText)
                         .fixedSize(horizontal: false, vertical: true)
@@ -300,7 +301,8 @@ private struct IntroComparisonCard: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 24)
-        .frame(maxWidth: .infinity, minHeight: 260, alignment: .topLeading)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .frame(minHeight: 260, alignment: .topLeading)
         .background(background)
         .clipShape(.rect(cornerRadius: 24))
     }
@@ -311,7 +313,7 @@ private struct StyleQuestionView: View {
     let toggleStyle: (WineStylePreference) -> Void
 
     var body: some View {
-        QuestionSection(title: "What kind of wines do you usually like?") {
+        QuestionSection(title: .onboardingQuestionStylesTitle) {
 //            Text("Choose 1–2 that sound most like you")
 //                .font(.subheadline)
 //                .foregroundStyle(Color.wineMutedText)
@@ -333,9 +335,9 @@ private struct ChoiceStyleQuestionView: View {
     let onSelect: (ChoiceStyle) -> Void
 
     var body: some View {
-        QuestionSection(title: "What do you look for when choosing wine?”") {
+        QuestionSection(title: .onboardingQuestionChoiceStyleTitle) {
             
-            Text("Choose the one that fits best.")
+            Text(.onboardingQuestionChoiceStyleSubtitle)
                 .font(.subheadline)
                 .foregroundStyle(Color.wineMutedText)
 
@@ -357,7 +359,7 @@ private struct PurchasePreferenceQuestionView: View {
     let onSelect: (UsualPurchasePreference) -> Void
 
     var body: some View {
-        QuestionSection(title: "Are you usually picking a glass or a bottle?") {
+        QuestionSection(title: .onboardingQuestionPurchaseTitle) {
             ForEach(UsualPurchasePreference.allCases) { preference in
                 SelectableOptionButton(
                     title: preference.title,
@@ -377,8 +379,8 @@ private struct VarietalQuestionView: View {
 
     var body: some View {
         ScrollView {
-            QuestionSection(title: "What varietals do you usually reach for?") {
-                Text("Select any you like — or skip for now")
+            QuestionSection(title: .onboardingQuestionVarietalsTitle) {
+                Text(.onboardingQuestionVarietalsSubtitle)
                     .font(.subheadline)
                     .foregroundStyle(Color.wineMutedText)
 
@@ -419,7 +421,7 @@ private struct VarietalQuestionView: View {
 }
 
 private struct QuestionSection<Content: View>: View {
-    let title: LocalizedStringKey
+    let title: LocalizedStringResource
     @ViewBuilder let content: Content
 
     var body: some View {

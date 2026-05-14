@@ -16,7 +16,7 @@ struct BestPickHeroView: View {
                     .background(Color.white.opacity(0.0))
                     .clipShape(.rect(cornerRadius: 7))
 
-                Text("TOP PICK")
+                Text(.resultsBestPickLabel)
                     .font(.caption.weight(.bold))
                     .tracking(0.8)
                     .foregroundStyle(Color.white.opacity(0.95))

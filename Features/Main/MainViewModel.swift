@@ -18,7 +18,7 @@ final class MainViewModel {
     var bottleContext: BottleContext = .forMe
     var categoryPreference: WineCategoryPreference = .anything
     var isScanning = false
-    var loadingMessage = String(localized: "Reading the wine list…")
+    var loadingMessage = String(localized: .mainViewModelLoadingReadingWineList)
     var failure: ScanFailureState?
     var selectedPreviewImage: UIImage?
     var canRetryLastScan: Bool {
@@ -215,13 +215,13 @@ final class MainViewModel {
 
     private func startLoadingMessages() {
         loadingTask?.cancel()
-        loadingMessage = String(localized: "Reading the wine list…")
+        loadingMessage = String(localized: .mainViewModelLoadingReadingWineList)
 
         loadingTask = Task { @MainActor in
             let messages = [
-                String(localized: "Estimating value…"),
-                String(localized: "Comparing producer quality…"),
-                String(localized: "Ranking the best picks…"),
+                String(localized: .mainViewModelLoadingEstimatingValue),
+                String(localized: .mainViewModelLoadingComparingProducerQuality),
+                String(localized: .mainViewModelLoadingRankingBestPicks),
             ]
 
             for message in messages {
@@ -237,7 +237,7 @@ final class MainViewModel {
         loadingTask = nil
         scanTask = nil
         isScanning = false
-        loadingMessage = String(localized: "Reading the wine list…")
+        loadingMessage = String(localized: .mainViewModelLoadingReadingWineList)
     }
 
     private func failureState(for error: Error) -> ScanFailureState {
@@ -245,23 +245,23 @@ final class MainViewModel {
             switch serviceError {
             case .backendNotConfigured:
                 return ScanFailureState(
-                    title: String(localized: "Backend not configured."),
-                    message: String(localized: "Add the Supabase base URL to the app configuration before running live scans.")
+                    title: String(localized: .mainViewModelFailureBackendNotConfiguredTitle),
+                    message: String(localized: .mainViewModelFailureBackendNotConfiguredMessage)
                 )
             case .authorizationFailed:
                 return ScanFailureState(
-                    title: String(localized: "Couldn't verify app access."),
-                    message: String(localized: "Please try again in a moment.")
+                    title: String(localized: .mainViewModelFailureAuthorizationTitle),
+                    message: String(localized: .mainViewModelFailureAuthorizationMessage)
                 )
             case .entitlementRequired(let response):
                 return ScanFailureState(
-                    title: String(localized: "Subscription required."),
+                    title: String(localized: .mainViewModelFailureSubscriptionRequiredTitle),
                     message: response.message
                 )
             case .invalidInput:
                 return ScanFailureState(
-                    title: String(localized: "Couldn't prepare that file."),
-                    message: String(localized: "Try another image or PDF with a readable wine list.")
+                    title: String(localized: .mainViewModelFailureInvalidInputTitle),
+                    message: String(localized: .mainViewModelFailureInvalidInputMessage)
                 )
             case .serverError(let response):
                 return ScanFailureState(
@@ -271,41 +271,41 @@ final class MainViewModel {
             case .invalidResponse(let responseBody):
                 let details = responseBody?.isEmpty == false
                     ? responseBody!
-                    : String(localized: "The wine analysis service returned data the app couldn't read.")
+                    : String(localized: .mainViewModelFailureInvalidResponseFallbackMessage)
                 return ScanFailureState(
-                    title: String(localized: "Unexpected response from the server."),
+                    title: String(localized: .mainViewModelFailureInvalidResponseTitle),
                     message: details
                 )
             case .requestFailed:
                 return ScanFailureState(
-                    title: String(localized: "Network request failed."),
-                    message: String(localized: "Check your connection and try the scan again.")
+                    title: String(localized: .mainViewModelFailureRequestFailedTitle),
+                    message: String(localized: .mainViewModelFailureRequestFailedMessage)
                 )
             }
         }
 
         return ScanFailureState(
-            title: String(localized: "Couldn't read enough of the wine list."),
-            message: String(localized: "Try taking the photo again in better light, or upload a clearer image.")
+            title: String(localized: .mainViewModelFailureUnreadableTitle),
+            message: String(localized: .mainViewModelFailureUnreadableMessage)
         )
     }
 
     private func title(for errorCode: String) -> String {
         switch errorCode {
         case "menu_unreadable":
-            return String(localized: "Couldn't read enough of the wine list.")
+            return String(localized: .mainViewModelFailureUnreadableTitle)
         case "no_wines_detected":
-            return String(localized: "No wines detected.")
+            return String(localized: .mainViewModelFailureNoWinesDetectedTitle)
         case "image_too_large":
-            return String(localized: "Image too large.")
+            return String(localized: .mainViewModelFailureImageTooLargeTitle)
         case "invalid_request":
-            return String(localized: "Invalid scan request.")
+            return String(localized: .mainViewModelFailureInvalidRequestTitle)
         case "analysis_failed":
-            return String(localized: "Analysis failed.")
+            return String(localized: .mainViewModelFailureAnalysisFailedTitle)
         case "entitlement_required":
-            return String(localized: "Subscription required.")
+            return String(localized: .mainViewModelFailureSubscriptionRequiredTitle)
         default:
-            return String(localized: "Scan failed.")
+            return String(localized: .mainViewModelFailureScanFailedTitle)
         }
     }
 

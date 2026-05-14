@@ -10,7 +10,7 @@ struct ResultsView: View {
         let displayName = if let restaurantName, restaurantName.isEmpty == false {
             restaurantName
         } else {
-            String(localized: "Wine List")
+            String(localized: .commonWineList)
         }
         let formattedDate = viewedAt.formatted(date: .abbreviated, time: .omitted)
 
@@ -52,7 +52,7 @@ struct ResultsContentView: View {
                                 recommendation: recommendation,
                                 purchaseMode: purchaseMode,
                                 currencyCode: result.currencyCode,
-                                categoryLabel: String(localized: "Highly Recommend"),
+                                categoryLabel: String(localized: .resultsCategoryHighlyRecommend),
                                 categorySystemImage: "star.fill"
                             )
                         }
@@ -69,7 +69,7 @@ struct ResultsContentView: View {
 
                 if result.notes.isEmpty == false {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Notes")
+                        Text(.resultsNotesTitle)
                             .font(.system(size: 20, weight: .bold, design: .serif))
                             .foregroundStyle(Color.wineText)
 
@@ -133,23 +133,23 @@ private struct DebugScanInfoView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Debug")
+            Text(.resultsDebugTitle)
                 .font(.title3)
                 .bold()
 
-            Text("Model: \(debugInfo.model)")
+            Text(.resultsDebugModel(debugInfo.model))
                 .font(.subheadline)
 
-            Text("API Time: \(debugInfo.apiDurationMilliseconds) ms")
+            Text(.resultsDebugApiTime(debugInfo.apiDurationMilliseconds))
                 .font(.subheadline)
 
             if let usage = debugInfo.usage {
-                Text("Tokens: \(usage.promptTokenCount) in / \(usage.candidatesTokenCount) out / \(usage.totalTokenCount) total")
+                Text(.resultsDebugTokens(usage.promptTokenCount, usage.candidatesTokenCount, usage.totalTokenCount))
                     .font(.subheadline)
             }
 
             if let totalCostUsd = debugInfo.totalCostUsd {
-                Text("Cost: \(formattedCost(totalCostUsd))")
+                Text(.resultsDebugCost(formattedCost(totalCostUsd)))
                     .font(.subheadline)
             }
         }
@@ -180,7 +180,7 @@ private struct MenuSnapshotView: View {
                     .foregroundStyle(Color.wineAccent)
                     .frame(width: 18, height: 18)
 
-                Text("What Stands Out")
+                Text(.resultsSnapshotTitle)
                     .font(.caption.weight(.bold))
                     .tracking(0.9)
                     .foregroundStyle(Color.wineAccent)

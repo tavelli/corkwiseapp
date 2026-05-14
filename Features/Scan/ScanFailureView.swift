@@ -17,11 +17,11 @@ struct ScanFailureView: View {
                 .foregroundStyle(.secondary)
 
             if canRetry {
-                Button("Try Again", action: retryAction)
+                Button(String(localized: .commonActionTryAgain), action: retryAction)
                     .buttonStyle(.borderedProminent)
             }
 
-            Button("Upload Photo", action: uploadAction)
+            Button(String(localized: .scanFailureUploadPhoto), action: uploadAction)
                 .buttonStyle(.bordered)
         }
         .padding()

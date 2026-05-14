@@ -125,9 +125,9 @@ struct RecommendationMetricRow: View {
 
     private var metrics: [Metric] {
         [
-            formattedMenuPrice.map { Metric(title: String(localized: "Menu"), value: $0) },
-            formattedRetailBottle.map { Metric(title: String(localized: "Retail Bottle"), value: $0) },
-            formattedMarkup.map { Metric(title: String(localized: "Markup"), value: $0) },
+            formattedMenuPrice.map { Metric(title: String(localized: .resultsMetricMenu), value: $0) },
+            formattedRetailBottle.map { Metric(title: String(localized: .resultsMetricRetailBottle), value: $0) },
+            formattedMarkup.map { Metric(title: String(localized: .resultsMetricMarkup), value: $0) },
         ].compactMap { $0 }
     }
 

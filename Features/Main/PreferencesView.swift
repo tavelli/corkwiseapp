@@ -10,7 +10,7 @@ struct PreferencesView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 if let preferences = preferenceRecords.first {
-                    PreferenceSection(title: "Preferred Styles") {
+                    PreferenceSection(title: .preferencesSectionPreferredStyles) {
                         VStack(spacing: 12) {
                             ForEach(WineStylePreference.allCases) { style in
                                 Button {
@@ -36,7 +36,7 @@ struct PreferencesView: View {
                         }
                     }
 
-                    PreferenceSection(title: "Favorite Varietals") {
+                    PreferenceSection(title: .preferencesSectionFavoriteVarietals) {
                         VStack(alignment: .leading, spacing: 18) {
                             ForEach(WineVarietalCategory.allCases) { category in
                                 VStack(alignment: .leading, spacing: 2) {
@@ -80,7 +80,7 @@ struct PreferencesView: View {
 //                        .tint(Color.wineAccent)
 //                    }
 
-                    PreferenceSection(title: "Tone") {
+                    PreferenceSection(title: .preferencesSectionTone) {
                         VStack(spacing: 12) {
                             ForEach(TonePreference.allCases) { tone in
                                 Button {
@@ -115,11 +115,11 @@ struct PreferencesView: View {
                     }
 
                     #if DEBUG
-                    PreferenceSection(title: "Debug") {
+                    PreferenceSection(title: .preferencesSectionDebug) {
                         Button(role: .destructive) {
                             clearAllScans()
                         } label: {
-                            Text("Clear All Scans")
+                            Text(.preferencesDebugClearAllScans)
                                 .font(.subheadline.weight(.semibold))
                                 .frame(maxWidth: .infinity)
                         }
@@ -129,20 +129,20 @@ struct PreferencesView: View {
                         Button(role: .destructive) {
                             resetPreferences()
                         } label: {
-                            Text("Reset Onboarding")
+                            Text(.preferencesDebugResetOnboarding)
                                 .font(.subheadline.weight(.semibold))
                                 .frame(maxWidth: .infinity)
                         }
                         .buttonStyle(.borderedProminent)
                         .tint(Color.wineAccent)
 
-                        Text("Deletes the saved taste profile so the app returns to onboarding on next render.")
+                        Text(.preferencesDebugResetExplanation)
                             .font(.footnote)
                             .foregroundStyle(.secondary)
                     }
                     #endif
                 } else {
-                    Text("No preferences found. Complete onboarding to create your taste profile.")
+                    Text(.preferencesEmptyMessage)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .padding(20)
@@ -153,7 +153,7 @@ struct PreferencesView: View {
             }
             .padding(20)
         }
-        .navigationTitle("Preferences")
+        .navigationTitle(String(localized: .preferencesTitle))
         .navigationBarTitleDisplayMode(.inline)
         .background(mainScreenBackground.ignoresSafeArea())
     }
@@ -226,7 +226,7 @@ struct PreferencesView: View {
 }
 
 private struct PreferenceSection<Content: View>: View {
-    let title: LocalizedStringKey
+    let title: LocalizedStringResource
     @ViewBuilder let content: Content
 
     var body: some View {

@@ -13,15 +13,15 @@ enum WineStylePreference: String, Codable, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .crispRefreshing:
-            return String(localized: "Crisp and refreshing")
+            return String(localized: .wineStyleCrispRefreshingTitle)
         case .fruitySmooth:
-            return String(localized: "Fruity and easy-drinking")
+            return String(localized: .wineStyleFruitySmoothTitle)
         case .richFull:
-            return String(localized: "Rich and full-bodied")
+            return String(localized: .wineStyleRichFullTitle)
         case .earthySavory:
-            return String(localized: "Earthy and savory")
+            return String(localized: .wineStyleEarthySavoryTitle)
         case .boldStructured:
-            return String(localized: "Bold and tannic")
+            return String(localized: .wineStyleBoldStructuredTitle)
         }
     }
 }
@@ -37,26 +37,26 @@ enum ChoiceStyle: String, Codable, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .bestValue:
-            return String(localized: "Wines that overdeliver for the price")
+            return String(localized: .choiceStyleBestValueTitle)
         case .safeChoice:
-            return String(localized: "A producer I already trust")
+            return String(localized: .choiceStyleSafeChoiceTitle)
         case .interesting:
-            return String(localized: "Something distinctive or unexpected")
+            return String(localized: .choiceStyleInterestingTitle)
         case .premium:
-            return String(localized: "A wine worth splurging on")
+            return String(localized: .choiceStylePremiumTitle)
         }
     }
 
     var description: String {
         switch self {
         case .bestValue:
-            return String(localized: "I compare prices and try to find the best deal.")
+            return String(localized: .choiceStyleBestValueDescription)
         case .safeChoice:
-            return String(localized: "I stick to wines I already know.")
+            return String(localized: .choiceStyleSafeChoiceDescription)
         case .interesting:
-            return String(localized: "I like trying unfamiliar wines.")
+            return String(localized: .choiceStyleInterestingDescription)
         case .premium:
-            return String(localized: "I spend more hoping for something special.")
+            return String(localized: .choiceStylePremiumDescription)
         }
     }
 }
@@ -70,18 +70,18 @@ enum UsualPurchasePreference: String, Codable, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .glass:
-            return String(localized: "Glass")
+            return String(localized: .usualPurchasePreferenceGlassTitle)
         case .bottle:
-            return String(localized: "Bottle")
+            return String(localized: .usualPurchasePreferenceBottleTitle)
         }
     }
 
     var description: String {
         switch self {
         case .glass:
-            return String(localized: "Usually ordering for myself.")
+            return String(localized: .usualPurchasePreferenceGlassDescription)
         case .bottle:
-            return String(localized: "Choosing for the table.")
+            return String(localized: .usualPurchasePreferenceBottleDescription)
         }
     }
 
@@ -105,22 +105,22 @@ enum TonePreference: String, Codable, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .standard:
-            return String(localized: "Standard")
+            return String(localized: .toneStandardTitle)
         case .sommelier:
-            return String(localized: "Sommelier")
+            return String(localized: .toneSommelierTitle)
         case .sassy:
-            return String(localized: "Sassy")
+            return String(localized: .toneSassyTitle)
         }
     }
 
     var userDescription: String {
         switch self {
         case .standard:
-            return String(localized: "Clear and straightforward; quick, easy-to-understand picks")
+            return String(localized: .toneStandardDescription)
         case .sommelier:
-            return String(localized: "More refined and wine-focused; adds insight on style, structure, and producer quality")
+            return String(localized: .toneSommelierDescription)
         case .sassy:
-            return String(localized: "Sharp and opinionated; calls out overpriced bottles and hype with a bit of attitude")
+            return String(localized: .toneSassyDescription)
         }
     }
 }
@@ -152,90 +152,90 @@ enum WineVarietal: String, Codable, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .pinotGrigio:
-            return String(localized: "Pinot Grigio")
+            return String(localized: .varietalPinotGrigioTitle)
         case .sauvignonBlanc:
-            return String(localized: "Sauvignon Blanc")
+            return String(localized: .varietalSauvignonBlancTitle)
         case .riesling:
-            return String(localized: "Riesling")
+            return String(localized: .varietalRieslingTitle)
         case .chardonnay:
-            return String(localized: "Chardonnay")
+            return String(localized: .varietalChardonnayTitle)
         case .dryRose:
-            return String(localized: "Dry Rosé")
+            return String(localized: .varietalDryRoseTitle)
         case .pinotNoirRose:
-            return String(localized: "Pinot Noir Rosé")
+            return String(localized: .varietalPinotNoirRoseTitle)
         case .whiteZinfandel:
-            return String(localized: "White Zinfandel")
+            return String(localized: .varietalWhiteZinfandelTitle)
         case .moscato:
-            return String(localized: "Moscato")
+            return String(localized: .varietalMoscatoTitle)
         case .prosecco:
-            return String(localized: "Prosecco")
+            return String(localized: .varietalProseccoTitle)
         case .cava:
-            return String(localized: "Cava")
+            return String(localized: .varietalCavaTitle)
         case .champagne:
-            return String(localized: "Champagne")
+            return String(localized: .varietalChampagneTitle)
         case .pinotNoir:
-            return String(localized: "Pinot Noir")
+            return String(localized: .varietalPinotNoirTitle)
         case .grenacheGarnacha:
-            return String(localized: "Grenache / Garnacha")
+            return String(localized: .varietalGrenacheGarnachaTitle)
         case .sangiovese:
-            return String(localized: "Sangiovese")
+            return String(localized: .varietalSangioveseTitle)
         case .merlot:
-            return String(localized: "Merlot")
+            return String(localized: .varietalMerlotTitle)
         case .tempranillo:
-            return String(localized: "Tempranillo")
+            return String(localized: .varietalTempranilloTitle)
         case .malbec:
-            return String(localized: "Malbec")
+            return String(localized: .varietalMalbecTitle)
         case .syrahShiraz:
-            return String(localized: "Syrah / Shiraz")
+            return String(localized: .varietalSyrahShirazTitle)
         case .zinfandel:
-            return String(localized: "Zinfandel")
+            return String(localized: .varietalZinfandelTitle)
         case .cabernetSauvignon:
-            return String(localized: "Cabernet Sauvignon")
+            return String(localized: .varietalCabernetSauvignonTitle)
         }
     }
 
     var description: String {
         switch self {
         case .pinotGrigio:
-            return String(localized: "Light, crisp, and neutral. The easy-drinking choice.")
+            return String(localized: .varietalPinotGrigioDescription)
         case .sauvignonBlanc:
-            return String(localized: "Zesty and aromatic. Often has green notes like grass and lime.")
+            return String(localized: .varietalSauvignonBlancDescription)
         case .riesling:
-            return String(localized: "High acidity. Can range from bone-dry to very sweet.")
+            return String(localized: .varietalRieslingDescription)
         case .chardonnay:
-            return String(localized: "Medium to full-bodied. Often buttery if oak-aged, or apple-like if not.")
+            return String(localized: .varietalChardonnayDescription)
         case .dryRose:
-            return String(localized: "A crisp, bone-dry wine with elegant notes of strawberry and a refreshing finish.")
+            return String(localized: .varietalDryRoseDescription)
         case .pinotNoirRose:
-            return String(localized: "A delicate and aromatic dry wine with bright cherry notes and a smooth, silky texture.")
+            return String(localized: .varietalPinotNoirRoseDescription)
         case .whiteZinfandel:
-            return String(localized: "A soft and distinctly sweet wine with jammy flavors of raspberry and cream.")
+            return String(localized: .varietalWhiteZinfandelDescription)
         case .moscato:
-            return String(localized: "A light, sweet tingle with soft floral notes and very low alcohol.")
+            return String(localized: .varietalMoscatoDescription)
         case .prosecco:
-            return String(localized: "Fresh and fruity with smooth, easy-going bubbles.")
+            return String(localized: .varietalProseccoDescription)
         case .cava:
-            return String(localized: "Crisp and dry with a steady stream of fine, refreshing bubbles.")
+            return String(localized: .varietalCavaDescription)
         case .champagne:
-            return String(localized: "Intense, pinpoint bubbles with complex toasty notes and a sharp finish.")
+            return String(localized: .varietalChampagneDescription)
         case .pinotNoir:
-            return String(localized: "Light-bodied, smooth, and earthy. The most popular elegant red.")
+            return String(localized: .varietalPinotNoirDescription)
         case .grenacheGarnacha:
-            return String(localized: "Medium-bodied and fruity with strawberry and raspberry notes.")
+            return String(localized: .varietalGrenacheGarnachaDescription)
         case .sangiovese:
-            return String(localized: "Savory and acidic. The classic Italian restaurant grape.")
+            return String(localized: .varietalSangioveseDescription)
         case .merlot:
-            return String(localized: "Medium-to-full-bodied, plush, and soft with very low grip.")
+            return String(localized: .varietalMerlotDescription)
         case .tempranillo:
-            return String(localized: "Savory with notes of leather and dried cherry.")
+            return String(localized: .varietalTempranilloDescription)
         case .malbec:
-            return String(localized: "Bold and juicy with dark plum and cocoa flavors.")
+            return String(localized: .varietalMalbecDescription)
         case .syrahShiraz:
-            return String(localized: "Bold, intense, and often peppery or smoky.")
+            return String(localized: .varietalSyrahShirazDescription)
         case .zinfandel:
-            return String(localized: "Jammy, bold, and high-alcohol with fruit-forward character.")
+            return String(localized: .varietalZinfandelDescription)
         case .cabernetSauvignon:
-            return String(localized: "The heaviest red. Bold tannins and dark fruit.")
+            return String(localized: .varietalCabernetSauvignonDescription)
         }
     }
 
@@ -264,13 +264,13 @@ enum WineVarietalCategory: String, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .redWines:
-            return String(localized: "Reds")
+            return String(localized: .varietalCategoryRedWinesTitle)
         case .whiteWines:
-            return String(localized: "Whites")
+            return String(localized: .varietalCategoryWhiteWinesTitle)
         case .blush:
-            return String(localized: "Rose")
+            return String(localized: .varietalCategoryBlushTitle)
         case .sparklingWines:
-            return String(localized: "Sparkling")
+            return String(localized: .varietalCategorySparklingWinesTitle)
         }
     }
 

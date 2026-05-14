@@ -36,13 +36,13 @@ struct ScanProgressResultsView: View {
 
     private var pageTitle: String {
         guard isOverlayVisible == false else { return "" }
-        guard let result else { return String(localized: "Analyzing Wine List") }
+        guard let result else { return String(localized: .scanProgressTitleAnalyzingWineList) }
 
         let restaurantName = result.restaurantName?.trimmingCharacters(in: .whitespacesAndNewlines)
         let displayName = if let restaurantName, restaurantName.isEmpty == false {
             restaurantName
         } else {
-            String(localized: "Wine List")
+            String(localized: .commonWineList)
         }
 
         return "\(displayName) - \(viewedAt.formatted(date: .abbreviated, time: .omitted)) "
@@ -165,11 +165,11 @@ private struct ScanCancelConfirmationSheet: View {
     var body: some View {
         VStack(spacing: 22) {
             VStack(spacing: 8) {
-                Text("Cancel scan?")
+                Text(.scanProgressCancelTitle)
                     .font(.title3.weight(.semibold))
                     .foregroundStyle(Color.wineText)
 
-                Text("Your recommendations will be discarded.")
+                Text(.scanProgressCancelMessage)
                     .font(.subheadline)
                     .foregroundStyle(Color.wineMutedText)
                     .multilineTextAlignment(.center)
@@ -177,7 +177,7 @@ private struct ScanCancelConfirmationSheet: View {
             .padding(.top, 24)
 
             VStack(spacing: 10) {
-                Button("Keep scanning", action: keepScanningAction)
+                Button(String(localized: .scanProgressCancelKeepScanning), action: keepScanningAction)
                     .font(.headline.weight(.semibold))
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
@@ -185,7 +185,7 @@ private struct ScanCancelConfirmationSheet: View {
                     .background(Color.wineMutedText.opacity(0.78))
                     .clipShape(.rect(cornerRadius: 14))
 
-                Button("Cancel scan", role: .destructive, action: cancelScanAction)
+                Button(String(localized: .scanProgressCancelCancelScan), role: .destructive, action: cancelScanAction)
                     .font(.body.weight(.semibold))
                     .foregroundStyle(.red)
                     .frame(maxWidth: .infinity)
@@ -207,10 +207,10 @@ private struct ScanProgressModal: View {
     let cancelAction: () -> Void
 
     private let steps = [
-        String(localized: "Scanning menu"),
-        String(localized: "Reading wine list"),
-        String(localized: "Evaluating quality & value"),
-        String(localized: "Curating recommendations"),
+        String(localized: .scanProgressStepScanningMenu),
+        String(localized: .scanProgressStepReadingWineList),
+        String(localized: .scanProgressStepEvaluatingQualityValue),
+        String(localized: .scanProgressStepCuratingRecommendations),
     ]
 
     private var activeStepIndex: Int {
@@ -229,19 +229,19 @@ private struct ScanProgressModal: View {
     }
 
     private var footerText: String {
-        guard isCompleting == false else { return String(localized: "Finishing up...") }
-        guard elapsedSeconds < 20 else { return String(localized: "Finishing up...") }
+        guard isCompleting == false else { return String(localized: .scanProgressFooterFinishingUp) }
+        guard elapsedSeconds < 20 else { return String(localized: .scanProgressFooterFinishingUp) }
 
         let remaining = max(1, Int(ceil(20 - elapsedSeconds)))
-        return String(localized: "~\(remaining) sec remaining")
+        return String(localized: .scanProgressFooterSecondsRemaining(remaining))
     }
 
     private var titleText: String {
         switch purchaseMode {
         case .glass:
-            return String(localized: "Finding the best pours")
+            return String(localized: .scanProgressTitleBestPours)
         case .bottle:
-            return String(localized: "Finding the best bottles")
+            return String(localized: .scanProgressTitleBestBottles)
         }
     }
 
@@ -253,7 +253,7 @@ private struct ScanProgressModal: View {
                         .font(.system(size: 21, weight: .bold, design: .serif))
                         .foregroundStyle(Color.wineText)
 
-                    Text("takes about 20 seconds")
+                    Text(.scanProgressDurationMessage)
                         .font(.subheadline)
                         .foregroundStyle(Color.wineMutedText)
                 }
@@ -275,7 +275,7 @@ private struct ScanProgressModal: View {
                         Text(footerText)
                             .foregroundStyle(Color.wineMutedText.opacity(0.92))
                         Spacer()
-                        Button("Cancel", action: cancelAction)
+                        Button(String(localized: .commonActionCancel), action: cancelAction)
                             .font(.caption.weight(.semibold))
                             .foregroundStyle(Color.wineMutedText.opacity(0.68))
                             .buttonStyle(.plain)
