@@ -162,13 +162,6 @@ struct WineListCameraView: View {
                     .padding(.vertical, 7)
                     .background(.black.opacity(0.46))
                     .clipShape(.capsule)
-//                Text("Keeps analysis fast and accurate.")
-//                    .font(.caption.bold())
-//                    .foregroundStyle(.white)
-//                    .padding(.horizontal, 12)
-//                    .padding(.vertical, 7)
-//                    .background(.black.opacity(0.46))
-//                    .clipShape(.capsule)
             } else if cameraModel.capturedPages.isEmpty {
                 Text(.cameraCaptureHint)
                     .font(.subheadline.weight(.semibold))
@@ -401,14 +394,6 @@ private struct CapturedPageTrayThumbnail: View {
                     RoundedRectangle(cornerRadius: 10)
                         .stroke(Color.wineSoftPeach.opacity(0.86), lineWidth: 1.5)
                 }
-
-//            Text("\(number)")
-//                .font(.caption.bold())
-//                .foregroundStyle(.white.opacity(0.94))
-//                .frame(width: 24, height: 24)
-//                .background(.black.opacity(0.58))
-//                .clipShape(.circle)
-//                .offset(x: -84, y: 8)
 
             Button(action: deleteAction) {
                 Image(systemName: "xmark")

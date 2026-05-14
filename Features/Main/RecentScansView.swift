@@ -48,26 +48,6 @@ struct ScanHistoryCard: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: 16) {
-//                VStack(spacing: 8) {
-//                    RoundedRectangle(cornerRadius: 18)
-//                        .fill(
-//                            LinearGradient(
-//                                colors: [Color.wineAccent.opacity(0.16), Color.wineSoftPeach],
-//                                startPoint: .top,
-//                                endPoint: .bottom
-//                            )
-//                        )
-//                        .frame(width: 64, height: 96)
-//                        .overlay {
-//                            Image(systemName: scan.purchaseModeValue == .glass ? "wineglass.fill" : "wineglass")
-//                                .font(.system(size: 28))
-//                                .foregroundStyle(Color.wineAccent.opacity(0.85))
-//                        }
-//
-//                    Text(scoreText)
-//                        .font(.headline.weight(.bold))
-//                        .foregroundStyle(Color.wineAccent)
-//                }
 
                 VStack(alignment: .leading, spacing: 6) {
                     Text(scan.restaurantName ?? String(localized: .commonWineList))
@@ -106,12 +86,6 @@ struct ScanHistoryCard: View {
     private var metadataText: String {
         var parts = [scan.purchaseModeValue.title]
         parts.append(scan.categoryPreferenceValue.title)
-
-        // this was for me / for a group thing we can probably delete
-//        if scan.purchaseModeValue == .bottle, let bottleContext = scan.bottleContextValue {
-//            parts.append(bottleContext.shortTitle)
-//        }
-
         parts.append(scan.createdAt.formatted(date: .abbreviated, time: .omitted))
         return parts.joined(separator: " • ")
     }

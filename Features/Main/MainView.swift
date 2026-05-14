@@ -328,17 +328,6 @@ struct MainView: View {
                 )
             )
 
-//            if viewModel.purchaseMode == .bottle {
-//                slidingSegmentedControl(
-//                    items: BottleContext.allCases,
-//                    selection: Binding(
-//                        get: { viewModel.bottleContext },
-//                        set: { viewModel.bottleContext = $0 }
-//                    ),
-//                    title: \.title,
-//                    icon: { $0 == .forMe ? "person.fill" : "person.2.fill" }
-//                )
-//            }
         }
         .padding(.top, 6)
         .padding(.bottom, 6)

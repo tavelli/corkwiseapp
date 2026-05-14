@@ -3245,13 +3245,13 @@
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Retail Bottle"
+            "value" : "Shop Bottle"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Retail Bottle"
+            "value" : "Shop Bottle"
           }
         }
       }

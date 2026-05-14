@@ -61,11 +61,6 @@ struct BestPickHeroView: View {
 
             WineDataTagRow(tags: wineDataTags, style: .hero)
 
-//            if let restaurantName {
-//                Label(restaurantName, systemImage: "fork.knife")
-//                    .font(.footnote)
-//                    .foregroundStyle(Color.white.opacity(0.9))
-//            }
         }
         .padding(24)
         .frame(maxWidth: .infinity, alignment: .leading)
