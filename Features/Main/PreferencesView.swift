@@ -70,15 +70,15 @@ struct PreferencesView: View {
                         }
                     }
 
-                    PreferenceSection(title: "Decision Style") {
-                        Picker("Decision Style", selection: binding(for: preferences, keyPath: \.choiceStyle, defaultValue: ChoiceStyle.bestValue.rawValue)) {
-                            ForEach(ChoiceStyle.allCases) { style in
-                                Text(style.title).tag(style.rawValue)
-                            }
-                        }
-                        .pickerStyle(.menu)
-                        .tint(Color.wineAccent)
-                    }
+//                    PreferenceSection(title: "Decision Style") {
+//                        Picker("Decision Style", selection: binding(for: preferences, keyPath: \.choiceStyle, defaultValue: ChoiceStyle.bestValue.rawValue)) {
+//                            ForEach(ChoiceStyle.allCases) { style in
+//                                Text(style.title).tag(style.rawValue)
+//                            }
+//                        }
+//                        .pickerStyle(.menu)
+//                        .tint(Color.wineAccent)
+//                    }
 
                     PreferenceSection(title: "Tone") {
                         VStack(spacing: 12) {

@@ -70,9 +70,9 @@ enum UsualPurchasePreference: String, Codable, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .glass:
-            return String(localized: "By the glass")
+            return String(localized: "Glass")
         case .bottle:
-            return String(localized: "By the bottle")
+            return String(localized: "Bottle")
         }
     }
 

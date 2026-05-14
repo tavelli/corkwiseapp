@@ -69,7 +69,7 @@ struct OnboardingView: View {
                 .frame(height: 55)
 
             Text("Building your taste profile for smarter picks.")
-                .font(.subheadline)
+                .font(.footnote)
                 .foregroundStyle(Color.wineText.opacity(0.6))
                 .padding(.top, 6)
                 .padding(.bottom, 38)
@@ -189,7 +189,7 @@ struct OnboardingView: View {
 }
 
 private struct OnboardingIntroStepView: View {
-    @ScaledMetric(relativeTo: .largeTitle) private var headlineFontSize = 42
+    @ScaledMetric(relativeTo: .largeTitle) private var headlineFontSize = 34
 
     var body: some View {
         VStack(spacing: 0) {
@@ -209,7 +209,7 @@ private struct OnboardingIntroStepView: View {
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
 
-                Text("Scan any wine list to quickly spot standout values, trusted producers, and wines actually worth the price.")
+                Text("Scan any wine list to spot standout values, trusted producers, and exceptional wines.")
                     .font(.body)
                     .foregroundStyle(Color.wineMutedText)
                     .lineSpacing(4)
@@ -312,9 +312,9 @@ private struct StyleQuestionView: View {
 
     var body: some View {
         QuestionSection(title: "What kind of wines do you usually like?") {
-            Text("Choose 1–2 that sound most like you")
-                .font(.subheadline)
-                .foregroundStyle(Color.wineMutedText)
+//            Text("Choose 1–2 that sound most like you")
+//                .font(.subheadline)
+//                .foregroundStyle(Color.wineMutedText)
 
             ForEach(WineStylePreference.allCases) { style in
                 SelectableOptionButton(
@@ -333,7 +333,13 @@ private struct ChoiceStyleQuestionView: View {
     let onSelect: (ChoiceStyle) -> Void
 
     var body: some View {
-        QuestionSection(title: "What do you look for when choosing your wine?") {
+        QuestionSection(title: "What do you look for when choosing wine?”") {
+            
+            Text("Choose the one that fits best.")
+                .font(.subheadline)
+                .foregroundStyle(Color.wineMutedText)
+
+            
             ForEach(ChoiceStyle.allCases) { style in
                 SelectableOptionButton(
                     title: style.title,
@@ -355,7 +361,7 @@ private struct PurchasePreferenceQuestionView: View {
             ForEach(UsualPurchasePreference.allCases) { preference in
                 SelectableOptionButton(
                     title: preference.title,
-                    subtitle: preference.description,
+//                    subtitle: preference.description,
                     isSelected: selection == preference
                 ) {
                     onSelect(preference)
@@ -371,7 +377,7 @@ private struct VarietalQuestionView: View {
 
     var body: some View {
         ScrollView {
-            QuestionSection(title: "What wine varietals do you usually reach for?") {
+            QuestionSection(title: "What varietals do you usually reach for?") {
                 Text("Select any you like — or skip for now")
                     .font(.subheadline)
                     .foregroundStyle(Color.wineMutedText)
