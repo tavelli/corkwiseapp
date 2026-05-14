@@ -387,7 +387,7 @@ struct MainView: View {
                     .frame(width: 80, height: 80)
                     .foregroundStyle(Color.wineSoftPeach)
 
-                Text("Scan wine list")
+                Text("Analyze wine list")
                     .font(.system(size: 28, weight: .semibold, design: .default))
                     .tracking(1.2)
                     .foregroundStyle(Color.wineSoftPeach)
@@ -405,7 +405,7 @@ struct MainView: View {
                     .fill(Color.wineDivider)
                     .frame(height: 1)
 
-                Text("other ways to scan")
+                Text("other ways to import")
                     .font(.caption.weight(.semibold))
                     .tracking(1.2)
                     .foregroundStyle(.secondary)

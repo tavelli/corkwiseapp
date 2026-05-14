@@ -202,14 +202,14 @@ private struct OnboardingIntroStepView: View {
             Spacer(minLength: 28)
 
             VStack(spacing: 18) {
-                Text("Stop overpaying\nfor bad wine.")
+                Text("Stop overpaying\nfor mediocre wine.")
                     .font(.system(size: headlineFontSize, weight: .semibold))
                     .dynamicTypeSize(.large ... .accessibility1)
                     .foregroundStyle(Color.wineText)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
 
-                Text("Scan any wine list and instantly see what's worth ordering - and what to avoid.")
+                Text("Scan any wine list to quickly spot standout values, trusted producers, and wines actually worth the price.")
                     .font(.body)
                     .foregroundStyle(Color.wineMutedText)
                     .lineSpacing(4)
@@ -228,7 +228,7 @@ private struct OnboardingIntroStepView: View {
                         .foregroundStyle(Color.wineAccent)
                         .frame(maxWidth: .infinity)
 
-                    Text("USING CORKWISE")
+                    Text("WITH CORKWISE")
                         .font(.caption)
                         .bold()
                         .foregroundStyle(Color(red: 0.18, green: 0.34, blue: 0.16))
@@ -241,10 +241,10 @@ private struct OnboardingIntroStepView: View {
                         background: Color.wineAccent.opacity(0.06),
                         systemImage: "xmark",
                         items: [
-                            "Overpaying for wine",
-                            "Playing it safe",
-                            "Disappointing pours",
-                            "Staring at the menu"
+                            "Hesitating over expensive options",
+                            "Guessing under pressure",
+                            "Defaulting to familiar picks",
+                            "Studying the wine list"
                         ]
                     )
 
@@ -253,9 +253,9 @@ private struct OnboardingIntroStepView: View {
                         background: Color(red: 0.18, green: 0.34, blue: 0.16).opacity(0.07),
                         systemImage: "checkmark",
                         items: [
-                            "Hidden value picks",
-                            "Discover new favoritess",
-                            "Wine worth ordering",
+                            "Finding wines worth ordering",
+                            "Ordering with confidence",
+                            "Discovering standout bottles",
                             "Enjoying the moment"
                         ]
                     )
@@ -333,11 +333,10 @@ private struct ChoiceStyleQuestionView: View {
     let onSelect: (ChoiceStyle) -> Void
 
     var body: some View {
-        QuestionSection(title: "How do you usually choose wine?") {
+        QuestionSection(title: "What do you look for when choosing your wine?") {
             ForEach(ChoiceStyle.allCases) { style in
                 SelectableOptionButton(
                     title: style.title,
-                    subtitle: style.description,
                     isSelected: selection == style
                 ) {
                     onSelect(style)

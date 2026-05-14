@@ -15,7 +15,7 @@ final class EntitlementManager {
     var purchaseStatusMessage: String?
     var purchaseErrorMessage: String?
     private var hasActivatedAdaptyUI = false
-    private var loadedPaywallTags: [String: String]?
+    private var loadedPaywallCustomAttributes: [String: String]?
 
     func configure() async {
         isLoading = true
@@ -89,14 +89,18 @@ final class EntitlementManager {
     func loadPaywallConfiguration(preferences: UserWinePreferences? = nil) async {
         guard isConfigured else { return }
 
-        let tagResolver = Self.paywallTags(for: preferences)
-        if paywallConfiguration != nil, loadedPaywallTags == tagResolver {
+        let customAttributes = Self.paywallCustomAttributes(for: preferences)
+        if paywallConfiguration != nil, loadedPaywallCustomAttributes == customAttributes {
             return
         }
 
         purchaseErrorMessage = nil
 
         do {
+            if let customAttributes {
+                try await Self.updateProfile(with: customAttributes)
+            }
+
             let placementID = AppConfiguration.shared.adaptyPaywallPlacementID
             let paywall = try await Adapty.getPaywall(
                 placementId: placementID
@@ -112,13 +116,12 @@ final class EntitlementManager {
             }
             #endif
             paywallConfiguration = try await AdaptyUI.getPaywallConfiguration(
-                forPaywall: paywall,
-                tagResolver: tagResolver
+                forPaywall: paywall
             )
-            loadedPaywallTags = tagResolver
+            loadedPaywallCustomAttributes = customAttributes
         } catch {
             paywallConfiguration = nil
-            loadedPaywallTags = nil
+            loadedPaywallCustomAttributes = nil
             Self.logPaywallError(error, context: "load paywall \(AppConfiguration.shared.adaptyPaywallPlacementID)")
             #if DEBUG
             purchaseErrorMessage = "Couldn't load paywall \(AppConfiguration.shared.adaptyPaywallPlacementID): \(Self.debugDescription(for: error))"
@@ -203,13 +206,22 @@ final class EntitlementManager {
         profile.accessLevels[AppConfiguration.shared.paidAccessLevelID]?.isActive == true
     }
 
-    private static func paywallTags(for preferences: UserWinePreferences?) -> [String: String] {
-        guard let preferences else { return [:] }
+    private static func paywallCustomAttributes(for preferences: UserWinePreferences?) -> [String: String]? {
+        guard let preferences else { return nil }
 
         return [
-            "ONBOARDING_CHOICE_STYLE": preferences.choiceStyleValue.title,
-            "ONBOARDING_PURCHASE_PREFERENCE": preferences.usualPurchasePreferenceValue.title,
+            "ONBOARDING_CHOICE_STYLE": preferences.choiceStyleValue.rawValue,
+            "ONBOARDING_PURCHASE_PREFERENCE": preferences.usualPurchasePreferenceValue.rawValue,
         ]
+    }
+
+    private static func updateProfile(with customAttributes: [String: String]) async throws {
+        let builder = AdaptyProfileParameters.Builder()
+        for (key, value) in customAttributes {
+            try builder.with(customAttribute: value, forKey: key)
+        }
+
+        try await Adapty.updateProfile(params: builder.build())
     }
 
     private static func debugDescription(for error: Error) -> String {
