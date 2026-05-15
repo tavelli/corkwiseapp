@@ -216,18 +216,34 @@ struct WineListCameraView: View {
             dismiss()
             onAnalyze(images)
         } label: {
-            HStack(spacing: 7) {
-                Text(.cameraAnalyze)
-                    .font(.headline.bold())
+            HStack(spacing: 6) {
+                Text(String(localized: .cameraAnalyze))
+                    .font(.subheadline.weight(.regular))
 
                 Image(systemName: "arrow.right")
-                    .font(.subheadline.bold())
+                    .font(.subheadline.weight(.regular))
             }
-            .foregroundStyle(Color.wineSoftPeach)
-            .frame(width: 112, height: 52)
-            .background(Color.wineAccent)
-            .clipShape(.rect(cornerRadius: 16))
-            .shadow(color: .black.opacity(0.18), radius: 6, y: 3)
+            .foregroundStyle(Color.wineAccent)
+            .frame(width: 110, height: 52)
+            .background {
+                RoundedRectangle(cornerRadius: 17, style: .continuous)
+                    .fill(.ultraThinMaterial)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 17, style: .continuous)
+                            .fill(.white.opacity(0.84))
+                    }
+            }
+            .glassEffect(
+                .regular
+                    .tint(.white.opacity(0.54))
+                    .interactive(),
+                in: .rect(cornerRadius: 17)
+            )
+            .overlay {
+                RoundedRectangle(cornerRadius: 17, style: .continuous)
+                    .stroke(.white.opacity(0.72), lineWidth: 1)
+            }
+            .shadow(color: .black.opacity(0.16), radius: 14, y: 7)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(String(localized: .cameraAnalyzePagesAccessibilityLabel))
@@ -273,7 +289,7 @@ private struct CapturedPageStackPreview: View {
             ZStack(alignment: .bottomLeading) {
                 ForEach(0..<min(pages.count, 3), id: \.self) { index in
                     RoundedRectangle(cornerRadius: 13)
-                        .stroke(Color.wineSoftPeach.opacity(0.86), lineWidth: 1.5)
+                        .stroke(.white.opacity(0.88), lineWidth: 1.5)
                         .frame(width: 62, height: 80)
                         .offset(x: CGFloat(index) * 8, y: CGFloat(index) * -4.5)
                 }
@@ -286,7 +302,7 @@ private struct CapturedPageStackPreview: View {
                         .clipShape(.rect(cornerRadius: 13))
                         .overlay {
                             RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color.wineSoftPeach.opacity(0.86), lineWidth: 1.5)
+                                .stroke(.white.opacity(0.88), lineWidth: 1.5)
                         }
                         .offset(x: CGFloat(max(min(pages.count, 3) - 1, 0)) * 8, y: CGFloat(max(min(pages.count, 3) - 1, 0)) * -4.5)
                 }
@@ -298,7 +314,7 @@ private struct CapturedPageStackPreview: View {
                 .font(.caption.bold())
                 .foregroundStyle(.white.opacity(0.92))
                 .frame(width: 26, height: 26)
-                .background(.black.opacity(0.76))
+                .background(Color.wineAccent)
                 .clipShape(.circle)
                 .offset(x: 1, y: -1)
         }
