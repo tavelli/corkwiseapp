@@ -1,106 +1,19 @@
-# CorkWise Auth, Entitlement, And Backend Access Plan
+## Backlog: Consolidate Scan Page Limit
 
-## Goal
+Use a single shared page-limit constant set to 5 for wine-list scan image flows.
 
-Build a no-login access model that lets CorkWise protect expensive wine-analysis
-requests without introducing user accounts.
+- Add one iOS source of truth for the max scan page count.
+- Use it for camera capture limits, camera page-limit copy, photo picker `maxSelectionCount`, and photo item processing.
+- Update iOS attachment preparation and request validation to allow 5 images.
+- Update Supabase request validation to allow 5 attachments and revise the related error copy.
+- Keep generated localization-symbol usage for camera page-limit text.
 
-The app should use a durable app-level identity, anonymous Supabase Auth for
-Edge Function access, Adapty for paid entitlement, and Supabase database state
-for backend policy decisions. CloudKit and richer usage logging are useful next
-steps, but they should not block the first paid/free access implementation.
+Acceptance criteria:
 
-## Identity Model
-
-- Keychain UUID: durable CorkWise app user id.
-- Supabase anonymous auth: request identity for calling Edge Functions.
-- Adapty: source of truth for paid entitlement.
-- Supabase DB: backend policy state, free scan counts, abuse controls, and
-  optional usage analysis.
-- CloudKit: optional Apple-side sync for user-owned app data, such as scan
-  history and preferences.
-
-## Primary Build: Anonymous Auth + Backend Entitlement Gate
-
-### iOS App
-
-- Add the official Supabase Swift package.
-- Add Supabase anon/publishable key support to app configuration.
-- Create an app identity service that:
-  - loads an existing Keychain UUID
-  - creates and stores a UUID if none exists
-  - exposes the UUID as the CorkWise app user id
-- Create a Supabase auth service that:
-  - creates a Supabase client from the configured URL and anon/publishable key
-  - silently signs in anonymously when no valid session exists
-  - reuses the persisted anonymous session
-  - returns the current access token for scan requests
-- Update Adapty setup so the Keychain UUID is used as Adapty `customerUserId`.
-- Replace the placeholder entitlement manager with real Adapty profile refresh,
-  purchase, restore, and active access-level checks.
-- Update scan requests so `WineAnalysisService` sends:
-  - `Authorization: Bearer <supabase access token>`
-  - the Keychain UUID as `appUserId` in the request body or a dedicated header
-  - the existing scan payload
-- Gate app routing so users without active local Adapty entitlement see the
-  paywall, but still rely on the backend as the final authority before analysis.
-
-### Supabase Backend
-
-- Enable anonymous sign-ins in local Supabase config for parity with hosted
-  project settings.
-- Require JWT verification for `analyze-wine-menu`.
-- Add an `app_installations` table keyed by the durable Keychain app user id:
-  - `keychain_app_user_id uuid primary key`
-  - `supabase_user_id uuid null`
-  - `apple_original_transaction_id text null`
-  - `created_at timestamptz not null default now()`
-  - `updated_at timestamptz not null default now()`
-  - `free_scans_used integer not null default 0`
-- On every scan request, the Edge Function should:
-  - verify the Supabase JWT
-  - extract the JWT `sub` as the Supabase anonymous user id
-  - validate the Keychain `appUserId`
-  - upsert the matching `app_installations` row
-  - update `supabase_user_id` to the latest seen Supabase anonymous user id
-  - treat Supabase anonymous auth as the request-access identity
-  - treat the Keychain app user id as the Adapty entitlement identity
-- Add Adapty server API verification in the Edge Function:
-  - store the Adapty secret API key in Supabase secrets only
-  - check the Adapty profile for `customerUserId = appUserId`
-  - require active access level `premium`
-  - store `apple_original_transaction_id` when it is available from trusted
-    Adapty/server-side purchase data
-  - reject unpaid users before calling OpenAI/Gemini
-- Return a structured error for unpaid users:
-  - HTTP status: `402` or `403`
-  - `error: "entitlement_required"`
-  - user-facing message: "An active CorkWise subscription is required to scan."
-  - `retrySuggested: false`
-- Remove full scan-result logging from the Edge Function.
-- Do not return provider debug info in production responses.
-
-## Free Scan Policy
-
-Initial implementation should support paid gating first.
-
-If free scans are desired, add them after backend entitlement verification is in
-place:
-
-- If Adapty says the user is paid, allow the scan.
-- If Adapty says the user is not paid, check
-  `app_installations.free_scans_used`.
-- If free scans remain, increment `free_scans_used` and allow the scan.
-- If no free scans remain, return `entitlement_required`.
-
-Recommended first free-scan policy, if enabled later:
-
-- 1 lifetime free scans per Keychain app user id.
-- Count only scan attempts that pass request validation and reach backend policy
-  evaluation.
-- Store free scan usage in `app_installations`, not on device.
-- Increment scans used instead of counting down so the allowed free-scan limit
-  can be changed later without migrating existing rows.
+- Camera and photo picker both allow up to 5 pages.
+- 5 selected/captured JPEG pages can be prepared, validated, and submitted.
+- 6 attachments are rejected by client and backend validation.
+- iOS simulator, generic iOS, and Supabase request validation tests pass.
 
 ## Backlog: Usage Logging
 

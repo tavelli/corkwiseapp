@@ -1954,19 +1954,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ordering with confidence"
+            "value" : "Knowing what is worth the price"
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ordering with confidence"
+            "value" : "Knowing what is worth the price"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ordering with confidence"
+            "value" : "Knowing what is worth the price"
           }
         }
       }
@@ -2000,19 +2000,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Discovering standout bottles"
+            "value" : "Picking a bottle that delivers"
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Discovering standout bottles"
+            "value" : "Picking a bottle that delivers"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Discovering standout bottles"
+            "value" : "Picking a bottle that delivers"
           }
         }
       }
@@ -2023,19 +2023,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Finding wines worth ordering"
+            "value" : "Choosing from the strongest picks"
           }
         },
         "en-AU" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Finding wines worth ordering"
+            "state" : "needs_review",
+            "value" : "Seeing the wines worth ordering first"
           }
         },
         "en-GB" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Finding wines worth ordering"
+            "state" : "needs_review",
+            "value" : "Seeing the wines worth ordering first"
           }
         }
       }
@@ -2069,19 +2069,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hesitating over expensive options"
+            "value" : "Overwhelmed by endless options"
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hesitating over expensive options"
+            "value" : "Overwhelmed by endless options"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hesitating over expensive options"
+            "value" : "Overwhelmed by endless options"
           }
         }
       }
@@ -2092,19 +2092,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Defaulting to familiar picks"
+            "value" : "Settling for familiar names"
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Defaulting to familiar picks"
+            "value" : "Settling for familiar names"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Defaulting to familiar picks"
+            "value" : "Settling for familiar names"
           }
         }
       }
@@ -2138,19 +2138,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Studying the wine list"
+            "value" : "Stuck reading the wine list"
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Studying the wine list"
+            "value" : "Stuck reading the wine list"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Studying the wine list"
+            "value" : "Stuck reading the wine list"
           }
         }
       }
@@ -2253,19 +2253,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "What do you look for when choosing wine?”"
+            "value" : "What do you look for when choosing wine?"
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "What do you look for when choosing wine?”"
+            "value" : "What do you look for when choosing wine?"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "What do you look for when choosing wine?”"
+            "value" : "What do you look for when choosing wine?"
           }
         }
       }

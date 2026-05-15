@@ -2,7 +2,7 @@ import AVFoundation
 import SwiftUI
 import UIKit
 
-private let wineListCameraPageLimit = 5
+private let wineListCameraPageLimit = 4
 
 struct WineListCameraView: View {
     @Environment(\.dismiss) private var dismiss
