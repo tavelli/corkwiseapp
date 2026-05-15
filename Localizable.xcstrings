@@ -403,25 +403,25 @@
         }
       }
     },
-    "camera.pageLimit.message" : {
+    "camera.pageLimit.message.format" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Maximum of 4 pages per scan"
+            "value" : "Maximum of %lld pages per scan"
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Maximum of 4 pages per scan"
+            "value" : "Maximum of %lld pages per scan"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Maximum of 4 pages per scan"
+            "value" : "Maximum of %lld pages per scan"
           }
         }
       }

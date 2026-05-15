@@ -2,7 +2,7 @@ import AVFoundation
 import SwiftUI
 import UIKit
 
-private let wineListCameraPageLimit = 4
+private let wineListCameraPageLimit = 5
 
 struct WineListCameraView: View {
     @Environment(\.dismiss) private var dismiss
@@ -155,7 +155,7 @@ struct WineListCameraView: View {
     private var bottomControls: some View {
         VStack(spacing: 16) {
             if cameraModel.hasReachedPageLimit {
-                Text(.cameraPageLimitMessage)
+                Text(.cameraPageLimitMessageFormat(wineListCameraPageLimit))
                     .font(.caption.bold())
                     .foregroundStyle(.white)
                     .padding(.horizontal, 12)
@@ -280,34 +280,43 @@ struct WineListCameraView: View {
 private struct CapturedPageStackPreview: View {
     let pages: [CapturedWineListPage]
 
+    private let thumbnailSize = CGSize(width: 62, height: 80)
+    private let cornerRadius: CGFloat = 13
+    private let backingRotationStep: Double = -5
+
     private var latestPage: CapturedWineListPage? {
         pages.last
     }
 
+    private var visibleBackingCount: Int {
+        max(min(pages.count, 3) - 1, 0)
+    }
+
     var body: some View {
         ZStack(alignment: .topTrailing) {
-            ZStack(alignment: .bottomLeading) {
-                ForEach(0..<min(pages.count, 3), id: \.self) { index in
-                    RoundedRectangle(cornerRadius: 13)
+            ZStack(alignment: .topTrailing) {
+                ForEach(0..<visibleBackingCount, id: \.self) { index in
+                    let depth = visibleBackingCount - index
+
+                    RoundedRectangle(cornerRadius: cornerRadius)
                         .stroke(.white.opacity(0.88), lineWidth: 1.5)
-                        .frame(width: 62, height: 80)
-                        .offset(x: CGFloat(index) * 8, y: CGFloat(index) * -4.5)
+                        .frame(width: thumbnailSize.width, height: thumbnailSize.height)
+                        .rotationEffect(.degrees(Double(depth) * backingRotationStep))
                 }
 
                 if let latestPage {
                     Image(uiImage: latestPage.image)
                         .resizable()
                         .scaledToFill()
-                        .frame(width: 62, height: 80)
-                        .clipShape(.rect(cornerRadius: 13))
+                        .frame(width: thumbnailSize.width, height: thumbnailSize.height)
+                        .clipShape(.rect(cornerRadius: cornerRadius))
                         .overlay {
-                            RoundedRectangle(cornerRadius: 10)
+                            RoundedRectangle(cornerRadius: cornerRadius)
                                 .stroke(.white.opacity(0.88), lineWidth: 1.5)
                         }
-                        .offset(x: CGFloat(max(min(pages.count, 3) - 1, 0)) * 8, y: CGFloat(max(min(pages.count, 3) - 1, 0)) * -4.5)
                 }
             }
-            .frame(width: 90, height: 92, alignment: .bottomLeading)
+            .frame(width: 78, height: 90, alignment: .topTrailing)
             .shadow(color: .black.opacity(0.2), radius: 5, y: 3)
 
             Text("\(pages.count)")
@@ -316,7 +325,7 @@ private struct CapturedPageStackPreview: View {
                 .frame(width: 26, height: 26)
                 .background(Color.wineAccent)
                 .clipShape(.circle)
-                .offset(x: 1, y: -1)
+                .offset(x: 10, y: -10)
         }
     }
 }
@@ -336,7 +345,7 @@ private struct CapturedPagesTray: View {
                 .padding(.bottom, 16)
 
             VStack(alignment: .leading, spacing: 18) {
-                HStack(alignment: .top) {
+                HStack(alignment: .center) {
                     VStack(alignment: .leading, spacing: 4) {
                         HStack(spacing: 8) {
                             Text(.cameraTrayTitle)
@@ -351,9 +360,9 @@ private struct CapturedPagesTray: View {
                                 .clipShape(.circle)
                         }
 
-                        Text(.cameraTrayHint)
-                            .font(.caption)
-                            .foregroundStyle(.white.opacity(0.54))
+//                        Text(.cameraTrayHint)
+//                            .font(.caption)
+//                            .foregroundStyle(.white.opacity(0.54))
                     }
 
                     Spacer()
@@ -408,7 +417,7 @@ private struct CapturedPageTrayThumbnail: View {
                 .clipShape(.rect(cornerRadius: 10))
                 .overlay {
                     RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.wineSoftPeach.opacity(0.86), lineWidth: 1.5)
+                        .stroke(Color.white.opacity(0.86), lineWidth: 1.5)
                 }
 
             Button(action: deleteAction) {
@@ -416,7 +425,7 @@ private struct CapturedPageTrayThumbnail: View {
                     .font(.caption.bold())
                     .foregroundStyle(.white.opacity(0.94))
                     .frame(width: 26, height: 26)
-                    .background(.black.opacity(0.5))
+                    .background(Color.wineAccent)
                     .clipShape(.circle)
             }
             .buttonStyle(.plain)
