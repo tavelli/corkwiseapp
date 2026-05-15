@@ -2945,19 +2945,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Crowd Pleaser"
+            "value" : "Reliable Pick"
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Crowd Pleaser"
+            "value" : "Reliable Pick"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Crowd Pleaser"
+            "value" : "Reliable Pick"
           }
         }
       }
@@ -3037,19 +3037,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Try Something New"
+            "value" : "Something Different"
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Try Something New"
+            "value" : "Something Different"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Try Something New"
+            "value" : "Something Different"
           }
         }
       }
