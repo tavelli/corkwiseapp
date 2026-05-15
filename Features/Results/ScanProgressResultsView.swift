@@ -3,15 +3,9 @@ import SwiftUI
 
 struct ScanProgressResultsView: View {
     @Environment(AppState.self) private var appState
-    @State private var startedAt = Date()
-    @State private var progress = 0.01
-    @State private var isCompleting = false
-    @State private var isOverlayVisible = true
     @State private var isShowingCancelConfirmation = false
 
     let scanID: UUID
-
-    private let timer = Timer.publish(every: 0.12, on: .main, in: .common).autoconnect()
 
     private var presentation: ScanPresentation? {
         guard appState.activeScanPresentation?.id == scanID else { return nil }
@@ -26,9 +20,58 @@ struct ScanProgressResultsView: View {
         presentation?.purchaseMode ?? .bottle
     }
 
-    private var viewedAt: Date {
-        presentation?.viewedAt ?? startedAt
+    private var categoryPreference: WineCategoryPreference {
+        presentation?.categoryPreference ?? .anything
     }
+
+    private var viewedAt: Date {
+        presentation?.viewedAt ?? .now
+    }
+
+    var body: some View {
+        ScanProgressExperienceView(
+            result: result,
+            purchaseMode: purchaseMode,
+            categoryPreference: categoryPreference,
+            viewedAt: viewedAt,
+            showsPageHeader: true,
+            showsCancelAction: true,
+            cancelAction: {
+                isShowingCancelConfirmation = true
+            }
+        )
+        .sheet(isPresented: $isShowingCancelConfirmation) {
+            ScanCancelConfirmationSheet(
+                keepScanningAction: {
+                    isShowingCancelConfirmation = false
+                },
+                cancelScanAction: {
+                    isShowingCancelConfirmation = false
+                    appState.cancelScanProgress(id: scanID)
+                }
+            )
+            .presentationDetents([.height(238)])
+            .presentationDragIndicator(.visible)
+            .presentationCornerRadius(28)
+        }
+    }
+}
+
+struct ScanProgressExperienceView: View {
+    @State private var startedAt = Date()
+    @State private var progress = 0.01
+    @State private var isCompleting = false
+    @State private var isOverlayVisible = true
+
+    let result: WineScanResult?
+    let purchaseMode: PurchaseMode
+    let categoryPreference: WineCategoryPreference
+    let viewedAt: Date
+    let showsPageHeader: Bool
+    let showsCancelAction: Bool
+    let cancelAction: () -> Void
+
+    private let timer = Timer.publish(every: 0.12, on: .main, in: .common).autoconnect()
 
     private var elapsedSeconds: TimeInterval {
         Date().timeIntervalSince(startedAt)
@@ -46,6 +89,11 @@ struct ScanProgressResultsView: View {
         }
 
         return "\(displayName) - \(viewedAt.formatted(date: .abbreviated, time: .omitted)) "
+    }
+
+    private var navigationSubtitle: String {
+        guard isOverlayVisible == false else { return "" }
+        return "\(purchaseMode.title) • \(categoryPreference.title)"
     }
 
     var body: some View {
@@ -68,9 +116,7 @@ struct ScanProgressResultsView: View {
                     isCompleting: isCompleting,
                     purchaseMode: purchaseMode,
                     isCancelVisible: isCancelVisible,
-                    cancelAction: {
-                        isShowingCancelConfirmation = true
-                    }
+                    cancelAction: cancelAction
                 )
                 .transition(.opacity.combined(with: .scale(scale: 0.98)))
                 .zIndex(1)
@@ -78,9 +124,11 @@ struct ScanProgressResultsView: View {
 
         }
         .background(mainScreenBackground.ignoresSafeArea())
-        .navigationTitle(pageTitle)
+        .navigationTitle(showsPageHeader ? pageTitle : "")
+        .navigationSubtitle(showsPageHeader ? navigationSubtitle : "")
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(isOverlayVisible)
+        .toolbar(showsPageHeader ? .visible : .hidden, for: .navigationBar)
+        .navigationBarBackButtonHidden(isOverlayVisible || showsPageHeader == false)
         .interactiveDismissDisabled(isOverlayVisible)
         .onAppear {
             startedAt = Date()
@@ -96,24 +144,10 @@ struct ScanProgressResultsView: View {
             guard newValue != nil, isCompleting == false else { return }
             completeLoadingExperience()
         }
-        .sheet(isPresented: $isShowingCancelConfirmation) {
-            ScanCancelConfirmationSheet(
-                keepScanningAction: {
-                    isShowingCancelConfirmation = false
-                },
-                cancelScanAction: {
-                    isShowingCancelConfirmation = false
-                    appState.cancelScanProgress(id: scanID)
-                }
-            )
-            .presentationDetents([.height(238)])
-            .presentationDragIndicator(.visible)
-            .presentationCornerRadius(28)
-        }
     }
 
     private var isCancelVisible: Bool {
-        result == nil && isCompleting == false
+        showsCancelAction && result == nil && isCompleting == false
     }
 
     private func estimatedProgress(for elapsed: TimeInterval) -> Double {
@@ -603,7 +637,11 @@ private struct ScanProgressPreviewHost: View {
 
     init(result: WineScanResult? = nil) {
         let appState = AppState()
-        let presentation = ScanPresentation(purchaseMode: .bottle, viewedAt: .now)
+        let presentation = ScanPresentation(
+            purchaseMode: .bottle,
+            categoryPreference: .reds,
+            viewedAt: .now
+        )
         presentation.result = result
         appState.activeScanPresentation = presentation
 

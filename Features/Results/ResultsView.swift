@@ -3,6 +3,7 @@ import SwiftUI
 struct ResultsView: View {
     let result: WineScanResult
     let purchaseMode: PurchaseMode
+    let categoryPreference: WineCategoryPreference
     let viewedAt: Date
 
     private var pageTitle: String {
@@ -12,15 +13,19 @@ struct ResultsView: View {
         } else {
             String(localized: .commonWineList)
         }
-        let formattedDate = viewedAt.formatted(date: .abbreviated, time: .omitted)
 
-        return "\(displayName) - \(formattedDate) "
+        return "\(displayName)"
+    }
+
+    private var navigationSubtitle: String {
+        "\(purchaseMode.title) • \(categoryPreference.title)"
     }
 
     var body: some View {
         ResultsContentView(result: result, purchaseMode: purchaseMode)
             .navigationTitle(pageTitle)
             .navigationBarTitleDisplayMode(.inline)
+            .navigationSubtitle(navigationSubtitle)
             .background(mainScreenBackground.ignoresSafeArea())
     }
 }
@@ -123,6 +128,7 @@ struct ResultsContentView: View {
             )
         ),
         purchaseMode: .glass,
+        categoryPreference: .reds,
         viewedAt: .now
     )
 }

@@ -53,24 +53,9 @@
       </BuildableProductRunnable>
       <EnvironmentVariables>
          <EnvironmentVariable
-            key = "CORKWISE&#x200b;_&#x200b;USE&#x200b;_&#x200b;LOCAL&#x200b;_&#x200b;SUPABASE"
-            value = "0"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-         <EnvironmentVariable
-            key = "CORKWISE&#x200b;_&#x200b;SUPABASE&#x200b;_&#x200b;BASE&#x200b;_&#x200b;URL&#x200b;_&#x200b;OVERRIDE"
-            value = "http://127&#x200b;.0&#x200b;.0&#x200b;.1&#x200b;:54321"
-            isEnabled = "NO">
-         </EnvironmentVariable>
-         <EnvironmentVariable
-            key = "CORKWISE_SUPABASE_API_KEY_OVERRIDE"
-            value = "sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH"
-            isEnabled = "NO">
-         </EnvironmentVariable>
-         <EnvironmentVariable
             key = "CORKWISE_DEMO_RECORDING"
             value = "1"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </EnvironmentVariable>
       </EnvironmentVariables>
    </LaunchAction>

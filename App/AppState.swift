@@ -9,11 +9,13 @@ final class AppState {
 
     func showScanProgress(
         purchaseMode: PurchaseMode,
+        categoryPreference: WineCategoryPreference,
         viewedAt: Date = .now,
         cancellationHandler: (() -> Void)? = nil
     ) -> UUID {
         let presentation = ScanPresentation(
             purchaseMode: purchaseMode,
+            categoryPreference: categoryPreference,
             viewedAt: viewedAt,
             cancellationHandler: cancellationHandler
         )
@@ -43,8 +45,13 @@ final class AppState {
         dismissScanProgress(id: id)
     }
 
-    func showResults(_ result: WineScanResult, purchaseMode: PurchaseMode, viewedAt: Date = .now) {
-        navigationPath.append(.results(result, purchaseMode, viewedAt))
+    func showResults(
+        _ result: WineScanResult,
+        purchaseMode: PurchaseMode,
+        categoryPreference: WineCategoryPreference,
+        viewedAt: Date = .now
+    ) {
+        navigationPath.append(.results(result, purchaseMode, categoryPreference, viewedAt))
     }
 
     func showPreferences() {
@@ -65,6 +72,7 @@ final class AppState {
 final class ScanPresentation {
     let id: UUID
     let purchaseMode: PurchaseMode
+    let categoryPreference: WineCategoryPreference
     let viewedAt: Date
     let cancellationHandler: (() -> Void)?
     var result: WineScanResult?
@@ -72,11 +80,13 @@ final class ScanPresentation {
     init(
         id: UUID = UUID(),
         purchaseMode: PurchaseMode,
+        categoryPreference: WineCategoryPreference,
         viewedAt: Date,
         cancellationHandler: (() -> Void)? = nil
     ) {
         self.id = id
         self.purchaseMode = purchaseMode
+        self.categoryPreference = categoryPreference
         self.viewedAt = viewedAt
         self.cancellationHandler = cancellationHandler
     }

@@ -1,0 +1,123 @@
+{
+  "restaurantName": "The Ashford Room",
+  "currencyCode": "USD",
+  "summary": {
+    "headline": "A polished downtown list with the strongest value clustered in classic European reds, plus one standout white for the table."
+  },
+  "recommendations": [
+    {
+      "rank": 1,
+      "wineName": "Domaine Tempier Bandol Rouge",
+      "displayName": "Domaine Tempier Bandol Rouge",
+      "extractedText": "Domaine Tempier Bandol Rouge, Provence 2020",
+      "producer": "Domaine Tempier",
+      "region": "Bandol, Provence, France",
+      "vintage": 2020,
+      "varietal": "Mourvedre blend",
+      "menuPrice": 118,
+      "menuPriceUnit": "bottle",
+      "estimatedRetail": 82,
+      "valueScore": 9.4,
+      "why": "A benchmark producer with enough bottle age to feel special, priced below the usual restaurant markup for this name."
+    },
+    {
+      "rank": 2,
+      "wineName": "Arnot-Roberts Chardonnay Watson Ranch",
+      "displayName": "Watson Ranch Chardonnay",
+      "extractedText": "Arnot-Roberts Watson Ranch Chardonnay, Napa Valley 2022",
+      "producer": "Arnot-Roberts",
+      "region": "Napa Valley, California",
+      "vintage": 2022,
+      "varietal": "Chardonnay",
+      "menuPrice": 86,
+      "menuPriceUnit": "bottle",
+      "estimatedRetail": 54,
+      "valueScore": 8.8,
+      "why": "Bright, mineral Chardonnay from a respected producer that should work across seafood, salads, and richer starters."
+    },
+    {
+      "rank": 3,
+      "wineName": "Produttori del Barbaresco Langhe Nebbiolo",
+      "displayName": "Produttori Langhe Nebbiolo",
+      "extractedText": "Produttori del Barbaresco Langhe Nebbiolo 2021",
+      "producer": "Produttori del Barbaresco",
+      "region": "Piedmont, Italy",
+      "vintage": 2021,
+      "varietal": "Nebbiolo",
+      "menuPrice": 74,
+      "menuPriceUnit": "bottle",
+      "estimatedRetail": 34,
+      "valueScore": 8.2,
+      "why": "A reliable producer and a versatile red for the table, with a markup that stays reasonable for a restaurant list."
+    }
+  ],
+  "categoryRecommendations": [
+    {
+      "key": "best_value",
+      "title": "Best Value",
+      "recommendations": [
+        {
+          "rank": 1,
+          "wineName": "Domaine Tempier Bandol Rouge",
+          "displayName": "Domaine Tempier Bandol Rouge",
+          "extractedText": "Domaine Tempier Bandol Rouge, Provence 2020",
+          "producer": "Domaine Tempier",
+          "region": "Bandol, Provence, France",
+          "vintage": 2020,
+          "varietal": "Mourvedre blend",
+          "menuPrice": 118,
+          "menuPriceUnit": "bottle",
+          "estimatedRetail": 82,
+          "valueScore": 9.4,
+          "why": "The strongest price-to-quality ratio on the list, especially for a wine with real producer recognition."
+        }
+      ]
+    },
+    {
+      "key": "white_wine_pick",
+      "title": "White Wine Pick",
+      "recommendations": [
+        {
+          "rank": 2,
+          "wineName": "Arnot-Roberts Chardonnay Watson Ranch",
+          "displayName": "Watson Ranch Chardonnay",
+          "extractedText": "Arnot-Roberts Watson Ranch Chardonnay, Napa Valley 2022",
+          "producer": "Arnot-Roberts",
+          "region": "Napa Valley, California",
+          "vintage": 2022,
+          "varietal": "Chardonnay",
+          "menuPrice": 86,
+          "menuPriceUnit": "bottle",
+          "estimatedRetail": 54,
+          "valueScore": 8.8,
+          "why": "A flexible, high-energy white that gives the table range without feeling like a compromise."
+        }
+      ]
+    },
+    {
+      "key": "crowd_pleaser",
+      "title": "Crowd Pleaser",
+      "recommendations": [
+        {
+          "rank": 3,
+          "wineName": "Produttori del Barbaresco Langhe Nebbiolo",
+          "displayName": "Produttori Langhe Nebbiolo",
+          "extractedText": "Produttori del Barbaresco Langhe Nebbiolo 2021",
+          "producer": "Produttori del Barbaresco",
+          "region": "Piedmont, Italy",
+          "vintage": 2021,
+          "varietal": "Nebbiolo",
+          "menuPrice": 74,
+          "menuPriceUnit": "bottle",
+          "estimatedRetail": 34,
+          "valueScore": 8.2,
+          "why": "Elegant enough for wine-focused guests but still friendly with pasta, roast chicken, and lighter meat dishes."
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "The list is strongest when it leans classic rather than flashy.",
+    "If the table wants one bottle for several courses, choose the Bandol for depth or the Chardonnay for flexibility."
+  ]
+}

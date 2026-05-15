@@ -234,12 +234,18 @@ struct MainView: View {
         let decoder = JSONDecoder()
 
         guard let result = try? decoder.decode(WineScanResult.self, from: data) else { return }
-        appState.showResults(result, purchaseMode: scan.purchaseModeValue, viewedAt: scan.createdAt)
+        appState.showResults(
+            result,
+            purchaseMode: scan.purchaseModeValue,
+            categoryPreference: scan.categoryPreferenceValue,
+            viewedAt: scan.createdAt
+        )
     }
 
     private func beginScanProgress() -> UUID {
         let scanID = appState.showScanProgress(
             purchaseMode: viewModel.purchaseMode,
+            categoryPreference: viewModel.categoryPreference,
             viewedAt: .now
         ) {
             viewModel.cancelScan()

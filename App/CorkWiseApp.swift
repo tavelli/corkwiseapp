@@ -22,10 +22,29 @@ struct CorkWiseApp: App {
 
     var body: some Scene {
         WindowGroup {
-            AppRouter()
+            rootView
                 .environment(appState)
                 .environment(entitlementManager)
         }
         .modelContainer(sharedModelContainer)
     }
+
+    @ViewBuilder
+    private var rootView: some View {
+        #if DEBUG
+        if Self.isDemoRecordingEnabled {
+            DemoRecordingView()
+        } else {
+            AppRouter()
+        }
+        #else
+        AppRouter()
+        #endif
+    }
+
+    #if DEBUG
+    private static var isDemoRecordingEnabled: Bool {
+        ProcessInfo.processInfo.environment["CORKWISE_DEMO_RECORDING"] == "1"
+    }
+    #endif
 }

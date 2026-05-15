@@ -16,6 +16,8 @@
 		375DE5FB2FAE74E9008D4574 /* AdaptyUI in Frameworks */ = {isa = PBXBuildFile; productRef = 375DE5FA2FAE74E9008D4574 /* AdaptyUI */; };
 		376100002FB54F0000000000 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 376100012FB54F0000000000 /* Localizable.xcstrings */; };
 		376100022FB54F0000000000 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 376100032FB54F0000000000 /* InfoPlist.xcstrings */; };
+		37A000022FB7800000000000 /* DemoRecordingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A000002FB7800000000000 /* DemoRecordingView.swift */; };
+		37A000032FB7800000000000 /* DemoWineScanResult.json in Resources */ = {isa = PBXBuildFile; fileRef = 37A000012FB7800000000000 /* DemoWineScanResult.json */; };
 		37915F0C2FB21FB2003B43A8 /* WineListCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37915F0B2FB21FB2003B43A8 /* WineListCameraView.swift */; };
 		379399B82FA3CC7400246506 /* ScanFailureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399B22FA3CC7400246506 /* ScanFailureView.swift */; };
 		379399B92FA3CC7400246506 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399A62FA3CC7400246506 /* OnboardingView.swift */; };
@@ -61,6 +63,8 @@
 		375DE5F82FAE4E16008D4574 /* BuildChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildChannel.swift; sourceTree = "<group>"; };
 		376100012FB54F0000000000 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		376100032FB54F0000000000 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
+		37A000002FB7800000000000 /* DemoRecordingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoRecordingView.swift; sourceTree = "<group>"; };
+		37A000012FB7800000000000 /* DemoWineScanResult.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = DemoWineScanResult.json; sourceTree = "<group>"; };
 		37915F0B2FB21FB2003B43A8 /* WineListCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WineListCameraView.swift; sourceTree = "<group>"; };
 		379399A22FA3CC7400246506 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		379399A32FA3CC7400246506 /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
@@ -155,6 +159,7 @@
 		379399D62FA3CE9000246506 /* Features */ = {
 			isa = PBXGroup;
 			children = (
+				37A000042FB7800000000000 /* Demo */,
 				379399D72FA3CE9000246506 /* Main */,
 				379399D82FA3CE9000246506 /* Onboarding */,
 				379399D92FA3CE9000246506 /* Paywall */,
@@ -162,6 +167,15 @@
 				379399DB2FA3CE9000246506 /* Scan */,
 			);
 			path = Features;
+			sourceTree = "<group>";
+		};
+		37A000042FB7800000000000 /* Demo */ = {
+			isa = PBXGroup;
+			children = (
+				37A000002FB7800000000000 /* DemoRecordingView.swift */,
+				37A000012FB7800000000000 /* DemoWineScanResult.json */,
+			);
+			path = Demo;
 			sourceTree = "<group>";
 		};
 		379399D72FA3CE9000246506 /* Main */ = {
@@ -321,6 +335,7 @@
 				376100022FB54F0000000000 /* InfoPlist.xcstrings in Resources */,
 				375DE5EF2FAB9D92008D4574 /* Launch Screen.storyboard in Resources */,
 				379399DD2FA3CF1E00246506 /* Assets.xcassets in Resources */,
+				37A000032FB7800000000000 /* DemoWineScanResult.json in Resources */,
 				376100002FB54F0000000000 /* Localizable.xcstrings in Resources */,
 				37FDAFAD2FB60F21002F91C0 /* CorkwiseStorekitConfig.storekit in Resources */,
 			);
@@ -343,6 +358,7 @@
 				379399BE2FA3CC7400246506 /* MainView.swift in Sources */,
 				379399BF2FA3CC7400246506 /* PurchaseMode.swift in Sources */,
 				379399C82FA3CC9800246506 /* WineScanResult.swift in Sources */,
+				37A000022FB7800000000000 /* DemoRecordingView.swift in Sources */,
 				379399C52FAC31C200246506 /* ScanProgressResultsView.swift in Sources */,
 				379399C92FA3CC9800246506 /* UserWinePreferences.swift in Sources */,
 				379399D02FA3CD3F00246506 /* AppRoute.swift in Sources */,
