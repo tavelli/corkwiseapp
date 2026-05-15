@@ -12,7 +12,7 @@ const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
 const OPENAI_MODEL = Deno.env.get("OPENAI_MODEL") ?? "gpt-4o";
 const OPENAI_REASONING_EFFORT = readOptionalEnv("OPENAI_REASONING_EFFORT");
 const OPENAI_TEXT_VERBOSITY = readOptionalEnv("OPENAI_TEXT_VERBOSITY");
-const OPENAI_TIMEOUT_MS = 45_000;
+const OPENAI_TIMEOUT_MS = 90_000;
 
 type ModelPricing = {
   inputPricePer1MTokens: number;

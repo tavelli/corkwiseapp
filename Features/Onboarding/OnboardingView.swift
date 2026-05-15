@@ -4,6 +4,7 @@ import SwiftUI
 struct OnboardingView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var viewModel: OnboardingViewModel
+    @State private var showsCompletionView = false
 
     init(existingPreferences: UserWinePreferences?) {
         _viewModel = State(initialValue: OnboardingViewModel(existingPreferences: existingPreferences))
@@ -12,28 +13,34 @@ struct OnboardingView: View {
     var body: some View {
         @Bindable var bindableViewModel = viewModel
 
-        VStack(alignment: .leading, spacing: 0) {
-            if viewModel.currentStep > 0 {
-                header
-            }
+        Group {
+            if showsCompletionView {
+                OnboardingCompletionView(onContinue: completeOnboarding)
+            } else {
+                VStack(alignment: .leading, spacing: 0) {
+                    if viewModel.currentStep > 0 {
+                        header
+                    }
 
-            stepContent(
-                purchaseSelection: $bindableViewModel.selectedUsualPurchasePreference,
-                selectedStyles: bindableViewModel.selectedStyles,
-                selectedVarietals: bindableViewModel.selectedVarietals,
-                choiceSelection: $bindableViewModel.selectedChoiceStyle
-            )
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-            .animation(.snappy(duration: 0.22), value: viewModel.currentStep)
+                    stepContent(
+                        purchaseSelection: $bindableViewModel.selectedUsualPurchasePreference,
+                        selectedStyles: bindableViewModel.selectedStyles,
+                        selectedVarietals: bindableViewModel.selectedVarietals,
+                        choiceSelection: $bindableViewModel.selectedChoiceStyle
+                    )
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                    .animation(.snappy(duration: 0.22), value: viewModel.currentStep)
 
-            if viewModel.showsFooterCTA {
-                footer
+                    if viewModel.showsFooterCTA {
+                        footer
+                    }
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 20)
+                .padding(.bottom, 16)
+                .background(mainScreenBackground.ignoresSafeArea())
             }
         }
-        .padding(.horizontal, 24)
-        .padding(.top, 20)
-        .padding(.bottom, 16)
-        .background(mainScreenBackground.ignoresSafeArea())
     }
 
     private var header: some View {
@@ -79,7 +86,7 @@ struct OnboardingView: View {
     private var footer: some View {
         Button {
             if viewModel.isLastStep {
-                persistPreferences()
+                savePreferencesDraft()
             } else {
                 viewModel.goForward()
             }
@@ -155,7 +162,16 @@ struct OnboardingView: View {
         }
     }
 
-    private func persistPreferences() {
+    private func savePreferencesDraft() {
+        upsertPreferences(hasCompletedOnboarding: false)
+        showsCompletionView = true
+    }
+
+    private func completeOnboarding() {
+        upsertPreferences(hasCompletedOnboarding: true)
+    }
+
+    private func upsertPreferences(hasCompletedOnboarding: Bool) {
         let fetchDescriptor = FetchDescriptor<UserWinePreferences>(
             sortBy: [SortDescriptor(\.createdAt, order: .forward)]
         )
@@ -169,7 +185,7 @@ struct OnboardingView: View {
             existing.favoriteVarietals = viewModel.selectedVarietals.map(\.rawValue).sorted()
             existing.choiceStyle = choiceStyle.rawValue
             existing.usualPurchasePreference = viewModel.selectedUsualPurchasePreference?.rawValue
-            existing.hasCompletedOnboarding = true
+            existing.hasCompletedOnboarding = hasCompletedOnboarding
             existing.updatedAt = now
         } else {
             let preferences = UserWinePreferences(
@@ -177,7 +193,7 @@ struct OnboardingView: View {
                 favoriteVarietals: viewModel.selectedVarietals.map(\.rawValue).sorted(),
                 choiceStyle: choiceStyle.rawValue,
                 usualPurchasePreference: viewModel.selectedUsualPurchasePreference?.rawValue,
-                hasCompletedOnboarding: true,
+                hasCompletedOnboarding: hasCompletedOnboarding,
                 createdAt: now,
                 updatedAt: now
             )
@@ -473,7 +489,7 @@ private struct SelectableOptionButton: View {
     }
 }
 
-private struct OnboardingPrimaryButtonStyle: ButtonStyle {
+struct OnboardingPrimaryButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         PrimaryButton(configuration: configuration)
     }

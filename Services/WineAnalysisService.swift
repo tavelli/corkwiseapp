@@ -87,7 +87,7 @@ struct WineAnalysisService {
             request.setValue(apiKey, forHTTPHeaderField: "apikey")
         }
         request.setValue("Bearer \(try await accessToken())", forHTTPHeaderField: "Authorization")
-        request.timeoutInterval = 45
+        request.timeoutInterval = 90
         request.httpBody = try JSONEncoder().encode(requestBody)
 
         let responseData: Data

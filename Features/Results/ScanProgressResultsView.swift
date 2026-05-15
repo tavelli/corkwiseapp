@@ -124,8 +124,8 @@ struct ScanProgressResultsView: View {
             return interpolate(elapsed, start: 2, end: 7, from: 0.15, to: 0.40)
         case ..<17:
             return interpolate(elapsed, start: 7, end: 17, from: 0.40, to: 0.85)
-        case ..<20:
-            return interpolate(elapsed, start: 17, end: 20, from: 0.85, to: 0.945)
+        case ..<25:
+            return interpolate(elapsed, start: 17, end: 25, from: 0.85, to: 0.945)
         default:
             return 0.945
         }
@@ -228,14 +228,6 @@ private struct ScanProgressModal: View {
         }
     }
 
-    private var footerText: String {
-        guard isCompleting == false else { return String(localized: .scanProgressFooterFinishingUp) }
-        guard elapsedSeconds < 20 else { return String(localized: .scanProgressFooterFinishingUp) }
-
-        let remaining = max(1, Int(ceil(20 - elapsedSeconds)))
-        return String(localized: .scanProgressFooterSecondsRemaining(remaining))
-    }
-
     private var titleText: String {
         switch purchaseMode {
         case .glass:
@@ -245,18 +237,17 @@ private struct ScanProgressModal: View {
         }
     }
 
+    private var footerText: String? {
+        guard isCompleting || elapsedSeconds >= 25 else { return nil }
+        return String(localized: .scanProgressFooterFinishingUp)
+    }
+
     var body: some View {
         GeometryReader { proxy in
             VStack(spacing: 24) {
-                VStack(spacing: 6) {
-                    Text(titleText)
-                        .font(.system(size: 21, weight: .bold, design: .serif))
-                        .foregroundStyle(Color.wineText)
-
-                    Text(.scanProgressDurationMessage)
-                        .font(.subheadline)
-                        .foregroundStyle(Color.wineMutedText)
-                }
+                Text(titleText)
+                    .font(.system(size: 20, weight: .semibold, design: .rounded))
+                    .foregroundStyle(Color.wineText)
 
                 VStack(spacing: 18) {
                     ForEach(Array(steps.enumerated()), id: \.offset) { index, title in
@@ -272,8 +263,10 @@ private struct ScanProgressModal: View {
                     ScanProgressBar(progress: progress)
 
                     HStack {
-                        Text(footerText)
-                            .foregroundStyle(Color.wineMutedText.opacity(0.92))
+                        if let footerText {
+                            Text(footerText)
+                                .foregroundStyle(Color.wineMutedText.opacity(0.92))
+                        }
                         Spacer()
                         Button(String(localized: .commonActionCancel), action: cancelAction)
                             .font(.caption.weight(.semibold))
@@ -284,7 +277,6 @@ private struct ScanProgressModal: View {
                             .animation(.easeOut(duration: 0.28), value: isCancelVisible)
                     }
                     .font(.caption.weight(.semibold))
-                    .monospacedDigit()
                 }
             }
             .padding(22)
@@ -328,7 +320,7 @@ private struct ScanProgressBar: View {
                     .frame(width: max(proxy.size.width * progress, 6))
             }
         }
-        .frame(height: 7)
+        .frame(height: 12)
         .animation(.easeOut(duration: 0.22), value: progress)
     }
 }
