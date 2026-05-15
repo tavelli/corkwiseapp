@@ -26,14 +26,12 @@ struct MainView: View {
             VStack(alignment: .leading, spacing: 26) {
                 actionPanel
 
-                if recentScans.isEmpty == false {
-                    RecentScansView(
-                        scans: recentScans,
-                        openScan: openScan,
-                        showAllScans: appState.showAllScans
-                    )
-                    .padding(.horizontal, 20)
-                }
+                RecentScansView(
+                    scans: recentScans,
+                    openScan: openScan,
+                    showAllScans: appState.showAllScans
+                )
+                .padding(.horizontal, 20)
             }
             .padding(.bottom, 24)
         }
@@ -749,6 +747,28 @@ private struct MenuURLImportSheet: View {
             resultJSON: sampleJSON
         )
     )
+    try! context.save()
+
+    return MainView(preferences: preferences)
+        .environment(AppState())
+        .modelContainer(container)
+}
+
+#Preview("Empty Recent Scans") {
+    let configuration = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: UserWinePreferences.self, WineScan.self, configurations: configuration)
+    let context = ModelContext(container)
+    let preferences = UserWinePreferences(
+        preferredStyles: [WineStylePreference.crispRefreshing.rawValue],
+        favoriteVarietals: [
+            WineVarietal.prosecco.rawValue,
+            WineVarietal.chardonnay.rawValue,
+        ],
+        choiceStyle: ChoiceStyle.bestValue.rawValue,
+        usualPurchasePreference: UsualPurchasePreference.glass.rawValue,
+        hasCompletedOnboarding: true
+    )
+    context.insert(preferences)
     try! context.save()
 
     return MainView(preferences: preferences)

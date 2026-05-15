@@ -8,8 +8,9 @@ struct RecentScansView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
             HStack {
-                Text(.historyRecentTitle)
+                Text(scans.isEmpty ? "For best results" : String(localized: .historyRecentTitle))
                     .font(.system(size: 22, weight: .semibold, design: .serif))
+                    .foregroundStyle(Color.wineText)
 
                 Spacer()
 
@@ -21,22 +22,92 @@ struct RecentScansView: View {
             }
 
             if scans.isEmpty {
-                Text(.historyEmptyRecent)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .padding(20)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color.white.opacity(0.8))
-                    .clipShape(.rect(cornerRadius: 20))
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(Color.wineBorder, lineWidth: 1)
-                    }
+                RecentScansEmptyStateCard()
             } else {
                 ForEach(scans.prefix(2)) { scan in
                     ScanHistoryCard(scan: scan, action: { openScan(scan) })
                 }
             }
+        }
+    }
+}
+
+private struct RecentScansEmptyStateCard: View {
+    private let tips = [
+        Tip(
+            title: "Capture the full page",
+            message: "Keep producer names, vintages, and prices in frame.",
+            systemImage: "viewfinder"
+        ),
+        Tip(
+            title: "Multiple pages",
+            message: "Capture as many pagese as you're interested in.",
+            systemImage: "doc.on.doc"
+        ),
+        Tip(
+            title: "Avoid glare",
+            message: "Especially important on laminated menus and wine books.",
+            systemImage: "sun.max"
+        ),
+    ]
+
+    var body: some View {
+        VStack(spacing: 0) {
+            ForEach(Array(tips.enumerated()), id: \.element.title) { index, tip in
+                TipRow(tip: tip)
+
+                if index < tips.count - 1 {
+                    Divider()
+                        .background(Color.wineDivider.opacity(0.65))
+                        .padding(.leading, 60)
+                        .padding(.trailing, 18)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.white.opacity(0.82))
+        .clipShape(.rect(cornerRadius: 20))
+        .overlay {
+            RoundedRectangle(cornerRadius: 20)
+                .stroke(Color.wineBorder, lineWidth: 1)
+        }
+    }
+
+    private struct Tip {
+        let title: String
+        let message: String
+        let systemImage: String
+    }
+
+    private struct TipRow: View {
+        let tip: Tip
+
+        var body: some View {
+            HStack(alignment: .top, spacing: 14) {
+                Image(systemName: tip.systemImage)
+                    .font(.system(size: 20, weight: .regular))
+                    .symbolRenderingMode(.monochrome)
+                    .foregroundStyle(Color.wineMutedText)
+                    .frame(width: 42, height: 42)
+                    .background(Color.wineCardBackground.opacity(0.82))
+                    .clipShape(Circle())
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(tip.title)
+                        .font(.subheadline.weight(.bold))
+                        .foregroundStyle(Color.wineText)
+
+                    Text(tip.message)
+                        .font(.subheadline)
+                        .foregroundStyle(Color.wineMutedText)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                Spacer(minLength: 0)
+            }
+            .padding(.vertical, 14)
+            .padding(.horizontal, 18)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 }

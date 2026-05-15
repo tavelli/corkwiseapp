@@ -24,14 +24,14 @@ struct RecommendationCardView: View {
             }
 
             HStack(alignment: .center, spacing: 14) {
-                Text(recommendation.valueScore.formatted(.number.precision(.fractionLength(1))))
-                    .font(.headline.weight(.bold))
-                    .foregroundStyle(Color.resultScoreText)
-                    .frame(width: 42, height: 42)
-                    .background(
-                        Circle()
-                            .fill(scoreBackground)
-                    )
+//                Text(recommendation.valueScore.formatted(.number.precision(.fractionLength(1))))
+//                    .font(.headline.weight(.bold))
+//                    .foregroundStyle(Color.resultScoreText)
+//                    .frame(width: 42, height: 42)
+//                    .background(
+//                        Circle()
+//                            .fill(scoreBackground)
+//                    )
 
                 VStack(alignment: .leading, spacing: 6) {
                     Text(recommendation.displayTitle)

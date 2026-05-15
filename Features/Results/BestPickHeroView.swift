@@ -23,14 +23,14 @@ struct BestPickHeroView: View {
             }
 
             HStack(alignment: .center, spacing: 14) {
-                Text(recommendation.valueScore.formatted(.number.precision(.fractionLength(1))))
-                    .font(.system(size: 22, weight: .bold, design: .serif))
-                    .foregroundStyle(Color.resultHeroIvory)
-                    .frame(width: 58, height: 58)
-                    .background(
-                        Circle()
-                            .fill(Color.white.opacity(0.10))
-                    )
+//                Text(recommendation.valueScore.formatted(.number.precision(.fractionLength(1))))
+//                    .font(.system(size: 22, weight: .bold, design: .serif))
+//                    .foregroundStyle(Color.resultHeroIvory)
+//                    .frame(width: 58, height: 58)
+//                    .background(
+//                        Circle()
+//                            .fill(Color.white.opacity(0.10))
+//                    )
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(recommendation.displayTitle)
