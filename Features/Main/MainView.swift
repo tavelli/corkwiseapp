@@ -664,7 +664,7 @@ private struct MenuURLImportSheet: View {
         .padding(.bottom, 12)
         .background(Color.wineCardBackground.ignoresSafeArea())
         .onAppear {
-            isURLFieldFocused = true
+            isURLFieldFocused = false
         }
     }
 
