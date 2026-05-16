@@ -146,20 +146,14 @@ Deno.serve(async (req) => {
       requestBody.purchaseMode,
     );
 
-    if (Deno.env.get("INCLUDE_DEBUG_INFO") === "true") {
-      normalizedResult.debugInfo = {
-        model: providerResult.model,
-        apiDurationMilliseconds: providerResult.apiDurationMilliseconds,
-        usage: providerResult.usage,
-        totalCostUsd: providerResult.totalCostUsd,
-      };
-    }
-
-    if (Deno.env.get("LOG_FULL_RESPONSE") === "true") {
-      console.log("full provider response", {
-        providerResponse: providerResult,
-      });
-    }
+    // if (Deno.env.get("INCLUDE_DEBUG_INFO") === "true") {
+    //   normalizedResult.debugInfo = {
+    //     model: providerResult.model,
+    //     apiDurationMilliseconds: providerResult.apiDurationMilliseconds,
+    //     usage: providerResult.usage,
+    //     totalCostUsd: providerResult.totalCostUsd,
+    //   };
+    // }
 
     if (shouldConsumeFreeScan) {
       const freeScanAllowance = await consumeFreeScan(
@@ -178,11 +172,20 @@ Deno.serve(async (req) => {
     }
 
     console.log("analysis complete", {
-      provider: providerResult.provider,
       recommendationCount: normalizedResult.recommendations.length,
       restaurantName: normalizedResult.restaurantName,
       currencyCode: normalizedResult.currencyCode,
+      model: providerResult.model,
+      apiDurationMilliseconds: providerResult.apiDurationMilliseconds,
+      usage: providerResult.usage,
+      totalCostUsd: providerResult.totalCostUsd,
     });
+
+    if (Deno.env.get("LOG_FULL_RESPONSE") === "true") {
+      console.log("full response", {
+        providerResponse: providerResult,
+      });
+    }
 
     return Response.json(normalizedResult, {
       status: 200,
