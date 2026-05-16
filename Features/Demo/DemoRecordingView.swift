@@ -16,8 +16,10 @@ struct DemoRecordingView: View {
                     purchaseMode: purchaseMode,
                     categoryPreference: .anything,
                     viewedAt: viewedAt,
+                    initialElapsedSeconds: 15,
                     showsPageHeader: false,
                     showsCancelAction: false,
+                    scriptedScrollSequence: .demoRecording,
                     cancelAction: {}
                 )
 
@@ -37,7 +39,7 @@ struct DemoRecordingView: View {
 
         do {
             let demoResult = try Self.decodeDemoResult()
-            try await Task.sleep(for: .seconds(3))
+            try await Task.sleep(for: .seconds(4))
             guard Task.isCancelled == false else { return }
             result = demoResult
         } catch {

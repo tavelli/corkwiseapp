@@ -114,6 +114,69 @@
           "why": "Elegant enough for wine-focused guests but still friendly with pasta, roast chicken, and lighter meat dishes."
         }
       ]
+    },
+    {
+      "key": "hidden_gem",
+      "title": "Hidden Gem",
+      "recommendations": [
+        {
+          "rank": 4,
+          "wineName": "Chateau Yvonne Saumur-Champigny",
+          "displayName": "Chateau Yvonne Saumur-Champigny",
+          "extractedText": "Chateau Yvonne Saumur-Champigny, Loire Valley 2019",
+          "producer": "Chateau Yvonne",
+          "region": "Saumur-Champigny, Loire Valley, France",
+          "vintage": 2019,
+          "varietal": "Cabernet Franc",
+          "menuPrice": 92,
+          "menuPriceUnit": "bottle",
+          "estimatedRetail": 58,
+          "valueScore": 8.7,
+          "why": "A quieter Loire pick with real depth, savory lift, and enough polish to outperform the more obvious names nearby."
+        }
+      ]
+    },
+    {
+      "key": "worth_the_splurge",
+      "title": "Worth the Splurge",
+      "recommendations": [
+        {
+          "rank": 5,
+          "wineName": "Domaine Dujac Morey-Saint-Denis",
+          "displayName": "Dujac Morey-Saint-Denis",
+          "extractedText": "Domaine Dujac Morey-Saint-Denis, Burgundy 2018",
+          "producer": "Domaine Dujac",
+          "region": "Morey-Saint-Denis, Burgundy, France",
+          "vintage": 2018,
+          "varietal": "Pinot Noir",
+          "menuPrice": 210,
+          "menuPriceUnit": "bottle",
+          "estimatedRetail": 145,
+          "valueScore": 8.5,
+          "why": "Expensive, yes, but the producer pedigree and restrained markup make it the right place to spend up on this list."
+        }
+      ]
+    },
+    {
+      "key": "overpriced_here",
+      "title": "Overpriced Here",
+      "recommendations": [
+        {
+          "rank": 6,
+          "wineName": "Silver Oak Alexander Valley Cabernet Sauvignon",
+          "displayName": "Silver Oak Alexander Valley Cabernet",
+          "extractedText": "Silver Oak Alexander Valley Cabernet Sauvignon 2019",
+          "producer": "Silver Oak",
+          "region": "Alexander Valley, California",
+          "vintage": 2019,
+          "varietal": "Cabernet Sauvignon",
+          "menuPrice": 198,
+          "menuPriceUnit": "bottle",
+          "estimatedRetail": 78,
+          "valueScore": 5.9,
+          "why": "A familiar bottle, but the menu price asks too much when more distinctive options around it deliver better value."
+        }
+      ]
     }
   ],
   "notes": [

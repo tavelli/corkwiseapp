@@ -16,6 +16,7 @@ struct CategoryHighlightsView: View {
                         categoryLabel: section.displayTitle,
                         categorySystemImage: section.systemImage
                     )
+                    .id(ResultsScrollTarget.category(key: section.key))
                 }
             }
         }

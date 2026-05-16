@@ -34,8 +34,10 @@ struct ScanProgressResultsView: View {
             purchaseMode: purchaseMode,
             categoryPreference: categoryPreference,
             viewedAt: viewedAt,
+            initialElapsedSeconds: 0,
             showsPageHeader: true,
             showsCancelAction: true,
+            scriptedScrollSequence: nil,
             cancelAction: {
                 isShowingCancelConfirmation = true
             }
@@ -67,8 +69,10 @@ struct ScanProgressExperienceView: View {
     let purchaseMode: PurchaseMode
     let categoryPreference: WineCategoryPreference
     let viewedAt: Date
+    let initialElapsedSeconds: TimeInterval
     let showsPageHeader: Bool
     let showsCancelAction: Bool
+    var scriptedScrollSequence: ResultsScriptedScrollSequence? = nil
     let cancelAction: () -> Void
 
     private let timer = Timer.publish(every: 0.12, on: .main, in: .common).autoconnect()
@@ -99,7 +103,11 @@ struct ScanProgressExperienceView: View {
     var body: some View {
         ZStack {
             if let result {
-                ResultsContentView(result: result, purchaseMode: purchaseMode)
+                ResultsContentView(
+                    result: result,
+                    purchaseMode: purchaseMode,
+                    scriptedScrollSequence: isOverlayVisible ? nil : scriptedScrollSequence
+                )
             } else {
                 ScanResultsSkeletonView()
             }
@@ -131,8 +139,9 @@ struct ScanProgressExperienceView: View {
         .navigationBarBackButtonHidden(isOverlayVisible || showsPageHeader == false)
         .interactiveDismissDisabled(isOverlayVisible)
         .onAppear {
-            startedAt = Date()
-            progress = 0.01
+            let now = Date()
+            startedAt = now.addingTimeInterval(-initialElapsedSeconds)
+            progress = estimatedProgress(for: initialElapsedSeconds)
         }
         .onReceive(timer) { _ in
             guard result == nil, isCompleting == false else { return }
