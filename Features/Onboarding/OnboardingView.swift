@@ -353,11 +353,6 @@ private struct ChoiceStyleQuestionView: View {
     var body: some View {
         QuestionSection(title: .onboardingQuestionChoiceStyleTitle) {
             
-            Text(.onboardingQuestionChoiceStyleSubtitle)
-                .font(.subheadline)
-                .foregroundStyle(Color.wineMutedText)
-
-            
             ForEach(ChoiceStyle.allCases) { style in
                 SelectableOptionButton(
                     title: style.title,
@@ -461,15 +456,25 @@ private struct SelectableOptionButton: View {
 
     var body: some View {
         Button(action: action) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(title)
-                    .bold()
-                    .foregroundStyle(isSelected ? Color.wineDeep : Color.wineText)
+            HStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title)
+                        .bold()
+                        .foregroundStyle(isSelected ? Color.wineDeep : Color.wineText)
 
-                if let subtitle {
-                    Text(subtitle)
-                        .font(.caption)
-                        .foregroundStyle(isSelected ? Color.wineDeep.opacity(0.78) : Color.wineMutedText.opacity(0.9))
+                    if let subtitle {
+                        Text(subtitle)
+                            .font(.caption)
+                            .foregroundStyle(isSelected ? Color.wineDeep.opacity(0.78) : Color.wineMutedText.opacity(0.9))
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                if isSelected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.title3)
+                        .foregroundStyle(Color.wineAccent, Color.wineSoftPeach.opacity(0.7))
+                        .transition(.scale.combined(with: .opacity))
                 }
             }
             .padding(.horizontal, 18)

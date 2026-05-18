@@ -547,19 +547,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wines that overdeliver for the price"
+            "value" : "Finding value without overpaying"
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wines that overdeliver for the price"
+            "value" : "Finding value without overpaying"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wines that overdeliver for the price"
+            "value" : "Finding value without overpaying"
           }
         }
       }
@@ -593,19 +593,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Something distinctive or unexpected"
+            "value" : "Discovering something distinctive"
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Something distinctive or unexpected"
+            "value" : "Discovering something distinctive"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Something distinctive or unexpected"
+            "value" : "Discovering something distinctive"
           }
         }
       }
@@ -639,19 +639,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A wine worth splurging on"
+            "value" : "Ordering something exceptional"
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A wine worth splurging on"
+            "value" : "Ordering something exceptional"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A wine worth splurging on"
+            "value" : "Ordering something exceptional"
           }
         }
       }
@@ -685,19 +685,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A producer I already trust"
+            "value" : "Choosing producers I trust"
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A producer I already trust"
+            "value" : "Choosing producers I trust"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A producer I already trust"
+            "value" : "Choosing producers I trust"
           }
         }
       }
@@ -2184,19 +2184,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scan any wine list to spot standout values, trusted producers, and exceptional wines."
+            "value" : "Analyze any wine list to spot standout values, trusted producers, and exceptional wines."
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scan any wine list to spot standout values, trusted producers, and exceptional wines."
+            "value" : "Analyze any wine list to spot standout values, trusted producers, and exceptional wines."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scan any wine list to spot standout values, trusted producers, and exceptional wines."
+            "value" : "Analyze any wine list to spot standout values, trusted producers, and exceptional wines."
           }
         }
       }
@@ -2253,19 +2253,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "What do you look for when choosing wine?"
+            "value" : "What best describes how you currently approach a wine list?"
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "What do you look for when choosing wine?"
+            "value" : "What best describes how you currently approach a wine list?"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "What do you look for when choosing wine?"
+            "value" : "What best describes how you currently approach a wine list?"
           }
         }
       }
