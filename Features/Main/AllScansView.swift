@@ -17,11 +17,7 @@ struct AllScansView: View {
                         .background(Color.white.opacity(0.9))
                         .clipShape(.rect(cornerRadius: 20))
                 } else {
-                    ForEach(scans) { scan in
-                        ScanHistoryCard(scan: scan) {
-                            openScan(scan)
-                        }
-                    }
+                    ScanHistoryList(scans: scans, openScan: openScan)
                 }
             }
             .padding(20)

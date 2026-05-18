@@ -289,7 +289,7 @@ private struct ScanProgressModal: View {
         GeometryReader { proxy in
             VStack(spacing: 24) {
                 Text(titleText)
-                    .font(.system(size: 20, weight: .semibold, design: .rounded))
+                    .font(.system(size: 20, weight: .medium, design: .rounded))
                     .foregroundStyle(Color.wineText)
 
                 VStack(spacing: 18) {
@@ -312,7 +312,7 @@ private struct ScanProgressModal: View {
                         }
                         Spacer()
                         Button(String(localized: .commonActionCancel), action: cancelAction)
-                            .font(.caption.weight(.semibold))
+                            .font(.caption.weight(.medium))
                             .foregroundStyle(Color.wineMutedText.opacity(0.68))
                             .buttonStyle(.plain)
                             .opacity(isCancelVisible ? 1 : 0)

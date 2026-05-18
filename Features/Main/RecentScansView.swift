@@ -24,9 +24,7 @@ struct RecentScansView: View {
             if scans.isEmpty {
                 RecentScansEmptyStateCard()
             } else {
-                ForEach(scans.prefix(2)) { scan in
-                    ScanHistoryCard(scan: scan, action: { openScan(scan) })
-                }
+                ScanHistoryList(scans: Array(scans.prefix(2)), openScan: openScan)
             }
         }
     }
@@ -53,7 +51,7 @@ private struct RecentScansEmptyStateCard: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            ForEach(Array(tips.enumerated()), id: \.element.title) { index, tip in
+            ForEach(tips.enumerated(), id: \.element.title) { index, tip in
                 TipRow(tip: tip)
 
                 if index < tips.count - 1 {
@@ -112,17 +110,47 @@ private struct RecentScansEmptyStateCard: View {
     }
 }
 
-struct ScanHistoryCard: View {
+struct ScanHistoryList: View {
+    let scans: [WineScan]
+    let openScan: (WineScan) -> Void
+
+    var body: some View {
+        VStack(spacing: 0) {
+            ForEach(scans.indices, id: \.self) { index in
+                let scan = scans[index]
+
+                ScanHistoryRow(scan: scan) {
+                    openScan(scan)
+                }
+
+                if index < scans.index(before: scans.endIndex) {
+                    Divider()
+                        .background(Color.wineDivider.opacity(0.65))
+                        .padding(.leading, 18)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.white.opacity(0.92))
+        .clipShape(.rect(cornerRadius: 26))
+        .overlay {
+            RoundedRectangle(cornerRadius: 26)
+                .stroke(Color.wineBorder, lineWidth: 1)
+        }
+        .shadow(color: Color.black.opacity(0.04), radius: 18, y: 10)
+    }
+}
+
+private struct ScanHistoryRow: View {
     let scan: WineScan
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
             HStack(spacing: 16) {
-
                 VStack(alignment: .leading, spacing: 6) {
                     Text(scan.restaurantName ?? String(localized: .commonWineList))
-                        .font(.headline.weight(.semibold))
+                        .font(.headline.weight(.medium))
                         .foregroundStyle(Color.wineText)
 
                     Text(metadataText)
@@ -144,26 +172,25 @@ struct ScanHistoryCard: View {
                 Spacer(minLength: 0)
 
                 Image(systemName: "chevron.right")
-                    .font(.headline.weight(.semibold))
+                    .font(.headline.weight(.medium))
                     .foregroundStyle(Color.wineText)
             }
             .padding(18)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color.white.opacity(0.92))
-            .clipShape(.rect(cornerRadius: 26))
-            .overlay {
-                RoundedRectangle(cornerRadius: 26)
-                    .stroke(Color.wineBorder, lineWidth: 1)
-            }
-            .shadow(color: Color.black.opacity(0.04), radius: 18, y: 10)
+            .contentShape(.rect)
         }
         .buttonStyle(.plain)
     }
 
     private var metadataText: String {
-        var parts = [scan.purchaseModeValue.title]
-        parts.append(scan.categoryPreferenceValue.title)
-        parts.append(scan.createdAt.formatted(date: .abbreviated, time: .omitted))
+        var parts = [scan.createdAt.formatted(Date.FormatStyle()
+            .weekday(.abbreviated)
+            .month(.abbreviated)
+            .day())]
+        parts.append(scan.purchaseModeValue.title)
+        if scan.categoryPreferenceValue != .anything {
+            parts.append(scan.categoryPreferenceValue.title)
+        }
         return parts.joined(separator: " • ")
     }
 

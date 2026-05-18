@@ -334,7 +334,7 @@ struct MainView: View {
 
         }
         .padding(.top, 6)
-        .padding(.bottom, 6)
+//        .padding(.bottom, 6)
     }
 
     private func categoryPreferenceChips(selection: Binding<WineCategoryPreference>) -> some View {
@@ -371,24 +371,36 @@ struct MainView: View {
     }
 
     private var heroScanCard: some View {
-        return Button(action: openCamera) {
-            VStack(spacing: 4) {
+        Button(action: openCamera) {
+            VStack(spacing: 7) {
                 Image("winemenuscan")
                     .renderingMode(.template)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 80, height: 80)
+                    .frame(width: 76, height: 76)
                     .foregroundStyle(Color.wineSoftPeach)
+
+                Text(selectedFilterSummary)
+                    .font(.subheadline.weight(.medium))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.82)
+                    .foregroundStyle(Color.wineSoftPeach.opacity(0.82))
 
                 Text(.mainScanAnalyzeWineList)
                     .font(.system(size: 28, weight: .semibold, design: .default))
                     .tracking(1.2)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.82)
                     .foregroundStyle(Color.wineSoftPeach)
             }
             .frame(maxWidth: .infinity)
             .frame(height: 180)
         }
         .buttonStyle(ScanHeroButtonStyle())
+    }
+
+    private var selectedFilterSummary: String {
+        viewModel.purchaseMode.title + " • " + viewModel.categoryPreference.title
     }
 
     private var sourceOptions: some View {
