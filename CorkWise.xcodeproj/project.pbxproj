@@ -14,7 +14,6 @@
 		375DE5F72FAE4094008D4574 /* SupabaseAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375DE5F62FAE4094008D4574 /* SupabaseAuthService.swift */; };
 		375DE5F92FAE4E16008D4574 /* BuildChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375DE5F82FAE4E16008D4574 /* BuildChannel.swift */; };
 		375DE5FD2FBAC2E9008D4574 /* ScanAccessService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375DE5FC2FBAC2E9008D4574 /* ScanAccessService.swift */; };
-		375DE5FB2FAE74E9008D4574 /* AdaptyUI in Frameworks */ = {isa = PBXBuildFile; productRef = 375DE5FA2FAE74E9008D4574 /* AdaptyUI */; };
 		376100002FB54F0000000000 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 376100012FB54F0000000000 /* Localizable.xcstrings */; };
 		376100022FB54F0000000000 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 376100032FB54F0000000000 /* InfoPlist.xcstrings */; };
 		37A000022FB7800000000000 /* DemoRecordingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A000002FB7800000000000 /* DemoRecordingView.swift */; };
@@ -114,7 +113,6 @@
 			files = (
 				375DE5F32FAE2729008D4574 /* Auth in Frameworks */,
 				375DE5ED2FA97D83008D4574 /* Adapty in Frameworks */,
-				375DE5FB2FAE74E9008D4574 /* AdaptyUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -282,7 +280,6 @@
 			name = CorkWise;
 			packageProductDependencies = (
 				375DE5EC2FA97D83008D4574 /* Adapty */,
-				375DE5FA2FAE74E9008D4574 /* AdaptyUI */,
 				375DE5F22FAE2729008D4574 /* Auth */,
 			);
 			productName = CorkWise;
@@ -644,11 +641,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 375DE5F12FAE2729008D4574 /* XCRemoteSwiftPackageReference "supabase-swift" */;
 			productName = Auth;
-		};
-		375DE5FA2FAE74E9008D4574 /* AdaptyUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 375DE5EB2FA97D83008D4574 /* XCRemoteSwiftPackageReference "AdaptySDK-iOS" */;
-			productName = AdaptyUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

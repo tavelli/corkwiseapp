@@ -1,72 +1,281 @@
 import Adapty
-import AdaptyUI
+import StoreKit
 import SwiftUI
 
 struct PaywallView: View {
     @Environment(EntitlementManager.self) private var entitlementManager
+    @Environment(\.dismiss) private var dismiss
+
     let preferences: UserWinePreferences?
 
     var body: some View {
         Group {
-            if let paywallConfiguration = entitlementManager.paywallConfiguration {
-                AdaptyPaywallView(
-                    paywallConfiguration: paywallConfiguration,
-                    didStartPurchase: { _ in
-                        entitlementManager.startPurchase()
+            if let paywall = entitlementManager.paywall {
+                CustomPaywallContent(
+                    paywall: paywall,
+                    isPurchaseInProgress: entitlementManager.isPurchaseInProgress,
+                    statusMessage: entitlementManager.purchaseStatusMessage,
+                    errorMessage: entitlementManager.purchaseErrorMessage,
+                    purchaseAction: {
+                        Task {
+                            await entitlementManager.purchaseSelectedPaywallProduct()
+                        }
                     },
-                    didFinishPurchase: { _, result in
-                        entitlementManager.finishPurchase(result)
-                    },
-                    didFailPurchase: { _, _ in
-                        entitlementManager.failPurchase()
-                    },
-                    didStartRestore: {
-                        entitlementManager.startPurchase()
-                    },
-                    didFinishRestore: { profile in
-                        entitlementManager.finishRestore(profile)
-                    },
-                    didFailRestore: { _ in
-                        entitlementManager.failRestore()
-                    },
-                    didFailRendering: { _ in
-                        entitlementManager.failRendering()
+                    restoreAction: {
+                        Task {
+                            do {
+                                try await entitlementManager.restorePurchases()
+                            } catch {
+                                entitlementManager.failRestore()
+                            }
+                        }
                     }
                 )
+                .task(id: paywall.id) {
+                    await entitlementManager.logPaywallShownIfNeeded()
+                }
             } else {
-                fallbackView
+                PaywallFallbackView(
+                    errorMessage: entitlementManager.purchaseErrorMessage,
+                    retryAction: {
+                        Task {
+                            await entitlementManager.loadPaywall(preferences: preferences)
+                        }
+                    }
+                )
             }
         }
-        .background(mainScreenBackground.ignoresSafeArea())
+        .background(PaywallBackground().ignoresSafeArea())
         .task {
-            await entitlementManager.loadPaywallConfiguration(preferences: preferences)
+            await entitlementManager.loadPaywall(preferences: preferences)
+        }
+        .onChange(of: entitlementManager.hasActiveEntitlement) { _, hasActiveEntitlement in
+            if hasActiveEntitlement {
+                dismiss()
+            }
         }
     }
+}
 
-    private var fallbackView: some View {
+private struct CustomPaywallContent: View {
+    let paywall: CustomPaywall
+    let isPurchaseInProgress: Bool
+    let statusMessage: String?
+    let errorMessage: String?
+    let purchaseAction: () -> Void
+    let restoreAction: () -> Void
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Capsule()
+                .fill(Color.white.opacity(0.24))
+                .frame(width: 66, height: 6)
+                .padding(.top, 16)
+
+            Spacer(minLength: 28)
+
+            VStack(spacing: 12) {
+                Text("CORKWISE PREMIUM")
+                    .font(.caption.bold())
+                    .tracking(2.4)
+                    .foregroundStyle(Color(red: 0.86, green: 0.68, blue: 0.38))
+
+                Text("Unlock your wine list analysis")
+                    .font(.largeTitle)
+                    .bold()
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(Color(red: 0.98, green: 0.93, blue: 0.86))
+                    .lineLimit(3)
+                    .minimumScaleFactor(0.82)
+
+                Text("See the bottles worth ordering before you choose.")
+                    .font(.callout)
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(Color(red: 0.90, green: 0.82, blue: 0.74))
+                    .padding(.horizontal, 12)
+            }
+
+            ProductSelectionCard(product: paywall.product)
+                .padding(.top, 28)
+
+            VStack(spacing: 12) {
+                Button(action: purchaseAction) {
+                    HStack(spacing: 8) {
+                        if isPurchaseInProgress {
+                            ProgressView()
+                                .tint(Color(red: 0.16, green: 0.10, blue: 0.08))
+                        }
+
+                        Text(paywall.remoteConfig.ctaText)
+                            .font(.headline)
+                            .bold()
+                    }
+                    .foregroundStyle(Color(red: 0.16, green: 0.10, blue: 0.08))
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 64)
+                    .background(
+                        LinearGradient(
+                            colors: [
+                                Color(red: 0.95, green: 0.76, blue: 0.42),
+                                Color(red: 0.82, green: 0.60, blue: 0.30),
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .clipShape(.rect(cornerRadius: 10))
+                }
+                .buttonStyle(.plain)
+                .disabled(isPurchaseInProgress)
+                .opacity(isPurchaseInProgress ? 0.78 : 1)
+
+                Button("Restore Purchases", action: restoreAction)
+                    .font(.footnote)
+                    .foregroundStyle(Color(red: 0.86, green: 0.76, blue: 0.66))
+                    .disabled(isPurchaseInProgress)
+            }
+            .padding(.top, 22)
+
+            PaywallMessageView(statusMessage: statusMessage, errorMessage: errorMessage)
+                .padding(.top, 16)
+
+            Spacer(minLength: 22)
+        }
+        .padding(.horizontal, 24)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
+private struct ProductSelectionCard: View {
+    let product: any AdaptyPaywallProduct
+
+    var body: some View {
+        HStack(spacing: 18) {
+            Image(systemName: "crown")
+                .font(.title2)
+                .foregroundStyle(Color(red: 0.91, green: 0.70, blue: 0.42))
+                .frame(width: 66, height: 66)
+                .background(Color(red: 0.20, green: 0.08, blue: 0.10).opacity(0.64))
+                .clipShape(.circle)
+                .overlay(
+                    Circle()
+                        .stroke(Color(red: 0.76, green: 0.55, blue: 0.32), lineWidth: 1)
+                )
+
+            VStack(alignment: .leading, spacing: 5) {
+                Text(productTitle)
+                    .font(.title2)
+                    .bold()
+                    .foregroundStyle(Color(red: 0.98, green: 0.92, blue: 0.84))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.82)
+
+                Text(productPrice)
+                    .font(.title3)
+                    .foregroundStyle(Color(red: 0.91, green: 0.76, blue: 0.54))
+
+                Text(product.localizedDescription.isEmpty ? "Premium guidance for every list" : product.localizedDescription)
+                    .font(.footnote)
+                    .foregroundStyle(Color(red: 0.75, green: 0.66, blue: 0.62))
+                    .lineLimit(2)
+            }
+
+            Spacer(minLength: 0)
+        }
+        .padding(20)
+        .frame(maxWidth: .infinity)
+        .background(Color(red: 0.18, green: 0.06, blue: 0.08).opacity(0.52))
+        .clipShape(.rect(cornerRadius: 14))
+        .overlay(
+            RoundedRectangle(cornerRadius: 14)
+                .stroke(Color(red: 0.92, green: 0.68, blue: 0.38), lineWidth: 1.4)
+        )
+        .shadow(color: Color(red: 0.90, green: 0.60, blue: 0.28).opacity(0.22), radius: 14, y: 3)
+    }
+
+    private var productTitle: String {
+        if product.adaptyProductType.localizedCaseInsensitiveContains("annual") ||
+            product.adaptyProductType.localizedCaseInsensitiveContains("year") ||
+            product.subscriptionPeriod?.unit == .year {
+            return "Annual"
+        }
+
+        return product.localizedTitle.isEmpty ? "Premium" : product.localizedTitle
+    }
+
+    private var productPrice: String {
+        guard let localizedPrice = product.localizedPrice, localizedPrice.isEmpty == false else {
+            return product.localizedTitle
+        }
+
+        guard let subscriptionPeriod = product.subscriptionPeriod else {
+            return localizedPrice
+        }
+
+        return "\(localizedPrice)/\(subscriptionUnitLabel(for: subscriptionPeriod))"
+    }
+
+    private func subscriptionUnitLabel(for subscriptionPeriod: AdaptySubscriptionPeriod) -> String {
+        switch subscriptionPeriod.unit {
+        case .day:
+            subscriptionPeriod.numberOfUnits == 1 ? "day" : "\(subscriptionPeriod.numberOfUnits) days"
+        case .week:
+            subscriptionPeriod.numberOfUnits == 1 ? "week" : "\(subscriptionPeriod.numberOfUnits) weeks"
+        case .month:
+            subscriptionPeriod.numberOfUnits == 1 ? "month" : "\(subscriptionPeriod.numberOfUnits) months"
+        case .year:
+            subscriptionPeriod.numberOfUnits == 1 ? "year" : "\(subscriptionPeriod.numberOfUnits) years"
+        case .unknown:
+            "period"
+        }
+    }
+}
+
+private struct PaywallMessageView: View {
+    let statusMessage: String?
+    let errorMessage: String?
+
+    var body: some View {
+        VStack(spacing: 6) {
+            if let statusMessage {
+                Text(statusMessage)
+                    .foregroundStyle(Color(red: 0.86, green: 0.76, blue: 0.66))
+            }
+
+            if let errorMessage {
+                Text(errorMessage)
+                    .foregroundStyle(Color(red: 1.0, green: 0.48, blue: 0.44))
+            }
+        }
+        .font(.footnote)
+        .multilineTextAlignment(.center)
+    }
+}
+
+private struct PaywallFallbackView: View {
+    let errorMessage: String?
+    let retryAction: () -> Void
+
+    var body: some View {
         VStack(spacing: 14) {
             Image("headerlogo4")
                 .resizable()
                 .scaledToFit()
                 .frame(height: 55)
 
-            if let message = entitlementManager.purchaseErrorMessage {
-                Text(message)
+            if let errorMessage {
+                Text(errorMessage)
                     .font(.footnote)
-                    .foregroundStyle(Color.red.opacity(0.82))
+                    .foregroundStyle(Color(red: 1.0, green: 0.48, blue: 0.44))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 24)
 
-                Button(String(localized: .paywallTryAgain)) {
-                    Task {
-                        await entitlementManager.loadPaywallConfiguration(preferences: preferences)
-                    }
-                }
-                .buttonStyle(PaywallRetryButtonStyle())
+                Button(String(localized: .paywallTryAgain), action: retryAction)
+                    .buttonStyle(PaywallRetryButtonStyle())
             } else {
                 ProgressView(String(localized: .paywallLoadingSubscriptionOptions))
                     .font(.footnote)
-                    .foregroundStyle(Color.wineMutedText.opacity(0.9))
+                    .foregroundStyle(Color(red: 0.90, green: 0.82, blue: 0.74))
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -74,10 +283,24 @@ struct PaywallView: View {
     }
 }
 
+private struct PaywallBackground: View {
+    var body: some View {
+        LinearGradient(
+            colors: [
+                Color(red: 0.34, green: 0.05, blue: 0.12),
+                Color(red: 0.16, green: 0.04, blue: 0.07),
+                Color(red: 0.09, green: 0.02, blue: 0.03),
+            ],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    }
+}
+
 private struct PaywallRetryButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.subheadline.weight(.semibold))
+            .font(.subheadline.bold())
             .foregroundStyle(Color.white)
             .padding(.horizontal, 20)
             .padding(.vertical, 12)
@@ -90,3 +313,51 @@ private struct PaywallRetryButtonStyle: ButtonStyle {
     PaywallView(preferences: nil)
         .environment(EntitlementManager())
 }
+
+#if DEBUG
+extension CustomPaywall {
+    static let previewLoaded = CustomPaywall(
+        id: "preview-annual-paywall",
+        product: PreviewPaywallProduct(
+            vendorProductId: "corkwise.premium.annual.preview",
+            localizedTitle: "Annual",
+            localizedDescription: "Premium guidance for every list",
+            localizedPrice: "$99/year",
+            price: 99,
+            adaptyProductType: "annual"
+        ),
+        remoteConfig: .init(dictionary: ["cta_text": "Unlock Premium"])
+    )
+}
+
+struct PreviewPaywallProduct: AdaptyPaywallProduct {
+    let vendorProductId: String
+    let localizedTitle: String
+    let localizedDescription: String
+    let localizedPrice: String?
+    let price: Decimal
+    let adaptyProductType: String
+
+    var sk1Product: StoreKit.SKProduct? { nil }
+
+    @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, visionOS 1.0, *)
+    var sk2Product: StoreKit.Product? { nil }
+
+    var currencyCode: String? { "USD" }
+    var currencySymbol: String? { "$" }
+    var regionCode: String? { "US" }
+    var priceLocale: Locale { Locale(identifier: "en_US") }
+    var isFamilyShareable: Bool { false }
+    var subscriptionPeriod: AdaptySubscriptionPeriod? { nil }
+    var subscriptionGroupIdentifier: String? { nil }
+    var localizedSubscriptionPeriod: String? { "year" }
+    var adaptyProductId: String { "preview_annual" }
+    var accessLevelId: String { "premium" }
+    var paywallProductIndex: Int { 0 }
+    var variationId: String { "preview_variation" }
+    var paywallABTestName: String { "Preview A/B Test" }
+    var paywallName: String { "Preview Paywall" }
+    var subscriptionOffer: AdaptySubscriptionOffer? { nil }
+    var description: String { "(vendorProductId: \(vendorProductId), localizedPrice: \(localizedPrice ?? ""))" }
+}
+#endif

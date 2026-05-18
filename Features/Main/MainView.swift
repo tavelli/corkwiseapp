@@ -60,6 +60,16 @@ struct MainView: View {
                         .frame(height: 1)
                 }
         }
+        .overlay {
+            if isShowingPaywall {
+                Color.black
+                    .opacity(0.44)
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
+                    .transition(.opacity)
+            }
+        }
+        .animation(.easeInOut(duration: 0.18), value: isShowingPaywall)
         .navigationBarBackButtonHidden()
         .sheet(item: $bindableViewModel.failure) { failure in
             ScanFailureView(
@@ -78,7 +88,7 @@ struct MainView: View {
         }
         .sheet(isPresented: $isShowingPaywall) {
             PaywallView(preferences: preferences)
-                .presentationDetents([.large])
+                .presentationDetents([.medium])
                 .presentationDragIndicator(.visible)
         }
         .fullScreenCover(isPresented: $isShowingCamera) {
@@ -915,6 +925,32 @@ private struct MenuURLImportSheet: View {
     return MainView(preferences: preferences, showsPaywallOnAppear: true)
         .environment(AppState())
         .environment(EntitlementManager())
+        .modelContainer(container)
+}
+
+#Preview("Paywall Sheet - Loaded") {
+    let configuration = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: UserWinePreferences.self, WineScan.self, configurations: configuration)
+    let context = ModelContext(container)
+    let preferences = UserWinePreferences(
+        preferredStyles: [WineStylePreference.crispRefreshing.rawValue],
+        favoriteVarietals: [
+            WineVarietal.prosecco.rawValue,
+            WineVarietal.chardonnay.rawValue,
+        ],
+        choiceStyle: ChoiceStyle.bestValue.rawValue,
+        usualPurchasePreference: UsualPurchasePreference.glass.rawValue,
+        hasCompletedOnboarding: true
+    )
+    context.insert(preferences)
+    try! context.save()
+
+    let entitlementManager = EntitlementManager()
+    entitlementManager.paywall = .previewLoaded
+
+    return MainView(preferences: preferences, showsPaywallOnAppear: true)
+        .environment(AppState())
+        .environment(entitlementManager)
         .modelContainer(container)
 }
 

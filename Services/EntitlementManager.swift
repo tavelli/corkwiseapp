@@ -1,8 +1,6 @@
 import Adapty
-import AdaptyUI
 import Foundation
 import Observation
-import StoreKit
 
 @MainActor
 @Observable
@@ -14,12 +12,12 @@ final class EntitlementManager {
     var isLoading = true
     var isScanAccessLoading = false
     var isConfigured = false
-    var paywallConfiguration: AdaptyUI.PaywallConfiguration?
+    var paywall: CustomPaywall?
     var isPurchaseInProgress = false
     var purchaseStatusMessage: String?
     var purchaseErrorMessage: String?
-    private var hasActivatedAdaptyUI = false
     private var loadedPaywallCustomAttributes: [String: String]?
+    private var loggedPaywallInstanceIdentities = Set<String>()
     private let scanAccessService = ScanAccessService()
 
     var canScanWithoutPurchase: Bool {
@@ -57,10 +55,6 @@ final class EntitlementManager {
 
             let configuration = configurationBuilder.build()
             try await Adapty.activate(with: configuration)
-            if hasActivatedAdaptyUI == false {
-                try await AdaptyUI.activate()
-                hasActivatedAdaptyUI = true
-            }
             isConfigured = true
             await refreshEntitlement(updatesLoadingState: false)
             await refreshScanAccess()
@@ -101,7 +95,7 @@ final class EntitlementManager {
     func refreshAccessForScanAttempt() async -> Bool {
         let didRefresh = await refreshScanAccess()
         if requiresPurchaseForScan {
-            await loadPaywallConfigurationIfNeeded()
+            await loadPaywallIfNeeded()
         }
         return didRefresh
     }
@@ -131,11 +125,11 @@ final class EntitlementManager {
         }
     }
 
-    func loadPaywallConfiguration(preferences: UserWinePreferences? = nil) async {
+    func loadPaywall(preferences: UserWinePreferences? = nil) async {
         guard isConfigured else { return }
 
         let customAttributes = Self.paywallCustomAttributes(for: preferences)
-        if paywallConfiguration != nil, loadedPaywallCustomAttributes == customAttributes {
+        if paywall != nil, loadedPaywallCustomAttributes == customAttributes {
             return
         }
 
@@ -153,19 +147,20 @@ final class EntitlementManager {
             #if DEBUG
             print("Adapty paywall:", paywall)
             print("Adapty vendor product IDs:", paywall.vendorProductIds)
-            do {
-                let storeKitProducts = try await Product.products(for: paywall.vendorProductIds)
-                print("Direct StoreKit products:", storeKitProducts.map(\.id))
-            } catch {
-                print("Direct StoreKit error:", error)
-            }
             #endif
-            paywallConfiguration = try await AdaptyUI.getPaywallConfiguration(
-                forPaywall: paywall
+            let products = try await Adapty.getPaywallProducts(paywall: paywall)
+            guard let selectedProduct = Self.selectedProduct(from: products) else {
+                throw CustomPaywallError.noProducts
+            }
+
+            self.paywall = CustomPaywall(
+                paywall: paywall,
+                product: selectedProduct,
+                remoteConfig: .init(dictionary: paywall.remoteConfig?.dictionary)
             )
             loadedPaywallCustomAttributes = customAttributes
         } catch {
-            paywallConfiguration = nil
+            paywall = nil
             loadedPaywallCustomAttributes = nil
             Self.logPaywallError(error, context: "load paywall \(AppConfiguration.shared.adaptyPaywallPlacementID)")
             #if DEBUG
@@ -176,10 +171,37 @@ final class EntitlementManager {
         }
     }
 
-    private func loadPaywallConfigurationIfNeeded() async {
+    private func loadPaywallIfNeeded() async {
         guard hasActiveEntitlement == false else { return }
 
-        await loadPaywallConfiguration()
+        await loadPaywall()
+    }
+
+    func logPaywallShownIfNeeded() async {
+        guard let paywall else { return }
+        guard let adaptyPaywall = paywall.adaptyPaywall else { return }
+        guard loggedPaywallInstanceIdentities.contains(paywall.id) == false else { return }
+
+        do {
+            try await Adapty.logShowPaywall(adaptyPaywall)
+            loggedPaywallInstanceIdentities.insert(paywall.id)
+        } catch {
+            Self.logPaywallError(error, context: "log shown paywall \(paywall.id)")
+        }
+    }
+
+    func purchaseSelectedPaywallProduct() async {
+        guard let paywall else { return }
+
+        startPurchase()
+
+        do {
+            let result = try await Adapty.makePurchase(product: paywall.product)
+            finishPurchase(result)
+        } catch {
+            Self.logPaywallError(error, context: "purchase \(paywall.product.vendorProductId)")
+            failPurchase()
+        }
     }
 
     func restorePurchases() async throws {
@@ -260,6 +282,14 @@ final class EntitlementManager {
         profile.accessLevels[AppConfiguration.shared.paidAccessLevelID]?.isActive == true
     }
 
+    private static func selectedProduct(from products: [any AdaptyPaywallProduct]) -> (any AdaptyPaywallProduct)? {
+        products.first { product in
+            product.adaptyProductType.localizedCaseInsensitiveContains("annual") ||
+                product.adaptyProductType.localizedCaseInsensitiveContains("year") ||
+                product.subscriptionPeriod?.unit == .year
+        } ?? products.first
+    }
+
     private static func paywallCustomAttributes(for preferences: UserWinePreferences?) -> [String: String]? {
         guard let preferences else { return nil }
 
@@ -306,5 +336,49 @@ final class EntitlementManager {
             """
         )
         #endif
+    }
+}
+
+struct CustomPaywall {
+    let id: String
+    let adaptyPaywall: AdaptyPaywall?
+    let product: any AdaptyPaywallProduct
+    let remoteConfig: CustomPaywallRemoteConfig
+
+    init(paywall: AdaptyPaywall, product: any AdaptyPaywallProduct, remoteConfig: CustomPaywallRemoteConfig) {
+        id = paywall.instanceIdentity
+        adaptyPaywall = paywall
+        self.product = product
+        self.remoteConfig = remoteConfig
+    }
+
+    init(id: String, product: any AdaptyPaywallProduct, remoteConfig: CustomPaywallRemoteConfig) {
+        self.id = id
+        adaptyPaywall = nil
+        self.product = product
+        self.remoteConfig = remoteConfig
+    }
+}
+
+struct CustomPaywallRemoteConfig {
+    private static let fallbackCTAText = "Unlock Premium"
+
+    let ctaText: String
+
+    init(dictionary: [String: Any]?) {
+        if let ctaText = dictionary?["cta_text"] as? String {
+            let trimmedCTAText = ctaText.trimmingCharacters(in: .whitespacesAndNewlines)
+            self.ctaText = trimmedCTAText.isEmpty ? Self.fallbackCTAText : trimmedCTAText
+        } else {
+            ctaText = Self.fallbackCTAText
+        }
+    }
+}
+
+private enum CustomPaywallError: LocalizedError {
+    case noProducts
+
+    var errorDescription: String? {
+        "Adapty paywall returned no products."
     }
 }
