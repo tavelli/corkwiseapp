@@ -89,8 +89,8 @@ struct RecommendationCardView: View {
     private var wineDataTags: [String] {
         [
             recommendation.varietal?.trimmedNonEmpty,
-            recommendation.region?.trimmedNonEmpty,
             recommendation.vintage.map(String.init),
+            recommendation.region?.trimmedNonEmpty,
         ].compactMap { $0 }
     }
 }

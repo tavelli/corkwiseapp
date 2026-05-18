@@ -76,7 +76,7 @@ struct CategoryHighlightsView: View {
         case "crowd_pleaser":
             return "checkmark.shield.fill"
         case "hidden_gem":
-            return "sparkle.magnifyingglass"
+            return "magnifyingglass"
         case "overpriced_here":
             return "exclamationmark.triangle.fill"
         case "try_something_new":
