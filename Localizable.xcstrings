@@ -2322,19 +2322,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Select any you like — or skip for now"
+            "value" : "Choose any favorites, or skip for now."
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Select any you like — or skip for now"
+            "value" : "Choose any favorites, or skip for now."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Select any you like — or skip for now"
+            "value" : "Choose any favorites, or skip for now."
           }
         }
       }
@@ -2345,19 +2345,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "What varietals do you usually reach for?"
+            "value" : "Which varietals do you usually reach for?"
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "What varietals do you usually reach for?"
+            "value" : "Which varietals do you usually reach for?"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "What varietals do you usually reach for?"
+            "value" : "Which varietals do you usually reach for?"
           }
         }
       }

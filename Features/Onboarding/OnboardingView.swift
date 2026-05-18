@@ -356,7 +356,8 @@ private struct ChoiceStyleQuestionView: View {
             ForEach(ChoiceStyle.allCases) { style in
                 SelectableOptionButton(
                     title: style.title,
-                    isSelected: selection == style
+                    isSelected: selection == style,
+                    indicatorStyle: .radio
                 ) {
                     onSelect(style)
                 }
@@ -374,7 +375,8 @@ private struct PurchasePreferenceQuestionView: View {
             ForEach(UsualPurchasePreference.allCases) { preference in
                 SelectableOptionButton(
                     title: preference.title,
-                    isSelected: selection == preference
+                    isSelected: selection == preference,
+                    indicatorStyle: .radio
                 ) {
                     onSelect(preference)
                 }
@@ -435,7 +437,7 @@ private struct QuestionSection<Content: View>: View {
     @ViewBuilder let content: Content
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 18) {
+        VStack(alignment: .leading, spacing: 28) {
             Text(title)
                 .font(.title2)
                 .bold()
@@ -448,10 +450,16 @@ private struct QuestionSection<Content: View>: View {
     }
 }
 
+private enum SelectionIndicatorStyle {
+    case checkmark
+    case radio
+}
+
 private struct SelectableOptionButton: View {
     let title: String
     var subtitle: String? = nil
     let isSelected: Bool
+    var indicatorStyle: SelectionIndicatorStyle = .checkmark
     let action: () -> Void
 
     var body: some View {
@@ -470,12 +478,9 @@ private struct SelectableOptionButton: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                if isSelected {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.title3)
-                        .foregroundStyle(Color.wineAccent, Color.wineSoftPeach.opacity(0.7))
-                        .transition(.scale.combined(with: .opacity))
-                }
+                SelectionIndicator(style: indicatorStyle)
+                    .opacity(isSelected ? 1 : 0)
+                    .accessibilityHidden(isSelected == false)
             }
             .padding(.horizontal, 18)
             .padding(.vertical, 16)
@@ -486,10 +491,32 @@ private struct SelectableOptionButton: View {
                 RoundedRectangle(cornerRadius: 18)
                     .stroke(isSelected ? Color.wineAccent.opacity(0.55) : Color.wineBorder.opacity(0.9), lineWidth: 1)
             }
-            .scaleEffect(isSelected ? 1 : 0.985)
             .animation(.spring(response: 0.24, dampingFraction: 0.72), value: isSelected)
         }
         .buttonStyle(.plain)
+    }
+}
+
+private struct SelectionIndicator: View {
+    let style: SelectionIndicatorStyle
+
+    var body: some View {
+        Group {
+            switch style {
+            case .checkmark:
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.title3)
+                    .foregroundStyle(Color.wineAccent, Color.wineSoftPeach.opacity(0.7))
+            case .radio:
+                Circle()
+                    .fill(Color.wineAccent)
+                    .frame(width: 10, height: 10)
+                    .padding(6)
+                    .background(Color.wineSoftPeach.opacity(0.7))
+                    .clipShape(.circle)
+            }
+        }
+        .frame(width: 22, height: 22)
     }
 }
 
