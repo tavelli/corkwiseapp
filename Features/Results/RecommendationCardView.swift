@@ -117,7 +117,7 @@ struct RecommendationMetricRow: View {
         .padding(.vertical, 4)
         .frame(maxWidth: .infinity)
         .background(backgroundColor)
-        .clipShape(.rect(cornerRadius: style == .hero ? 16 : 0))
+        .clipShape(.rect(cornerRadius: 12))
     }
 
     private var metrics: [Metric] {
@@ -167,9 +167,9 @@ struct RecommendationMetricRow: View {
     private var backgroundColor: Color {
         switch style {
         case .standard:
-            return .clear
+            return Color(red: 0.972, green: 0.934, blue: 0.914)
         case .hero:
-            return Color.white.opacity(0.0)
+            return Color.resultHeroIvory.opacity(0.12)
         }
     }
 }
@@ -185,18 +185,21 @@ private struct MetricItem: View {
     let style: RecommendationMetricRow.Style
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 5) {
+        VStack(alignment: .center, spacing: 3) {
             Text(value)
-                .font(.system(size: valueFontSize, weight: .semibold))
+                .font(.system(size: valueFontSize, weight: .medium))
                 .foregroundStyle(valueColor)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
+                .multilineTextAlignment(.center)
             Text(title.uppercased())
                 .font(.system(size: 9, weight: .medium))
                 .foregroundStyle(titleColor)
+                .multilineTextAlignment(.center)
+                .tracking(0.7)
         }
         .padding(.horizontal, 10)
-        .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+        .frame(maxWidth: .infinity, minHeight: 44, alignment: .center)
         .layoutPriority(1)
     }
 
@@ -221,7 +224,7 @@ private struct MetricItem: View {
     private var titleColor: Color {
         switch style {
         case .standard:
-            return .secondary
+            return Color(red: 0.43, green: 0.37, blue: 0.35)
         case .hero:
             return Color.resultHeroIvory.opacity(0.82)
         }
