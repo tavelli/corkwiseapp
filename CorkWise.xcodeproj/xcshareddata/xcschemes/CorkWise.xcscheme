@@ -70,7 +70,7 @@
          <EnvironmentVariable
             key = "CORKWISE_DEMO_RECORDING"
             value = "1"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </EnvironmentVariable>
       </EnvironmentVariables>
    </LaunchAction>

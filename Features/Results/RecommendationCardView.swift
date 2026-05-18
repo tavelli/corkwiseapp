@@ -35,7 +35,7 @@ struct RecommendationCardView: View {
 
                 VStack(alignment: .leading, spacing: 6) {
                     Text(recommendation.displayTitle)
-                        .font(.system(size: 17, weight: .bold, design: .serif))
+                        .font(.system(size: 20, weight: .bold, design: .serif))
                         .foregroundStyle(Color.wineText)
 
                     if let displayProducer = recommendation.displayProducer {
@@ -54,7 +54,7 @@ struct RecommendationCardView: View {
                 currencyCode: currencyCode
             )
 
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: 6) {
                 Text(recommendation.why)
                     .font(.subheadline)
                     .foregroundStyle(Color.wineText)
@@ -373,3 +373,27 @@ extension WineRecommendation {
         return displayTitle.localizedCaseInsensitiveContains(producer) ? nil : producer
     }
 }
+#Preview {
+    ZStack(alignment: .top) {
+        mainScreenBackground
+            .ignoresSafeArea()
+
+        RecommendationCardView(
+            recommendation: WineScanResult.sample(
+                for: .bottle,
+                preferences: UserWinePreferences(
+                    preferredStyles: [WineStylePreference.crispRefreshing.rawValue],
+                    choiceStyle: ChoiceStyle.bestValue.rawValue,
+                    usualPurchasePreference: UsualPurchasePreference.bottle.rawValue,
+                    hasCompletedOnboarding: true
+                )
+            ).recommendations[1],
+            purchaseMode: .bottle,
+            currencyCode: "USD",
+            categoryLabel: String(localized: .resultsCategoryHighlyRecommend),
+            categorySystemImage: "star.fill"
+        )
+        .padding()
+    }
+}
+

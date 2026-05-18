@@ -1,4 +1,4 @@
-import type { AnalyzeWineMenuRequest } from "./types.ts";
+import type {AnalyzeWineMenuRequest} from "./types.ts";
 
 export function buildSystemPrompt(requestBody: AnalyzeWineMenuRequest): string {
   // const toneGuidance = tonePromptGuidance(requestBody.userPreferences.tone);
@@ -68,9 +68,9 @@ export function buildSystemPrompt(requestBody: AnalyzeWineMenuRequest): string {
     "Value score = 1-10 based on estimated retail price vs. menu price, producer reputation, category inflation, age/scarcity, and whether the wine gives the user something meaningfully better than cheaper alternatives on the same list.",
     "",
     "The value score is not just markup math.",
-    "Set summary.headline to a concise menu snapshot sentence highlighting the overall list quality, strongest value areas, standout regions/styles, pricing patterns and notable weaknesses. Do not repeat or directly reference the top pick.",
+    "Set summary.headline to one concise, plain-language sentence that helps the user understand how to approach this wine list. When evident, mention the strongest sections, best value areas, notable regions/styles, pricing patterns, and areas to be cautious about. Be specific to this list and avoid generic praise. Do not repeat or directly reference the top pick. Do not imply that unmentioned wines are poor choices.",
     "Return a maximum of 3 'Best Overall Picks' in recommendations. These are the smartest overall choices on the list.",
-    "Then separately return 1-2 recommendations for each relevant category in categoryRecommendations.",
+    "Then separately return 1 recommendation for each relevant category in categoryRecommendations.",
     "Use these category keys when relevant: best_value, worth_the_splurge, crowd_pleaser, hidden_gem, overpriced_here, try_something_new.",
     "Use worth_the_splurge for pricier wines that justify the spend through quality, rarity, age, producer strength, or a meaningfully better experience.",
     "Use crowd_pleaser for broadly appealing, low-risk wines that are likely to work well for a table or mixed preferences.",

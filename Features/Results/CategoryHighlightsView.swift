@@ -70,17 +70,17 @@ struct CategoryHighlightsView: View {
     private static func systemImage(for key: String) -> String {
         switch key {
         case "best_value":
-            return "tag.fill"
+            return "chart.bar.xaxis"
         case "worth_the_splurge":
-            return "crown.fill"
+            return "rosette"
         case "crowd_pleaser":
             return "checkmark.shield.fill"
         case "hidden_gem":
-            return "sparkles"
+            return "sparkle.magnifyingglass"
         case "overpriced_here":
             return "exclamationmark.triangle.fill"
         case "try_something_new":
-            return "sparkles.square.filled.on.square"
+            return "arrow.trianglehead.branch"
         default:
             return "star.circle.fill"
         }
