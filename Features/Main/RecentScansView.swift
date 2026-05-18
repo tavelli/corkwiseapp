@@ -122,24 +122,30 @@ struct ScanHistoryCard: View {
 
                 VStack(alignment: .leading, spacing: 6) {
                     Text(scan.restaurantName ?? String(localized: .commonWineList))
-                        .font(.headline.weight(.bold))
+                        .font(.headline.weight(.semibold))
                         .foregroundStyle(Color.wineText)
 
                     Text(metadataText)
                         .font(.caption.weight(.medium))
                         .foregroundStyle(.secondary)
 
-                    Text(.historyTopPick(topPickName))
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(Color.wineAccent)
-                        .lineLimit(2)
+                    HStack(spacing: 6) {
+                        Image(systemName: "crown.fill")
+                            .font(.subheadline.weight(.regular))
+
+                        Text(topPickName)
+                            .font(.subheadline.weight(.regular))
+                            .lineLimit(2)
+                    }
+                    .foregroundStyle(Color.resultHeroTop)
+                    .accessibilityLabel(Text(.historyTopPick(topPickName)))
                 }
 
                 Spacer(minLength: 0)
 
                 Image(systemName: "chevron.right")
                     .font(.headline.weight(.semibold))
-                    .foregroundStyle(Color.wineAccent.opacity(0.55))
+                    .foregroundStyle(Color.wineText)
             }
             .padding(18)
             .frame(maxWidth: .infinity, alignment: .leading)

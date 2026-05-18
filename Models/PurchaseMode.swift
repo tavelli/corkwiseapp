@@ -1,8 +1,8 @@
 import Foundation
 
 enum PurchaseMode: String, Codable, CaseIterable, Identifiable, Hashable {
-    case glass
     case bottle
+    case glass
 
     var id: String { rawValue }
 
