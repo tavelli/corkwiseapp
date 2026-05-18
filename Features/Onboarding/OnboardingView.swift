@@ -379,7 +379,6 @@ private struct PurchasePreferenceQuestionView: View {
             ForEach(UsualPurchasePreference.allCases) { preference in
                 SelectableOptionButton(
                     title: preference.title,
-//                    subtitle: preference.description,
                     isSelected: selection == preference
                 ) {
                     onSelect(preference)

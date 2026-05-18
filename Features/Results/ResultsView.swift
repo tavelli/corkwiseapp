@@ -143,11 +143,11 @@ struct ResultsScriptedScrollSequence: Equatable {
     @MainActor
     func run(using proxy: ScrollViewProxy) async {
         let steps: [(delay: Duration, target: ResultsScrollTarget, anchor: UnitPoint, duration: TimeInterval)] = [
-            (.seconds(3), .summary, .top, 1.05),
-            (.seconds(3), .highlyRecommendCard(index: 1), .top, 1.15),
-            (.seconds(3), .category(key: "worth_the_splurge"), .top, 1.05),
-            (.seconds(3), .category(key: "hidden_gem"), .top, 1.05),
-//            (.seconds(3), .category(key: "overpriced_here"), .top, 1.05),
+            (.seconds(3), .summary, .top, 4),
+            (.seconds(5), .highlyRecommendCard(index: 1), .top, 3),
+            (.seconds(5), .category(key: "worth_the_splurge"), .top, 3),
+            (.seconds(5), .category(key: "hidden_gem"), .top, 3),
+//           (.seconds(3), .category(key: "overpriced_here"), .top, 12),
         ]
 
         for step in steps {

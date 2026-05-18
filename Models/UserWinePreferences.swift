@@ -194,51 +194,6 @@ enum WineVarietal: String, Codable, CaseIterable, Identifiable {
         }
     }
 
-    var description: String {
-        switch self {
-        case .pinotGrigio:
-            return String(localized: .varietalPinotGrigioDescription)
-        case .sauvignonBlanc:
-            return String(localized: .varietalSauvignonBlancDescription)
-        case .riesling:
-            return String(localized: .varietalRieslingDescription)
-        case .chardonnay:
-            return String(localized: .varietalChardonnayDescription)
-        case .dryRose:
-            return String(localized: .varietalDryRoseDescription)
-        case .pinotNoirRose:
-            return String(localized: .varietalPinotNoirRoseDescription)
-        case .whiteZinfandel:
-            return String(localized: .varietalWhiteZinfandelDescription)
-        case .moscato:
-            return String(localized: .varietalMoscatoDescription)
-        case .prosecco:
-            return String(localized: .varietalProseccoDescription)
-        case .cava:
-            return String(localized: .varietalCavaDescription)
-        case .champagne:
-            return String(localized: .varietalChampagneDescription)
-        case .pinotNoir:
-            return String(localized: .varietalPinotNoirDescription)
-        case .grenacheGarnacha:
-            return String(localized: .varietalGrenacheGarnachaDescription)
-        case .sangiovese:
-            return String(localized: .varietalSangioveseDescription)
-        case .merlot:
-            return String(localized: .varietalMerlotDescription)
-        case .tempranillo:
-            return String(localized: .varietalTempranilloDescription)
-        case .malbec:
-            return String(localized: .varietalMalbecDescription)
-        case .syrahShiraz:
-            return String(localized: .varietalSyrahShirazDescription)
-        case .zinfandel:
-            return String(localized: .varietalZinfandelDescription)
-        case .cabernetSauvignon:
-            return String(localized: .varietalCabernetSauvignonDescription)
-        }
-    }
-
     var category: WineVarietalCategory {
         switch self {
         case .pinotGrigio, .sauvignonBlanc, .riesling, .chardonnay:

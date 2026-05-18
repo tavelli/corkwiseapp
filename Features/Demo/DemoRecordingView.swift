@@ -27,8 +27,10 @@ struct DemoRecordingView: View {
                     DemoFixtureFailureView(message: loadingError)
                 }
             }
+            .persistentSystemOverlays(.hidden)
+            .statusBarHidden(true)
         }
-        .statusBarHidden(true)
+        
         .task {
             await loadDemoResult()
         }
