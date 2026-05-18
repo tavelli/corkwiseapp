@@ -59,12 +59,14 @@ final class MainViewModel {
         image: UIImage,
         preferences: UserWinePreferences,
         modelContext: ModelContext,
+        onEntitlementRequired: @escaping () -> Void = {},
         onResult: @escaping (WineScanResult) -> Void
     ) {
         startScan(
             images: [image],
             preferences: preferences,
             modelContext: modelContext,
+            onEntitlementRequired: onEntitlementRequired,
             onResult: onResult
         )
     }
@@ -73,6 +75,7 @@ final class MainViewModel {
         images: [UIImage],
         preferences: UserWinePreferences,
         modelContext: ModelContext,
+        onEntitlementRequired: @escaping () -> Void = {},
         onResult: @escaping (WineScanResult) -> Void
     ) {
         do {
@@ -82,6 +85,7 @@ final class MainViewModel {
                 attachments: attachments,
                 preferences: preferences,
                 modelContext: modelContext,
+                onEntitlementRequired: onEntitlementRequired,
                 onResult: onResult
             )
         } catch {
@@ -93,6 +97,7 @@ final class MainViewModel {
         attachments: [AnalyzeWineMenuAttachment],
         preferences: UserWinePreferences,
         modelContext: ModelContext,
+        onEntitlementRequired: @escaping () -> Void = {},
         onResult: @escaping (WineScanResult) -> Void
     ) {
         scanTask?.cancel()
@@ -121,6 +126,10 @@ final class MainViewModel {
                     return
                 }
                 finishScan()
+                if error.isEntitlementRequired {
+                    onEntitlementRequired()
+                    return
+                }
                 failure = failureState(for: error)
             }
         }
@@ -130,6 +139,7 @@ final class MainViewModel {
         menuURL: URL,
         preferences: UserWinePreferences,
         modelContext: ModelContext,
+        onEntitlementRequired: @escaping () -> Void = {},
         onResult: @escaping (WineScanResult) -> Void
     ) {
         scanTask?.cancel()
@@ -158,6 +168,10 @@ final class MainViewModel {
                     return
                 }
                 finishScan()
+                if error.isEntitlementRequired {
+                    onEntitlementRequired()
+                    return
+                }
                 failure = failureState(for: error)
             }
         }
@@ -166,6 +180,7 @@ final class MainViewModel {
     func retryLastScan(
         preferences: UserWinePreferences,
         modelContext: ModelContext,
+        onEntitlementRequired: @escaping () -> Void = {},
         onResult: @escaping (WineScanResult) -> Void
     ) {
         guard let pendingAttachments else { return }
@@ -174,6 +189,7 @@ final class MainViewModel {
             attachments: pendingAttachments,
             preferences: preferences,
             modelContext: modelContext,
+            onEntitlementRequired: onEntitlementRequired,
             onResult: onResult
         )
     }
@@ -311,5 +327,19 @@ final class MainViewModel {
 
     private var effectiveBottleContext: BottleContext? {
         purchaseMode == .bottle ? bottleContext : nil
+    }
+}
+
+private extension Error {
+    var isEntitlementRequired: Bool {
+        guard let serviceError = self as? WineAnalysisServiceError else {
+            return false
+        }
+
+        if case .entitlementRequired = serviceError {
+            return true
+        }
+
+        return false
     }
 }

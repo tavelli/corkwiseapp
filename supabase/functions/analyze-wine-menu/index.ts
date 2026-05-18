@@ -6,6 +6,10 @@ import {
 import {authenticatedUser} from "./domain/auth.ts";
 import {checkEntitlement, type EntitlementState} from "./domain/adapty.ts";
 import {MAX_REQUEST_BYTES, validateAnalyzeRequest} from "./domain/request.ts";
+import {
+  scanAccessForRequest,
+  validateScanAccessRequest,
+} from "./domain/scan-access.ts";
 import {normalizeScanResult} from "./domain/normalize.ts";
 import {makeProvider} from "./providers/factory.ts";
 import {
@@ -72,6 +76,23 @@ Deno.serve(async (req) => {
         "Request body must be valid JSON.",
         false,
       );
+    }
+
+    const action = parsedBody != null && typeof parsedBody === "object"
+      ? (parsedBody as Record<string, unknown>).action
+      : null;
+    if (action === "scan_access") {
+      const accessRequest = validateScanAccessRequest(parsedBody);
+      const accessResponse = await scanAccessForRequest(
+        accessRequest,
+        authUser.id,
+        FREE_SCAN_LIMIT,
+      );
+
+      return Response.json(accessResponse, {
+        status: 200,
+        headers: corsHeaders,
+      });
     }
 
     const requestBody = validateAnalyzeRequest(parsedBody);

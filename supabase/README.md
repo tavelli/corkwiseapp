@@ -28,6 +28,9 @@ This app expects a public Supabase Edge Function at:
    - `OPENAI_TEXT_VERBOSITY` (optional, set to `off` to disable)
    - `GEMINI_API_KEY` when using Gemini
    - `GEMINI_MODEL` (optional, defaults to `gemini-2.5-flash`)
+   - `FREE_SCAN_LIMIT=1` to allow one unpaid scan before subscription is required
+   - `ADAPTY_SECRET_API_KEY` for backend entitlement checks
+   - `ADAPTY_ACCESS_LEVEL_ID` (optional, defaults to `premium`)
 5. Run the function locally:
    `supabase functions serve analyze-wine-menu --env-file supabase/functions/.env`
 

@@ -7,17 +7,24 @@ import UniformTypeIdentifiers
 struct MainView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(AppState.self) private var appState
+    @Environment(EntitlementManager.self) private var entitlementManager
     @Query(sort: \WineScan.createdAt, order: .reverse) private var recentScans: [WineScan]
     @State private var viewModel = MainViewModel()
     @State private var isShowingCamera = false
     @State private var isShowingPhotoPicker = false
     @State private var isShowingFileImporter = false
     @State private var isShowingURLImporter = false
+    @State private var isShowingPaywall = false
     @State private var menuURLText = ""
     @State private var selectedPhotoItems: [PhotosPickerItem] = []
     @State private var activeScanID: UUID?
 
     let preferences: UserWinePreferences?
+
+    init(preferences: UserWinePreferences?, showsPaywallOnAppear: Bool = false) {
+        self.preferences = preferences
+        _isShowingPaywall = State(initialValue: showsPaywallOnAppear)
+    }
 
     var body: some View {
         @Bindable var bindableViewModel = viewModel
@@ -64,10 +71,15 @@ struct MainView: View {
                 },
                 uploadAction: {
                     viewModel.clearFailure()
-                    isShowingPhotoPicker = true
+                    openPhotoPicker()
                 }
             )
             .presentationDetents([.medium])
+        }
+        .sheet(isPresented: $isShowingPaywall) {
+            PaywallView(preferences: preferences)
+                .presentationDetents([.large])
+                .presentationDragIndicator(.visible)
         }
         .fullScreenCover(isPresented: $isShowingCamera) {
             WineListCameraView { images in
@@ -125,6 +137,14 @@ struct MainView: View {
                 latestScan: recentScans.first
             )
         }
+        .task {
+            await entitlementManager.refreshScanAccess()
+        }
+        .onChange(of: entitlementManager.hasActiveEntitlement) { _, hasActiveEntitlement in
+            if hasActiveEntitlement {
+                isShowingPaywall = false
+            }
+        }
         .onChange(of: viewModel.failure) { _, failure in
             guard failure != nil, let activeScanID else { return }
             appState.dismissScanProgress(id: activeScanID)
@@ -148,7 +168,12 @@ struct MainView: View {
         guard let preferences, images.isEmpty == false else { return }
 
         let scanID = beginScanProgress()
-        viewModel.startScan(images: images, preferences: preferences, modelContext: modelContext) { result in
+        viewModel.startScan(
+            images: images,
+            preferences: preferences,
+            modelContext: modelContext,
+            onEntitlementRequired: handleEntitlementRequired
+        ) { result in
             completeScanProgress(id: scanID, result: result)
         }
     }
@@ -183,7 +208,12 @@ struct MainView: View {
         guard let preferences else { return }
 
         let scanID = beginScanProgress()
-        viewModel.startScan(menuURL: menuURL, preferences: preferences, modelContext: modelContext) { result in
+        viewModel.startScan(
+            menuURL: menuURL,
+            preferences: preferences,
+            modelContext: modelContext,
+            onEntitlementRequired: handleEntitlementRequired
+        ) { result in
             completeScanProgress(id: scanID, result: result)
         }
     }
@@ -192,19 +222,43 @@ struct MainView: View {
         guard let preferences else { return }
 
         let scanID = beginScanProgress()
-        viewModel.retryLastScan(preferences: preferences, modelContext: modelContext) { result in
+        viewModel.retryLastScan(
+            preferences: preferences,
+            modelContext: modelContext,
+            onEntitlementRequired: handleEntitlementRequired
+        ) { result in
             completeScanProgress(id: scanID, result: result)
         }
     }
 
     private func openCamera() {
-        if CameraPicker.isCameraAvailable {
-            isShowingCamera = true
-        } else {
-            viewModel.failure = ScanFailureState(
-                title: String(localized: .mainFailureCameraUnavailableTitle),
-                message: String(localized: .mainFailureCameraUnavailableMessage)
-            )
+        requestScanAccess {
+            if CameraPicker.isCameraAvailable {
+                isShowingCamera = true
+            } else {
+                viewModel.failure = ScanFailureState(
+                    title: String(localized: .mainFailureCameraUnavailableTitle),
+                    message: String(localized: .mainFailureCameraUnavailableMessage)
+                )
+            }
+        }
+    }
+
+    private func openPhotoPicker() {
+        requestScanAccess {
+            isShowingPhotoPicker = true
+        }
+    }
+
+    private func openFileImporter() {
+        requestScanAccess {
+            isShowingFileImporter = true
+        }
+    }
+
+    private func openURLImporter() {
+        requestScanAccess {
+            isShowingURLImporter = true
         }
     }
 
@@ -218,7 +272,12 @@ struct MainView: View {
 
             let attachment = try ImagePreparationService().prepareAttachment(from: fileURL)
             let scanID = beginScanProgress()
-            viewModel.startScan(attachments: [attachment], preferences: preferences, modelContext: modelContext) { result in
+            viewModel.startScan(
+                attachments: [attachment],
+                preferences: preferences,
+                modelContext: modelContext,
+                onEntitlementRequired: handleEntitlementRequired
+            ) { result in
                 completeScanProgress(id: scanID, result: result)
             }
         } catch {
@@ -259,6 +318,46 @@ struct MainView: View {
         appState.completeScanProgress(id: id, result: result)
         if activeScanID == id {
             activeScanID = nil
+        }
+
+        if entitlementManager.hasActiveEntitlement == false {
+            Task {
+                await entitlementManager.refreshScanAccess()
+            }
+        }
+    }
+
+    private func requestScanAccess(action: @escaping @MainActor () -> Void) {
+        if entitlementManager.canScanWithoutPurchase {
+            action()
+            return
+        }
+
+        Task {
+            let didRefresh = await entitlementManager.refreshAccessForScanAttempt()
+            if entitlementManager.canScanWithoutPurchase || didRefresh == false {
+                action()
+            } else {
+                isShowingPaywall = true
+            }
+        }
+    }
+
+    private func handleEntitlementRequired() {
+        guard let activeScanID else {
+            showPaywallAfterEntitlementRefresh()
+            return
+        }
+
+        appState.dismissScanProgress(id: activeScanID)
+        self.activeScanID = nil
+        showPaywallAfterEntitlementRefresh()
+    }
+
+    private func showPaywallAfterEntitlementRefresh() {
+        Task {
+            await entitlementManager.refreshAccessForScanAttempt()
+            isShowingPaywall = true
         }
     }
 
@@ -428,7 +527,7 @@ struct MainView: View {
                     subtitle: .mainImportPdfOrPhotoSubtitle,
                     systemImage: "photo.on.rectangle"
                 ) {
-                    isShowingPhotoPicker = true
+                    openPhotoPicker()
                 }
                 
                 optionButton(
@@ -436,7 +535,7 @@ struct MainView: View {
                     subtitle: .mainImportPdfOrPhotoSubtitle,
                     systemImage: "text.document"
                 ) {
-                    isShowingFileImporter = true
+                    openFileImporter()
                 }
 
 //                optionButton(
@@ -451,7 +550,7 @@ struct MainView: View {
                     subtitle: .mainImportMenuLinkSubtitle,
                     systemImage: "link"
                 ) {
-                    isShowingURLImporter = true
+                    openURLImporter()
                 }
             }
         }
@@ -769,6 +868,7 @@ private struct MenuURLImportSheet: View {
 
     return MainView(preferences: preferences)
         .environment(AppState())
+        .environment(EntitlementManager())
         .modelContainer(container)
 }
 
@@ -791,6 +891,30 @@ private struct MenuURLImportSheet: View {
 
     return MainView(preferences: preferences)
         .environment(AppState())
+        .environment(EntitlementManager())
+        .modelContainer(container)
+}
+
+#Preview("Paywall Sheet") {
+    let configuration = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: UserWinePreferences.self, WineScan.self, configurations: configuration)
+    let context = ModelContext(container)
+    let preferences = UserWinePreferences(
+        preferredStyles: [WineStylePreference.crispRefreshing.rawValue],
+        favoriteVarietals: [
+            WineVarietal.prosecco.rawValue,
+            WineVarietal.chardonnay.rawValue,
+        ],
+        choiceStyle: ChoiceStyle.bestValue.rawValue,
+        usualPurchasePreference: UsualPurchasePreference.glass.rawValue,
+        hasCompletedOnboarding: true
+    )
+    context.insert(preferences)
+    try! context.save()
+
+    return MainView(preferences: preferences, showsPaywallOnAppear: true)
+        .environment(AppState())
+        .environment(EntitlementManager())
         .modelContainer(container)
 }
 

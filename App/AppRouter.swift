@@ -11,12 +11,6 @@ struct AppRouter: View {
             return .onboarding
         }
 
-        if entitlementManager.isConfigured,
-           entitlementManager.isLoading == false,
-           entitlementManager.hasActiveEntitlement == false {
-            return .paywall
-        }
-
         return .main
     }
 
@@ -28,8 +22,6 @@ struct AppRouter: View {
                 switch currentRoute {
                 case .onboarding:
                     OnboardingView(existingPreferences: preferenceRecords.first)
-                case .paywall:
-                    PaywallView(preferences: preferenceRecords.first)
                 case .main:
                     MainView(preferences: preferenceRecords.first)
                 }

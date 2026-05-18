@@ -2,7 +2,6 @@ import Foundation
 
 enum AppRoute {
     case onboarding
-    case paywall
     case main
 }
 
