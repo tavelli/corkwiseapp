@@ -92,10 +92,10 @@ final class EntitlementManager {
     }
 
     @discardableResult
-    func refreshAccessForScanAttempt() async -> Bool {
+    func refreshAccessForScanAttempt(preferences: UserWinePreferences? = nil) async -> Bool {
         let didRefresh = await refreshScanAccess()
-        if requiresPurchaseForScan {
-            await loadPaywallIfNeeded()
+        if hasActiveEntitlement == false {
+            await loadPaywallIfNeeded(preferences: preferences)
         }
         return didRefresh
     }
@@ -125,12 +125,13 @@ final class EntitlementManager {
         }
     }
 
-    func loadPaywall(preferences: UserWinePreferences? = nil) async {
-        guard isConfigured else { return }
+    @discardableResult
+    func loadPaywall(preferences: UserWinePreferences? = nil) async -> Bool {
+        guard isConfigured else { return false }
 
         let customAttributes = Self.paywallCustomAttributes(for: preferences)
         if paywall != nil, loadedPaywallCustomAttributes == customAttributes {
-            return
+            return true
         }
 
         purchaseErrorMessage = nil
@@ -159,6 +160,7 @@ final class EntitlementManager {
                 remoteConfig: .init(dictionary: paywall.remoteConfig?.dictionary)
             )
             loadedPaywallCustomAttributes = customAttributes
+            return true
         } catch {
             paywall = nil
             loadedPaywallCustomAttributes = nil
@@ -168,13 +170,14 @@ final class EntitlementManager {
             #else
             purchaseErrorMessage = String(localized: .paywallErrorLoadFailed)
             #endif
+            return false
         }
     }
 
-    private func loadPaywallIfNeeded() async {
+    private func loadPaywallIfNeeded(preferences: UserWinePreferences? = nil) async {
         guard hasActiveEntitlement == false else { return }
 
-        await loadPaywall()
+        await loadPaywall(preferences: preferences)
     }
 
     func logPaywallShownIfNeeded() async {

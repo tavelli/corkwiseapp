@@ -147,8 +147,10 @@ struct MainView: View {
                 latestScan: recentScans.first
             )
         }
-        .task {
+        .task(id: paywallPreloadSeedID) {
+            guard entitlementManager.isConfigured else { return }
             await entitlementManager.refreshScanAccess()
+            await preloadPaywallForNonPaidUser()
         }
         .onChange(of: entitlementManager.hasActiveEntitlement) { _, hasActiveEntitlement in
             if hasActiveEntitlement {
@@ -167,6 +169,14 @@ struct MainView: View {
             preferences?.favoriteVarietals?.joined(separator: ",") ?? "",
             recentScans.first?.categoryPreference ?? "",
             recentScans.first?.createdAt.ISO8601Format() ?? "",
+        ].joined(separator: "|")
+    }
+
+    private var paywallPreloadSeedID: String {
+        [
+            entitlementManager.isConfigured.description,
+            preferences?.choiceStyle ?? "",
+            preferences?.usualPurchasePreference ?? "",
         ].joined(separator: "|")
     }
 
@@ -344,11 +354,11 @@ struct MainView: View {
         }
 
         Task {
-            let didRefresh = await entitlementManager.refreshAccessForScanAttempt()
+            let didRefresh = await entitlementManager.refreshAccessForScanAttempt(preferences: preferences)
             if entitlementManager.canScanWithoutPurchase || didRefresh == false {
                 action()
             } else {
-                isShowingPaywall = true
+                await showPaywallWhenReady()
             }
         }
     }
@@ -366,7 +376,19 @@ struct MainView: View {
 
     private func showPaywallAfterEntitlementRefresh() {
         Task {
-            await entitlementManager.refreshAccessForScanAttempt()
+            await entitlementManager.refreshAccessForScanAttempt(preferences: preferences)
+            await showPaywallWhenReady()
+        }
+    }
+
+    private func preloadPaywallForNonPaidUser() async {
+        guard entitlementManager.hasActiveEntitlement == false else { return }
+        await entitlementManager.loadPaywall(preferences: preferences)
+    }
+
+    private func showPaywallWhenReady() async {
+        let didLoadPaywall = await entitlementManager.loadPaywall(preferences: preferences)
+        if didLoadPaywall {
             isShowingPaywall = true
         }
     }
