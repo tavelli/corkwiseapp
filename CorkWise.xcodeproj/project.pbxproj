@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		37539B0B2FBC01ED00F67C2C /* ResultsSoftPaywallCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37539B0A2FBC01ED00F67C2C /* ResultsSoftPaywallCardView.swift */; };
 		375DE5ED2FA97D83008D4574 /* Adapty in Frameworks */ = {isa = PBXBuildFile; productRef = 375DE5EC2FA97D83008D4574 /* Adapty */; };
 		375DE5EF2FAB9D92008D4574 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 375DE5EE2FAB9D92008D4574 /* Launch Screen.storyboard */; };
 		375DE5F32FAE2729008D4574 /* Auth in Frameworks */ = {isa = PBXBuildFile; productRef = 375DE5F22FAE2729008D4574 /* Auth */; };
@@ -16,12 +17,10 @@
 		375DE5FD2FBAC2E9008D4574 /* ScanAccessService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375DE5FC2FBAC2E9008D4574 /* ScanAccessService.swift */; };
 		376100002FB54F0000000000 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 376100012FB54F0000000000 /* Localizable.xcstrings */; };
 		376100022FB54F0000000000 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 376100032FB54F0000000000 /* InfoPlist.xcstrings */; };
-		37A000022FB7800000000000 /* DemoRecordingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A000002FB7800000000000 /* DemoRecordingView.swift */; };
-		37A000032FB7800000000000 /* DemoWineScanResult.json in Resources */ = {isa = PBXBuildFile; fileRef = 37A000012FB7800000000000 /* DemoWineScanResult.json */; };
 		37915F0C2FB21FB2003B43A8 /* WineListCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37915F0B2FB21FB2003B43A8 /* WineListCameraView.swift */; };
+		379399B62FB7000000246506 /* OnboardingCompletionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399B52FB7000000246506 /* OnboardingCompletionView.swift */; };
 		379399B82FA3CC7400246506 /* ScanFailureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399B22FA3CC7400246506 /* ScanFailureView.swift */; };
 		379399B92FA3CC7400246506 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399A62FA3CC7400246506 /* OnboardingView.swift */; };
-		379399B62FB7000000246506 /* OnboardingCompletionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399B52FB7000000246506 /* OnboardingCompletionView.swift */; };
 		379399BA2FA3CC7400246506 /* SelectedPhoto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399B42FA3CC7400246506 /* SelectedPhoto.swift */; };
 		379399BB2FA3CC7400246506 /* OnboardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399A72FA3CC7400246506 /* OnboardingViewModel.swift */; };
 		379399BC2FA3CC7400246506 /* ResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399B02FA3CC7400246506 /* ResultsView.swift */; };
@@ -51,10 +50,13 @@
 		37939A032FA3F10000246506 /* CameraPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399FC2FA3F10000246506 /* CameraPicker.swift */; };
 		37939A042FA3F10000246506 /* BestPickHeroView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399FD2FA3F10000246506 /* BestPickHeroView.swift */; };
 		37939A052FA3F10000246506 /* CategoryHighlightsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399FE2FA3F10000246506 /* CategoryHighlightsView.swift */; };
+		37A000022FB7800000000000 /* DemoRecordingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A000002FB7800000000000 /* DemoRecordingView.swift */; };
+		37A000032FB7800000000000 /* DemoWineScanResult.json in Resources */ = {isa = PBXBuildFile; fileRef = 37A000012FB7800000000000 /* DemoWineScanResult.json */; };
 		37FDAFAD2FB60F21002F91C0 /* CorkwiseStorekitConfig.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 37FDAFAC2FB60F21002F91C0 /* CorkwiseStorekitConfig.storekit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		37539B0A2FBC01ED00F67C2C /* ResultsSoftPaywallCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsSoftPaywallCardView.swift; sourceTree = "<group>"; };
 		375DE4FE2FA675A7008D4574 /* winebottle1.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = winebottle1.svg; sourceTree = "<group>"; };
 		375DE5EE2FAB9D92008D4574 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		375DE5F02FAC2097008D4574 /* AGENTS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = AGENTS.md; sourceTree = "<group>"; };
@@ -64,14 +66,11 @@
 		375DE5FC2FBAC2E9008D4574 /* ScanAccessService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanAccessService.swift; sourceTree = "<group>"; };
 		376100012FB54F0000000000 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		376100032FB54F0000000000 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
-		37A000002FB7800000000000 /* DemoRecordingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoRecordingView.swift; sourceTree = "<group>"; };
-		37A000012FB7800000000000 /* DemoWineScanResult.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = DemoWineScanResult.json; sourceTree = "<group>"; };
 		37915F0B2FB21FB2003B43A8 /* WineListCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WineListCameraView.swift; sourceTree = "<group>"; };
 		379399A22FA3CC7400246506 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		379399A32FA3CC7400246506 /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
 		379399A62FA3CC7400246506 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		379399A72FA3CC7400246506 /* OnboardingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewModel.swift; sourceTree = "<group>"; };
-		379399B52FB7000000246506 /* OnboardingCompletionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCompletionView.swift; sourceTree = "<group>"; };
 		379399A92FA3CC7400246506 /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
 		379399AA2FA3CC7400246506 /* PLAN.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = PLAN.md; sourceTree = "<group>"; };
 		379399AB2FA3CC7400246506 /* PurchaseMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseMode.swift; sourceTree = "<group>"; };
@@ -82,6 +81,7 @@
 		379399B22FA3CC7400246506 /* ScanFailureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanFailureView.swift; sourceTree = "<group>"; };
 		379399B32FA3CC7400246506 /* ScanLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanLoadingView.swift; sourceTree = "<group>"; };
 		379399B42FA3CC7400246506 /* SelectedPhoto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedPhoto.swift; sourceTree = "<group>"; };
+		379399B52FB7000000246506 /* OnboardingCompletionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCompletionView.swift; sourceTree = "<group>"; };
 		379399C42FA3CC9800246506 /* UserWinePreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserWinePreferences.swift; sourceTree = "<group>"; };
 		379399C42FAC31C200246506 /* ScanProgressResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanProgressResultsView.swift; sourceTree = "<group>"; };
 		379399C52FA3CC9800246506 /* WineAnalysisService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WineAnalysisService.swift; sourceTree = "<group>"; };
@@ -103,6 +103,8 @@
 		379399FC2FA3F10000246506 /* CameraPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPicker.swift; sourceTree = "<group>"; };
 		379399FD2FA3F10000246506 /* BestPickHeroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BestPickHeroView.swift; sourceTree = "<group>"; };
 		379399FE2FA3F10000246506 /* CategoryHighlightsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryHighlightsView.swift; sourceTree = "<group>"; };
+		37A000002FB7800000000000 /* DemoRecordingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoRecordingView.swift; sourceTree = "<group>"; };
+		37A000012FB7800000000000 /* DemoWineScanResult.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = DemoWineScanResult.json; sourceTree = "<group>"; };
 		37FDAFAC2FB60F21002F91C0 /* CorkwiseStorekitConfig.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = CorkwiseStorekitConfig.storekit; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -170,15 +172,6 @@
 			path = Features;
 			sourceTree = "<group>";
 		};
-		37A000042FB7800000000000 /* Demo */ = {
-			isa = PBXGroup;
-			children = (
-				37A000002FB7800000000000 /* DemoRecordingView.swift */,
-				37A000012FB7800000000000 /* DemoWineScanResult.json */,
-			);
-			path = Demo;
-			sourceTree = "<group>";
-		};
 		379399D72FA3CE9000246506 /* Main */ = {
 			isa = PBXGroup;
 			children = (
@@ -217,6 +210,7 @@
 				379399AE2FA3CC7400246506 /* RecommendationCardView.swift */,
 				379399FD2FA3F10000246506 /* BestPickHeroView.swift */,
 				379399FE2FA3F10000246506 /* CategoryHighlightsView.swift */,
+				37539B0A2FBC01ED00F67C2C /* ResultsSoftPaywallCardView.swift */,
 			);
 			path = Results;
 			sourceTree = "<group>";
@@ -260,6 +254,15 @@
 				379399D42FA3CE5600246506 /* Corkwise.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		37A000042FB7800000000000 /* Demo */ = {
+			isa = PBXGroup;
+			children = (
+				37A000002FB7800000000000 /* DemoRecordingView.swift */,
+				37A000012FB7800000000000 /* DemoWineScanResult.json */,
+			);
+			path = Demo;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -376,6 +379,7 @@
 				375DE5F72FAE4094008D4574 /* SupabaseAuthService.swift in Sources */,
 				375DE5FD2FBAC2E9008D4574 /* ScanAccessService.swift in Sources */,
 				37939A032FA3F10000246506 /* CameraPicker.swift in Sources */,
+				37539B0B2FBC01ED00F67C2C /* ResultsSoftPaywallCardView.swift in Sources */,
 				37939A042FA3F10000246506 /* BestPickHeroView.swift in Sources */,
 				37939A052FA3F10000246506 /* CategoryHighlightsView.swift in Sources */,
 				379399CA2FA3CC9800246506 /* WineAnalysisService.swift in Sources */,

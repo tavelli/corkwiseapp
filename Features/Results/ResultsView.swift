@@ -1,10 +1,14 @@
 import SwiftUI
 
 struct ResultsView: View {
+    @Environment(EntitlementManager.self) private var entitlementManager
+
     let result: WineScanResult
     let purchaseMode: PurchaseMode
     let categoryPreference: WineCategoryPreference
     let viewedAt: Date
+
+    @State private var isShowingPaywall = false
 
     private var pageTitle: String {
         let restaurantName = result.restaurantName?.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -21,19 +25,50 @@ struct ResultsView: View {
         "\(purchaseMode.title) • \(categoryPreference.title)"
     }
 
-    var body: some View {
-        ResultsContentView(result: result, purchaseMode: purchaseMode)
-            .navigationTitle(pageTitle)
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationSubtitle(navigationSubtitle)
-            .background(mainScreenBackground.ignoresSafeArea())
+    private var showsSoftPaywall: Bool {
+        entitlementManager.hasActiveEntitlement == false
     }
+
+    var body: some View {
+        ResultsContentView(
+            result: result,
+            purchaseMode: purchaseMode,
+            showsSoftPaywall: showsSoftPaywall,
+            showPremiumAction: showPaywall
+        )
+        .navigationTitle(pageTitle)
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationSubtitle(navigationSubtitle)
+        .background(mainScreenBackground.ignoresSafeArea())
+        .sheet(isPresented: $isShowingPaywall) {
+            PaywallView(preferences: nil)
+                .presentationDetents([.height(500)])
+                .presentationDragIndicator(.visible)
+        }
+        .onChange(of: entitlementManager.hasActiveEntitlement) { _, hasActiveEntitlement in
+            if hasActiveEntitlement {
+                isShowingPaywall = false
+            }
+        }
+    }
+
+    private func showPaywall() {
+        Task {
+            let didLoadPaywall = await entitlementManager.loadPaywall(preferences: nil)
+            if didLoadPaywall {
+                isShowingPaywall = true
+            }
+        }
+    }
+
 }
 
 struct ResultsContentView: View {
     let result: WineScanResult
     let purchaseMode: PurchaseMode
     var scriptedScrollSequence: ResultsScriptedScrollSequence? = nil
+    var showsSoftPaywall = false
+    var showPremiumAction: () -> Void = {}
 
     @State private var hasRunScriptedScrollSequence = false
 
@@ -78,10 +113,12 @@ struct ResultsContentView: View {
                         )
                     }
 
+                    
+
                     if result.notes.isEmpty == false {
                         VStack(alignment: .leading, spacing: 12) {
                             Text(.resultsNotesTitle)
-                                .font(.system(size: 20, weight: .bold, design: .serif))
+                                .font(.system(size: 16, weight: .medium))
                                 .foregroundStyle(Color.wineText)
 
                             ForEach(result.notes, id: \.self) { note in
@@ -90,7 +127,7 @@ struct ResultsContentView: View {
                                         .foregroundStyle(Color.wineMutedText)
                                 } icon: {
                                     Image(systemName: "info.circle.fill")
-                                        .foregroundStyle(Color.resultScoreTint)
+                                        .foregroundStyle(Color.wineMutedText)
                                 }
                             }
                         }
@@ -101,6 +138,10 @@ struct ResultsContentView: View {
                             RoundedRectangle(cornerRadius: 22)
                                 .stroke(Color.wineBorder.opacity(0.8), lineWidth: 1)
                         }
+                    }
+                    
+                    if showsSoftPaywall {
+                        ResultsSoftPaywallCardView(premiumAction: showPremiumAction)
                     }
 
                     #if DEBUG
@@ -182,6 +223,7 @@ enum ResultsScrollTarget: Hashable {
         categoryPreference: .reds,
         viewedAt: .now
     )
+    .environment(EntitlementManager())
 }
 
 #if DEBUG
