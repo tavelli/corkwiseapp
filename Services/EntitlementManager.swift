@@ -361,7 +361,7 @@ struct CustomPaywall {
 }
 
 struct CustomPaywallRemoteConfig {
-    private static let fallbackCTAText = "Unlock Premium"
+    private static let fallbackCTAText = "Join Corkwise"
 
     let ctaText: String
 

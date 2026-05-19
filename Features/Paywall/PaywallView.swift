@@ -67,11 +67,6 @@ private struct CustomPaywallContent: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Capsule()
-                .fill(Color.white.opacity(0.24))
-                .frame(width: 66, height: 6)
-                .padding(.top, 16)
-
             Spacer(minLength: 28)
 
             VStack(spacing: 12) {
@@ -80,7 +75,7 @@ private struct CustomPaywallContent: View {
                     .tracking(2.4)
                     .foregroundStyle(Color(red: 0.86, green: 0.68, blue: 0.38))
 
-                Text("Unlock your wine list analysis")
+                Text("Know what’s worth ordering")
                     .font(.largeTitle)
                     .bold()
                     .multilineTextAlignment(.center)
@@ -88,7 +83,7 @@ private struct CustomPaywallContent: View {
                     .lineLimit(3)
                     .minimumScaleFactor(0.82)
 
-                Text("See the bottles worth ordering before you choose.")
+                Text("Expert guidance for every wine list.")
                     .font(.callout)
                     .multilineTextAlignment(.center)
                     .foregroundStyle(Color(red: 0.90, green: 0.82, blue: 0.74))
@@ -98,7 +93,7 @@ private struct CustomPaywallContent: View {
             ProductSelectionCard(product: paywall.product)
                 .padding(.top, 28)
 
-            VStack(spacing: 12) {
+            VStack(spacing: 24) {
                 Button(action: purchaseAction) {
                     HStack(spacing: 8) {
                         if isPurchaseInProgress {
@@ -129,12 +124,12 @@ private struct CustomPaywallContent: View {
                 .disabled(isPurchaseInProgress)
                 .opacity(isPurchaseInProgress ? 0.78 : 1)
 
-                Button("Restore Purchases", action: restoreAction)
-                    .font(.footnote)
-                    .foregroundStyle(Color(red: 0.86, green: 0.76, blue: 0.66))
-                    .disabled(isPurchaseInProgress)
+                PaywallFooterLinks(
+                    isPurchaseInProgress: isPurchaseInProgress,
+                    restoreAction: restoreAction
+                )
             }
-            .padding(.top, 22)
+            .padding(.top, 30)
 
             PaywallMessageView(statusMessage: statusMessage, errorMessage: errorMessage)
                 .padding(.top, 16)
@@ -231,6 +226,42 @@ private struct ProductSelectionCard: View {
     }
 }
 
+private struct PaywallFooterLinks: View {
+    let isPurchaseInProgress: Bool
+    let restoreAction: () -> Void
+
+    private static let privacyPolicyURL = URL(string: "https://getcorkwise.com/privacy")
+    private static let termsOfServiceURL = URL(string: "https://getcorkwise.com/terms")
+    private let linkColor = Color(red: 0.86, green: 0.76, blue: 0.66)
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Button("Restore Purchases", action: restoreAction)
+                .disabled(isPurchaseInProgress)
+
+            if let privacyPolicyURL = Self.privacyPolicyURL {
+                footerSeparator
+
+                Link("Privacy", destination: privacyPolicyURL)
+            }
+
+            if let termsOfServiceURL = Self.termsOfServiceURL {
+                footerSeparator
+
+                Link("Terms", destination: termsOfServiceURL)
+            }
+        }
+        .font(.footnote)
+        .foregroundStyle(linkColor)
+    }
+
+    private var footerSeparator: some View {
+        Text("•")
+            .foregroundStyle(linkColor.opacity(0.7))
+            .accessibilityHidden(true)
+    }
+}
+
 private struct PaywallMessageView: View {
     let statusMessage: String?
     let errorMessage: String?
@@ -314,6 +345,14 @@ private struct PaywallRetryButtonStyle: ButtonStyle {
         .environment(EntitlementManager())
 }
 
+#Preview("Loaded") {
+    let entitlementManager = EntitlementManager()
+    entitlementManager.paywall = .previewLoaded
+
+    return PaywallView(preferences: nil)
+        .environment(entitlementManager)
+}
+
 #if DEBUG
 extension CustomPaywall {
     static let previewLoaded = CustomPaywall(
@@ -321,12 +360,12 @@ extension CustomPaywall {
         product: PreviewPaywallProduct(
             vendorProductId: "corkwise.premium.annual.preview",
             localizedTitle: "Annual",
-            localizedDescription: "Premium guidance for every list",
+            localizedDescription: "A smarter way to choose the bottle",
             localizedPrice: "$99/year",
             price: 99,
             adaptyProductType: "annual"
         ),
-        remoteConfig: .init(dictionary: ["cta_text": "Unlock Premium"])
+        remoteConfig: .init(dictionary: ["cta_text": "Get Premium"])
     )
 }
 

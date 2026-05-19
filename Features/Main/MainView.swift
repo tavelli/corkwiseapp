@@ -63,7 +63,7 @@ struct MainView: View {
         .overlay {
             if isShowingPaywall {
                 Color.black
-                    .opacity(0.44)
+                    .opacity(0.65)
                     .ignoresSafeArea()
                     .allowsHitTesting(false)
                     .transition(.opacity)
@@ -88,7 +88,7 @@ struct MainView: View {
         }
         .sheet(isPresented: $isShowingPaywall) {
             PaywallView(preferences: preferences)
-                .presentationDetents([.medium])
+                .presentationDetents([.height(500)])
                 .presentationDragIndicator(.visible)
         }
         .fullScreenCover(isPresented: $isShowingCamera) {
