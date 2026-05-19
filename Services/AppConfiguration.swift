@@ -52,6 +52,10 @@ struct AppConfiguration {
         supabaseBaseURL?.appending(path: "functions").appending(path: "v1").appending(path: "analyze-wine-menu")
     }
 
+    var feedbackEndpoint: URL? {
+        supabaseBaseURL?.appending(path: "functions").appending(path: "v1").appending(path: "feedback")
+    }
+
     var authEndpoint: URL? {
         supabaseBaseURL?.appending(path: "auth").appending(path: "v1")
     }

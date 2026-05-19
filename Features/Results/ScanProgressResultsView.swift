@@ -60,6 +60,7 @@ struct ScanProgressResultsView: View {
 }
 
 struct ScanProgressExperienceView: View {
+    @Environment(AppState.self) private var appState
     @State private var startedAt = Date()
     @State private var progress = 0.01
     @State private var isCompleting = false
@@ -106,7 +107,8 @@ struct ScanProgressExperienceView: View {
                 ResultsContentView(
                     result: result,
                     purchaseMode: purchaseMode,
-                    scriptedScrollSequence: isOverlayVisible ? nil : scriptedScrollSequence
+                    scriptedScrollSequence: isOverlayVisible ? nil : scriptedScrollSequence,
+                    showRetryAction: appState.resetMainNavigation
                 )
             } else {
                 ScanResultsSkeletonView()

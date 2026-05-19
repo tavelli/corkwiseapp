@@ -1,4 +1,4 @@
-name: Deploy Supabase Edge Function
+name: Deploy Supabase Edge Functions
 
 on:
   push:
@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - "supabase/functions/analyze-wine-menu/**"
+      - "supabase/functions/feedback/**"
       - "supabase/config.toml"
       - "supabase/deno.json"
       - "supabase/package.json"
@@ -14,7 +15,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: deploy-analyze-wine-menu
+  group: deploy-supabase-edge-functions
   cancel-in-progress: true
 
 jobs:
@@ -45,14 +46,17 @@ jobs:
       - name: Install npm dependencies
         run: npm ci
 
-      - name: Lint edge function
+      - name: Lint edge functions
         run: npm run lint
 
-      - name: Type-check edge function
+      - name: Type-check edge functions
         run: npm run check
 
-      - name: Test edge function
+      - name: Test edge functions
         run: npm test
 
       - name: Deploy analyze-wine-menu
         run: supabase functions deploy analyze-wine-menu --project-ref "$SUPABASE_PROJECT_ID"
+
+      - name: Deploy feedback
+        run: supabase functions deploy feedback --project-ref "$SUPABASE_PROJECT_ID"

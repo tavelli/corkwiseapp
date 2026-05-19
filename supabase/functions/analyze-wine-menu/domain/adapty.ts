@@ -1,8 +1,10 @@
-import {RequestError} from "./types.ts";
+import { RequestError } from "./types.ts";
 
-const ADAPTY_PROFILE_URL = "https://api.adapty.io/api/v2/server-side-api/profile/";
+const ADAPTY_PROFILE_URL =
+  "https://api.adapty.io/api/v2/server-side-api/profile/";
 const ADAPTY_SECRET_API_KEY = Deno.env.get("ADAPTY_SECRET_API_KEY");
-const ADAPTY_ACCESS_LEVEL_ID = Deno.env.get("ADAPTY_ACCESS_LEVEL_ID") ?? "premium";
+const ADAPTY_ACCESS_LEVEL_ID = Deno.env.get("ADAPTY_ACCESS_LEVEL_ID") ??
+  "premium";
 
 export type EntitlementState = {
   isPaid: boolean;
@@ -38,7 +40,9 @@ type AccessLevel = {
 
 type AccessLevelCollection = Array<AccessLevel> | Record<string, AccessLevel>;
 
-export async function checkEntitlement(appUserId: string): Promise<EntitlementState> {
+export async function checkEntitlement(
+  appUserId: string,
+): Promise<EntitlementState> {
   if (ADAPTY_SECRET_API_KEY == null || ADAPTY_SECRET_API_KEY.length === 0) {
     throw new RequestError(
       500,
@@ -83,8 +87,9 @@ export async function checkEntitlement(appUserId: string): Promise<EntitlementSt
 
   console.log("adapty entitlement checked", {
     requestedAccessLevelID: ADAPTY_ACCESS_LEVEL_ID,
-    returnedAccessLevelIDs:
-      accessLevels?.map((accessLevel) => accessLevel.access_level_id) ?? [],
+    returnedAccessLevelIDs: accessLevels?.map((accessLevel) =>
+      accessLevel.access_level_id
+    ) ?? [],
     isPaid: activeAccessLevel != null,
   });
 
@@ -97,9 +102,11 @@ export async function checkEntitlement(appUserId: string): Promise<EntitlementSt
 }
 
 function appleOriginalTransactionId(
-  accessLevel: {store?: string; store_original_transaction_id?: string | null} | undefined,
+  accessLevel:
+    | { store?: string; store_original_transaction_id?: string | null }
+    | undefined,
   subscriptions:
-    | Array<{store?: string; store_original_transaction_id?: string | null}>
+    | Array<{ store?: string; store_original_transaction_id?: string | null }>
     | undefined,
 ): string | undefined {
   if (

@@ -22,8 +22,40 @@ struct ScanAccessRequest: Codable {
 struct ScanAccessResponse: Codable, Hashable {
     let hasActiveEntitlement: Bool
     let hasFreeScanAllowance: Bool
+    let hasRetryCredit: Bool
     let freeScansUsed: Int
     let freeScanLimit: Int
+
+    private enum CodingKeys: String, CodingKey {
+        case hasActiveEntitlement
+        case hasFreeScanAllowance
+        case hasRetryCredit
+        case freeScansUsed
+        case freeScanLimit
+    }
+
+    init(
+        hasActiveEntitlement: Bool,
+        hasFreeScanAllowance: Bool,
+        hasRetryCredit: Bool = false,
+        freeScansUsed: Int,
+        freeScanLimit: Int
+    ) {
+        self.hasActiveEntitlement = hasActiveEntitlement
+        self.hasFreeScanAllowance = hasFreeScanAllowance
+        self.hasRetryCredit = hasRetryCredit
+        self.freeScansUsed = freeScansUsed
+        self.freeScanLimit = freeScanLimit
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        hasActiveEntitlement = try container.decode(Bool.self, forKey: .hasActiveEntitlement)
+        hasFreeScanAllowance = try container.decode(Bool.self, forKey: .hasFreeScanAllowance)
+        hasRetryCredit = try container.decodeIfPresent(Bool.self, forKey: .hasRetryCredit) ?? false
+        freeScansUsed = try container.decode(Int.self, forKey: .freeScansUsed)
+        freeScanLimit = try container.decode(Int.self, forKey: .freeScanLimit)
+    }
 }
 
 struct ScanAccessService {

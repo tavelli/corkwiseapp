@@ -38,6 +38,10 @@ struct PricingContextPayload: Codable, Hashable {
 }
 
 struct WineScanResult: Codable, Hashable {
+    let analysisId: String?
+    let modelVersion: String?
+    let promptVersion: String?
+    let freeScanUsed: Bool?
     let restaurantName: String?
     let currencyCode: String
     let summary: ScanSummary
@@ -47,6 +51,10 @@ struct WineScanResult: Codable, Hashable {
     let debugInfo: ScanDebugInfo?
 
     private enum CodingKeys: String, CodingKey {
+        case analysisId
+        case modelVersion
+        case promptVersion
+        case freeScanUsed
         case restaurantName
         case currencyCode
         case summary
@@ -57,6 +65,10 @@ struct WineScanResult: Codable, Hashable {
     }
 
     init(
+        analysisId: String? = nil,
+        modelVersion: String? = nil,
+        promptVersion: String? = nil,
+        freeScanUsed: Bool? = nil,
         restaurantName: String?,
         currencyCode: String = "USD",
         summary: ScanSummary,
@@ -65,6 +77,10 @@ struct WineScanResult: Codable, Hashable {
         notes: [String],
         debugInfo: ScanDebugInfo?
     ) {
+        self.analysisId = analysisId
+        self.modelVersion = modelVersion
+        self.promptVersion = promptVersion
+        self.freeScanUsed = freeScanUsed
         self.restaurantName = restaurantName
         self.currencyCode = currencyCode
         self.summary = summary
@@ -76,6 +92,10 @@ struct WineScanResult: Codable, Hashable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        analysisId = try container.decodeIfPresent(String.self, forKey: .analysisId)
+        modelVersion = try container.decodeIfPresent(String.self, forKey: .modelVersion)
+        promptVersion = try container.decodeIfPresent(String.self, forKey: .promptVersion)
+        freeScanUsed = try container.decodeIfPresent(Bool.self, forKey: .freeScanUsed)
         restaurantName = try container.decodeIfPresent(String.self, forKey: .restaurantName)
         currencyCode = try container.decodeIfPresent(String.self, forKey: .currencyCode) ?? "USD"
         summary = try container.decode(ScanSummary.self, forKey: .summary)

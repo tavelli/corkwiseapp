@@ -1,4 +1,4 @@
-import {RequestError} from "./types.ts";
+import { RequestError } from "./types.ts";
 
 export type AuthenticatedUser = {
   id: string;
@@ -59,12 +59,15 @@ export function authenticatedUser(req: Request): AuthenticatedUser {
     );
   }
 
-  return {id: subject};
+  return { id: subject };
 }
 
 function base64URLDecode(value: string): Uint8Array {
   const base64 = value.replaceAll("-", "+").replaceAll("_", "/");
-  const padded = base64.padEnd(base64.length + ((4 - base64.length % 4) % 4), "=");
+  const padded = base64.padEnd(
+    base64.length + ((4 - base64.length % 4) % 4),
+    "=",
+  );
   const binary = atob(padded);
   return Uint8Array.from(binary, (character) => character.charCodeAt(0));
 }

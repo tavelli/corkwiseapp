@@ -2,14 +2,14 @@ import {
   scanAccessForRequest,
   validateScanAccessRequest,
 } from "./scan-access.ts";
-import {RequestError} from "./types.ts";
+import { RequestError } from "./types.ts";
 
 const appUserId = "7e95be64-3a08-4b6f-9943-61b9c1d15525";
 const supabaseUserId = "a91d43df-4bdb-48d4-9cb7-e9d59f1460b2";
 
 Deno.test("scanAccessForRequest allows paid users", async () => {
   const access = await scanAccessForRequest(
-    {action: "scan_access", appUserId, buildConfiguration: "testflight"},
+    { action: "scan_access", appUserId, buildConfiguration: "testflight" },
     supabaseUserId,
     1,
     {
@@ -20,7 +20,9 @@ Deno.test("scanAccessForRequest allows paid users", async () => {
         }),
       upsertAppInstallation: () => Promise.resolve(),
       checkFreeScanAllowance: () => {
-        throw new Error("Free scan allowance should not be checked for paid users.");
+        throw new Error(
+          "Free scan allowance should not be checked for paid users.",
+        );
       },
     },
   );
@@ -32,15 +34,15 @@ Deno.test("scanAccessForRequest allows paid users", async () => {
 
 Deno.test("scanAccessForRequest allows unpaid users with free allowance", async () => {
   const access = await scanAccessForRequest(
-    {action: "scan_access", appUserId},
+    { action: "scan_access", appUserId },
     supabaseUserId,
     1,
     {
       checkEntitlement: () =>
-        Promise.resolve({isPaid: false, appleOriginalTransactionId: null}),
+        Promise.resolve({ isPaid: false, appleOriginalTransactionId: null }),
       upsertAppInstallation: () => Promise.resolve(),
       checkFreeScanAllowance: () =>
-        Promise.resolve({allowed: true, freeScansUsed: 0}),
+        Promise.resolve({ allowed: true, freeScansUsed: 0 }),
     },
   );
 
@@ -51,40 +53,70 @@ Deno.test("scanAccessForRequest allows unpaid users with free allowance", async 
 
 Deno.test("scanAccessForRequest requires purchase when allowance is exhausted", async () => {
   const access = await scanAccessForRequest(
-    {action: "scan_access", appUserId},
+    { action: "scan_access", appUserId },
     supabaseUserId,
     1,
     {
       checkEntitlement: () =>
-        Promise.resolve({isPaid: false, appleOriginalTransactionId: null}),
+        Promise.resolve({ isPaid: false, appleOriginalTransactionId: null }),
       upsertAppInstallation: () => Promise.resolve(),
       checkFreeScanAllowance: () =>
-        Promise.resolve({allowed: false, freeScansUsed: 1}),
+        Promise.resolve({ allowed: false, freeScansUsed: 1 }),
+      availableRetryCredit: () => Promise.resolve(null),
     },
   );
 
-  if (access.hasFreeScanAllowance !== false || access.freeScansUsed !== 1) {
+  if (
+    access.hasFreeScanAllowance !== false || access.hasRetryCredit !== false ||
+    access.freeScansUsed !== 1
+  ) {
     throw new Error("Expected exhausted free scan allowance.");
   }
 });
 
 Deno.test("scanAccessForRequest requires purchase when free scans are disabled", async () => {
   const access = await scanAccessForRequest(
-    {action: "scan_access", appUserId},
+    { action: "scan_access", appUserId },
     supabaseUserId,
     0,
     {
       checkEntitlement: () =>
-        Promise.resolve({isPaid: false, appleOriginalTransactionId: null}),
+        Promise.resolve({ isPaid: false, appleOriginalTransactionId: null }),
       upsertAppInstallation: () => Promise.resolve(),
       checkFreeScanAllowance: () => {
-        throw new Error("Free scan allowance should not be checked when disabled.");
+        throw new Error(
+          "Free scan allowance should not be checked when disabled.",
+        );
       },
+      availableRetryCredit: () => Promise.resolve(null),
     },
   );
 
-  if (access.hasFreeScanAllowance !== false || access.freeScanLimit !== 0) {
+  if (
+    access.hasFreeScanAllowance !== false || access.hasRetryCredit !== false ||
+    access.freeScanLimit !== 0
+  ) {
     throw new Error("Expected free scans to be disabled.");
+  }
+});
+
+Deno.test("scanAccessForRequest allows unpaid users with retry credit", async () => {
+  const access = await scanAccessForRequest(
+    { action: "scan_access", appUserId },
+    supabaseUserId,
+    1,
+    {
+      checkEntitlement: () =>
+        Promise.resolve({ isPaid: false, appleOriginalTransactionId: null }),
+      upsertAppInstallation: () => Promise.resolve(),
+      checkFreeScanAllowance: () =>
+        Promise.resolve({ allowed: false, freeScansUsed: 1 }),
+      availableRetryCredit: () => Promise.resolve({ id: crypto.randomUUID() }),
+    },
+  );
+
+  if (access.hasRetryCredit !== true || access.hasFreeScanAllowance !== false) {
+    throw new Error("Expected retry credit access.");
   }
 });
 

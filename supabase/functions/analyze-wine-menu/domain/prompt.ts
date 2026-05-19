@@ -1,4 +1,6 @@
-import type {AnalyzeWineMenuRequest} from "./types.ts";
+import type { AnalyzeWineMenuRequest } from "./types.ts";
+
+export const PROMPT_VERSION = "2026-05-19";
 
 export function buildSystemPrompt(requestBody: AnalyzeWineMenuRequest): string {
   // const toneGuidance = tonePromptGuidance(requestBody.userPreferences.tone);

@@ -7,6 +7,7 @@ import Observation
 final class EntitlementManager {
     var hasActiveEntitlement = false
     var hasFreeScanAllowance = false
+    var hasRetryCredit = false
     var freeScansUsed = 0
     var freeScanLimit = 0
     var isLoading = true
@@ -21,7 +22,7 @@ final class EntitlementManager {
     private let scanAccessService = ScanAccessService()
 
     var canScanWithoutPurchase: Bool {
-        hasActiveEntitlement || hasFreeScanAllowance
+        hasActiveEntitlement || hasFreeScanAllowance || hasRetryCredit
     }
 
     var requiresPurchaseForScan: Bool {
@@ -83,6 +84,7 @@ final class EntitlementManager {
             let access = try await scanAccessService.scanAccess()
             hasActiveEntitlement = access.hasActiveEntitlement
             hasFreeScanAllowance = access.hasFreeScanAllowance
+            hasRetryCredit = access.hasRetryCredit
             freeScansUsed = access.freeScansUsed
             freeScanLimit = access.freeScanLimit
             return true
@@ -119,6 +121,7 @@ final class EntitlementManager {
             hasActiveEntitlement = Self.hasActiveEntitlement(in: profile)
             if hasActiveEntitlement {
                 hasFreeScanAllowance = false
+                hasRetryCredit = false
             }
         } catch {
             hasActiveEntitlement = false
@@ -217,6 +220,7 @@ final class EntitlementManager {
         hasActiveEntitlement = Self.hasActiveEntitlement(in: profile)
         if hasActiveEntitlement {
             hasFreeScanAllowance = false
+            hasRetryCredit = false
         }
 
         if hasActiveEntitlement {
@@ -240,6 +244,7 @@ final class EntitlementManager {
             hasActiveEntitlement = Self.hasActiveEntitlement(in: profile)
             if hasActiveEntitlement {
                 hasFreeScanAllowance = false
+                hasRetryCredit = false
             }
             if hasActiveEntitlement == false {
                 Task {
@@ -263,6 +268,7 @@ final class EntitlementManager {
         hasActiveEntitlement = Self.hasActiveEntitlement(in: profile)
         if hasActiveEntitlement {
             hasFreeScanAllowance = false
+            hasRetryCredit = false
         }
 
         if hasActiveEntitlement {

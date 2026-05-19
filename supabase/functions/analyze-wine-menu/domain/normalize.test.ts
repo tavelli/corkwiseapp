@@ -1,4 +1,4 @@
-import {normalizeScanResult} from "./normalize.ts";
+import { normalizeScanResult } from "./normalize.ts";
 
 Deno.test("normalizeScanResult derives bottle markup", () => {
   const result = normalizeScanResult(
@@ -33,7 +33,9 @@ Deno.test("normalizeScanResult derives bottle markup", () => {
 
   const [recommendation] = result.recommendations;
   if (recommendation.estimatedMarkup !== 2) {
-    throw new Error(`Expected 2x markup, got ${recommendation.estimatedMarkup}`);
+    throw new Error(
+      `Expected 2x markup, got ${recommendation.estimatedMarkup}`,
+    );
   }
 });
 
@@ -95,10 +97,14 @@ Deno.test("normalizeScanResult uses recommendation menu price unit for markup", 
 
   const [recommendation] = result.recommendations;
   if (recommendation.menuPriceUnit !== "bottle") {
-    throw new Error(`Expected bottle price unit, got ${recommendation.menuPriceUnit}`);
+    throw new Error(
+      `Expected bottle price unit, got ${recommendation.menuPriceUnit}`,
+    );
   }
 
   if (recommendation.estimatedMarkup !== 2) {
-    throw new Error(`Expected 2x markup, got ${recommendation.estimatedMarkup}`);
+    throw new Error(
+      `Expected 2x markup, got ${recommendation.estimatedMarkup}`,
+    );
   }
 });

@@ -1,4 +1,8 @@
-import {RequestError, type PurchaseMode, type WineScanResult} from "./types.ts";
+import {
+  type PurchaseMode,
+  RequestError,
+  type WineScanResult,
+} from "./types.ts";
 
 export function normalizeScanResult(
   input: unknown,
@@ -21,7 +25,7 @@ export function normalizeScanResult(
   }
 
   const normalizedRecommendations = recommendations.map((entry, index) =>
-    normalizeRecommendation(entry, index, purchaseMode),
+    normalizeRecommendation(entry, index, purchaseMode)
   );
   const normalizedCategoryRecommendations = arrayOrEmpty(
     candidate.categoryRecommendations,
@@ -67,7 +71,10 @@ function normalizeRecommendation(
 
   const candidate = input as Record<string, unknown>;
   const menuPrice = numberOrNull(candidate.menuPrice);
-  const menuPriceUnit = purchaseModeOrDefault(candidate.menuPriceUnit, purchaseMode);
+  const menuPriceUnit = purchaseModeOrDefault(
+    candidate.menuPriceUnit,
+    purchaseMode,
+  );
   const estimatedRetail = numberOrNull(candidate.estimatedRetail);
   const derivedMarkup = deriveMarkup({
     menuPriceUnit,
@@ -119,7 +126,7 @@ function normalizeCategorySection(
     recommendations: arrayOrEmpty(candidate.recommendations)
       .slice(0, 2)
       .map((entry, index) =>
-        normalizeRecommendation(entry, index, purchaseMode),
+        normalizeRecommendation(entry, index, purchaseMode)
       ),
   };
 }
@@ -131,7 +138,7 @@ function deriveDisplayName(input: {
   varietal: string | null;
   extractedText: string;
 }): string {
-  const {producer, region, varietal, extractedText} = input;
+  const { producer, region, varietal, extractedText } = input;
   const wineName = distinctPart(input.wineName, [producer, varietal]);
 
   if (wineName != null) {
@@ -221,8 +228,8 @@ function deriveMarkup(input: {
   menuPriceUnit: PurchaseMode;
   menuPrice: number | null;
   estimatedRetail: number | null;
-}): {value: number; display: string} | null {
-  const {menuPriceUnit, menuPrice, estimatedRetail} = input;
+}): { value: number; display: string } | null {
+  const { menuPriceUnit, menuPrice, estimatedRetail } = input;
 
   if (
     menuPrice == null ||
@@ -248,7 +255,10 @@ function deriveMarkup(input: {
   };
 }
 
-function purchaseModeOrDefault(value: unknown, fallback: PurchaseMode): PurchaseMode {
+function purchaseModeOrDefault(
+  value: unknown,
+  fallback: PurchaseMode,
+): PurchaseMode {
   return value === "glass" || value === "bottle" ? value : fallback;
 }
 

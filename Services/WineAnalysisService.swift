@@ -166,3 +166,136 @@ struct WineAnalysisService {
         }
     }
 }
+
+enum FeedbackServiceError: Error {
+    case backendNotConfigured
+    case authorizationFailed
+    case invalidResponse(String?)
+    case requestFailed
+    case serverError(WineAnalysisErrorResponse)
+}
+
+struct AnalysisFeedbackRequest: Codable {
+    let analysisId: String
+    let appUserId: String
+    let rating: Rating
+    let comment: String?
+    let source: String
+
+    enum Rating: String, Codable {
+        case useful
+        case notUseful = "not_useful"
+    }
+
+    init(
+        analysisId: String,
+        appUserId: String,
+        rating: Rating,
+        comment: String?
+    ) {
+        self.analysisId = analysisId
+        self.appUserId = appUserId
+        self.rating = rating
+        self.comment = comment
+        source = "result_end_card"
+    }
+}
+
+struct AnalysisFeedbackResponse: Codable, Hashable {
+    let ok: Bool
+    let retryGranted: Bool
+    let retryCreditId: String?
+
+    private enum CodingKeys: String, CodingKey {
+        case ok
+        case retryGranted
+        case retryCreditId
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        ok = try container.decode(Bool.self, forKey: .ok)
+        retryGranted = try container.decode(Bool.self, forKey: .retryGranted)
+        retryCreditId = try container.decodeIfPresent(String.self, forKey: .retryCreditId)
+    }
+}
+
+struct FeedbackService {
+    func submitFeedback(
+        analysisId: String,
+        rating: AnalysisFeedbackRequest.Rating,
+        comment: String?
+    ) async throws -> AnalysisFeedbackResponse {
+        guard let endpoint = AppConfiguration.shared.feedbackEndpoint else {
+            throw FeedbackServiceError.backendNotConfigured
+        }
+
+        let requestBody = AnalysisFeedbackRequest(
+            analysisId: analysisId,
+            appUserId: try appUserID(),
+            rating: rating,
+            comment: comment
+        )
+
+        var request = URLRequest(url: endpoint)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        if let apiKey = AppConfiguration.shared.supabaseAPIKey {
+            request.setValue(apiKey, forHTTPHeaderField: "apikey")
+        }
+        request.setValue("Bearer \(try await accessToken())", forHTTPHeaderField: "Authorization")
+        request.timeoutInterval = 30
+        request.httpBody = try JSONEncoder().encode(requestBody)
+
+        let responseData: Data
+        let response: URLResponse
+
+        do {
+            (responseData, response) = try await URLSession.shared.data(for: request)
+        } catch {
+            throw FeedbackServiceError.requestFailed
+        }
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw FeedbackServiceError.invalidResponse(nil)
+        }
+
+        let decoder = JSONDecoder()
+
+        if (200...299).contains(httpResponse.statusCode) {
+            do {
+                return try decoder.decode(AnalysisFeedbackResponse.self, from: responseData)
+            } catch {
+                throw FeedbackServiceError.invalidResponse(String(data: responseData, encoding: .utf8))
+            }
+        }
+
+        if httpResponse.statusCode == 401 {
+            throw FeedbackServiceError.authorizationFailed
+        }
+
+        if let errorResponse = try? decoder.decode(WineAnalysisErrorResponse.self, from: responseData) {
+            throw FeedbackServiceError.serverError(errorResponse)
+        }
+
+        throw FeedbackServiceError.invalidResponse(String(data: responseData, encoding: .utf8))
+    }
+
+    private func appUserID() throws -> String {
+        do {
+            return try AppIdentityService.shared.appUserID()
+        } catch {
+            throw FeedbackServiceError.authorizationFailed
+        }
+    }
+
+    private func accessToken() async throws -> String {
+        do {
+            return try await SupabaseAuthService.shared.accessToken()
+        } catch SupabaseAuthServiceError.backendNotConfigured {
+            throw FeedbackServiceError.backendNotConfigured
+        } catch {
+            throw FeedbackServiceError.authorizationFailed
+        }
+    }
+}

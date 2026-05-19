@@ -1,6 +1,6 @@
-import {RequestError, type WineModelProvider} from "../domain/types.ts";
-import {GeminiProvider} from "./gemini.ts";
-import {OpenAIProvider} from "./openai.ts";
+import { RequestError, type WineModelProvider } from "../domain/types.ts";
+import { GeminiProvider } from "./gemini.ts";
+import { OpenAIProvider } from "./openai.ts";
 
 const DEFAULT_PROVIDER = "openai";
 

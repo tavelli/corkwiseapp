@@ -53,6 +53,10 @@ export type TokenUsage = {
 };
 
 export type WineScanResult = {
+  analysisId?: string;
+  modelVersion?: string;
+  promptVersion?: string;
+  freeScanUsed?: boolean;
   restaurantName: string | null;
   currencyCode: string;
   summary: {
@@ -102,6 +106,12 @@ export type WineScanResult = {
     totalCostUsd?: number;
   };
 };
+
+export type AnalysisAccessSource =
+  | "paid"
+  | "free_scan"
+  | "retry_credit"
+  | "blocked";
 
 export type AnalysisProviderName = "openai" | "gemini";
 

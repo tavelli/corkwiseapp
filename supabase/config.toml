@@ -8,6 +8,9 @@ project_id = "supabase"
 [functions.analyze-wine-menu]
 verify_jwt = true
 
+[functions.feedback]
+verify_jwt = true
+
 
 [api]
 enabled = true

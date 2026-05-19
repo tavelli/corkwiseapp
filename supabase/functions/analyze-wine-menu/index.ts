@@ -3,16 +3,26 @@ import {
   consumeFreeScan,
   upsertAppInstallation,
 } from "./domain/app-installations.ts";
-import {authenticatedUser} from "./domain/auth.ts";
-import {checkEntitlement, type EntitlementState} from "./domain/adapty.ts";
-import {MAX_REQUEST_BYTES, validateAnalyzeRequest} from "./domain/request.ts";
+import {
+  completeAnalysis,
+  createAnalysisAttempt,
+} from "./domain/analysis-log.ts";
+import { authenticatedUser } from "./domain/auth.ts";
+import { checkEntitlement, type EntitlementState } from "./domain/adapty.ts";
+import { PROMPT_VERSION } from "./domain/prompt.ts";
+import { MAX_REQUEST_BYTES, validateAnalyzeRequest } from "./domain/request.ts";
 import {
   scanAccessForRequest,
   validateScanAccessRequest,
 } from "./domain/scan-access.ts";
-import {normalizeScanResult} from "./domain/normalize.ts";
-import {makeProvider} from "./providers/factory.ts";
+import { normalizeScanResult } from "./domain/normalize.ts";
 import {
+  availableRetryCredit,
+  consumeRetryCredit,
+} from "./domain/retry-credits.ts";
+import { makeProvider } from "./providers/factory.ts";
+import {
+  type AnalysisAccessSource,
   type AnalyzeWineMenuRequest,
   RequestError,
   type WineAnalysisErrorResponse,
@@ -30,8 +40,10 @@ const corsHeaders = {
 };
 
 Deno.serve(async (req) => {
+  let analysisId: string | null = null;
+
   if (req.method === "OPTIONS") {
-    return new Response("ok", {headers: corsHeaders});
+    return new Response("ok", { headers: corsHeaders });
   }
 
   try {
@@ -105,31 +117,99 @@ Deno.serve(async (req) => {
     );
 
     const shouldConsumeFreeScan = entitlement.isPaid === false;
+    let accessSource: AnalysisAccessSource = entitlement.isPaid
+      ? "paid"
+      : "blocked";
+    let decisionReason = entitlement.isPaid ? "paid_entitlement" : "";
+    let retryCreditId: string | null = null;
 
     if (shouldConsumeFreeScan) {
       if (FREE_SCAN_LIMIT <= 0) {
-        throw new RequestError(
-          403,
-          "entitlement_required",
-          "An active CorkWise subscription is required to scan.",
-          false,
-        );
+        const retryCredit = await availableRetryCredit(requestBody.appUserId);
+        if (retryCredit == null) {
+          decisionReason = "free_scans_disabled";
+          analysisId = await createAnalysisAttempt({
+            supabaseAuthUserId: authUser.id,
+            appUserId: requestBody.appUserId,
+            isPaid: false,
+            allowed: false,
+            decisionReason,
+            accessSource: "blocked",
+            scanSource: requestBody.source.kind,
+            attachmentCount: attachmentCountForRequest(requestBody),
+            purchaseMode: requestBody.purchaseMode,
+            categoryPreference: requestBody.categoryPreference,
+            buildConfiguration: requestBody.buildConfiguration,
+          });
+
+          throw new RequestError(
+            403,
+            "entitlement_required",
+            "An active CorkWise subscription is required to scan.",
+            false,
+          );
+        }
+
+        accessSource = "retry_credit";
+        decisionReason = "retry_credit_available";
+        retryCreditId = retryCredit.id;
       }
 
-      const freeScanAllowance = await checkFreeScanAllowance(
-        requestBody.appUserId,
-        FREE_SCAN_LIMIT,
-      );
-
-      if (freeScanAllowance.allowed === false) {
-        throw new RequestError(
-          403,
-          "entitlement_required",
-          "An active CorkWise subscription is required to scan.",
-          false,
+      if (FREE_SCAN_LIMIT > 0) {
+        const freeScanAllowance = await checkFreeScanAllowance(
+          requestBody.appUserId,
+          FREE_SCAN_LIMIT,
         );
+
+        if (freeScanAllowance.allowed) {
+          accessSource = "free_scan";
+          decisionReason = "free_scan_available";
+        } else {
+          const retryCredit = await availableRetryCredit(requestBody.appUserId);
+          if (retryCredit == null) {
+            decisionReason = "free_scan_exhausted";
+            analysisId = await createAnalysisAttempt({
+              supabaseAuthUserId: authUser.id,
+              appUserId: requestBody.appUserId,
+              isPaid: false,
+              allowed: false,
+              decisionReason,
+              accessSource: "blocked",
+              scanSource: requestBody.source.kind,
+              attachmentCount: attachmentCountForRequest(requestBody),
+              purchaseMode: requestBody.purchaseMode,
+              categoryPreference: requestBody.categoryPreference,
+              buildConfiguration: requestBody.buildConfiguration,
+            });
+
+            throw new RequestError(
+              403,
+              "entitlement_required",
+              "An active CorkWise subscription is required to scan.",
+              false,
+            );
+          }
+
+          accessSource = "retry_credit";
+          decisionReason = "retry_credit_available";
+          retryCreditId = retryCredit.id;
+        }
       }
     }
+
+    analysisId = await createAnalysisAttempt({
+      supabaseAuthUserId: authUser.id,
+      appUserId: requestBody.appUserId,
+      isPaid: entitlement.isPaid,
+      allowed: true,
+      decisionReason,
+      accessSource,
+      scanSource: requestBody.source.kind,
+      attachmentCount: attachmentCountForRequest(requestBody),
+      purchaseMode: requestBody.purchaseMode,
+      categoryPreference: requestBody.categoryPreference,
+      buildConfiguration: requestBody.buildConfiguration,
+    });
 
     console.log("request validated", {
       purchaseMode: requestBody.purchaseMode,
@@ -137,26 +217,22 @@ Deno.serve(async (req) => {
       pricingLocale: requestBody.pricingContext.localeIdentifier,
       currencyCode: requestBody.pricingContext.currencyCode,
       sourceKind: requestBody.source.kind,
-      attachmentMimeTypes:
-        requestBody.source.kind === "attachment"
-          ? requestBody.source.attachments.map(
-              (attachment) => attachment.mimeType,
-            )
-          : null,
-      attachmentCount:
-        requestBody.source.kind === "attachment"
-          ? requestBody.source.attachments.length
-          : null,
-      attachmentBase64Lengths:
-        requestBody.source.kind === "attachment"
-          ? requestBody.source.attachments.map(
-              (attachment) => attachment.base64Data.length,
-            )
-          : null,
-      menuUrlHost:
-        requestBody.source.kind === "url"
-          ? new URL(requestBody.source.menuUrl).host
-          : null,
+      attachmentMimeTypes: requestBody.source.kind === "attachment"
+        ? requestBody.source.attachments.map(
+          (attachment) => attachment.mimeType,
+        )
+        : null,
+      attachmentCount: requestBody.source.kind === "attachment"
+        ? requestBody.source.attachments.length
+        : null,
+      attachmentBase64Lengths: requestBody.source.kind === "attachment"
+        ? requestBody.source.attachments.map(
+          (attachment) => attachment.base64Data.length,
+        )
+        : null,
+      menuUrlHost: requestBody.source.kind === "url"
+        ? new URL(requestBody.source.menuUrl).host
+        : null,
       preferredStylesCount: requestBody.userPreferences.preferredStyles.length,
     });
 
@@ -176,7 +252,10 @@ Deno.serve(async (req) => {
     //   };
     // }
 
-    if (shouldConsumeFreeScan) {
+    let freeScanUsed = false;
+    let retryCreditUsedId: string | null = null;
+
+    if (accessSource === "free_scan") {
       const freeScanAllowance = await consumeFreeScan(
         requestBody.appUserId,
         FREE_SCAN_LIMIT,
@@ -190,7 +269,41 @@ Deno.serve(async (req) => {
           false,
         );
       }
+
+      freeScanUsed = true;
+    } else if (accessSource === "retry_credit") {
+      if (
+        retryCreditId == null ||
+        await consumeRetryCredit(retryCreditId) === false
+      ) {
+        throw new RequestError(
+          403,
+          "entitlement_required",
+          "An active CorkWise subscription is required to scan.",
+          false,
+        );
+      }
+
+      retryCreditUsedId = retryCreditId;
     }
+
+    normalizedResult.analysisId = analysisId;
+    normalizedResult.modelVersion = providerResult.model;
+    normalizedResult.promptVersion = PROMPT_VERSION;
+    normalizedResult.freeScanUsed = freeScanUsed;
+
+    await completeAnalysis({
+      analysisId,
+      provider: providerResult.provider,
+      modelVersion: providerResult.model,
+      success: true,
+      estimatedCostUsd: providerResult.totalCostUsd,
+      inputTokens: providerResult.usage?.promptTokenCount,
+      outputTokens: providerResult.usage?.candidatesTokenCount,
+      freeScanUsed,
+      retryCreditUsedId: retryCreditUsedId ?? undefined,
+      resultPayload: normalizedResult,
+    });
 
     console.log("analysis complete", {
       recommendationCount: normalizedResult.recommendations.length,
@@ -213,6 +326,16 @@ Deno.serve(async (req) => {
       headers: corsHeaders,
     });
   } catch (error) {
+    if (analysisId != null) {
+      await completeAnalysis({
+        analysisId,
+        success: false,
+        errorCode: error instanceof RequestError
+          ? error.responseBody.error
+          : "analysis_failed",
+      });
+    }
+
     if (error instanceof RequestError) {
       return Response.json(error.responseBody, {
         status: error.status,
@@ -257,4 +380,12 @@ async function entitlementForRequest(
   }
 
   return await checkEntitlement(requestBody.appUserId);
+}
+
+function attachmentCountForRequest(
+  requestBody: AnalyzeWineMenuRequest,
+): number {
+  return requestBody.source.kind === "attachment"
+    ? requestBody.source.attachments.length
+    : 0;
 }

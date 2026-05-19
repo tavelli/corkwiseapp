@@ -1,8 +1,8 @@
 {
   "lint": {
-    "include": ["functions/analyze-wine-menu"]
+    "include": ["functions/analyze-wine-menu", "functions/feedback"]
   },
   "test": {
-    "include": ["functions/analyze-wine-menu"]
+    "include": ["functions/analyze-wine-menu", "functions/feedback"]
   }
 }

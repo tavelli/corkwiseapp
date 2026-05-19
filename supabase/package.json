@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "lint": "deno lint functions/analyze-wine-menu",
-    "check": "deno check functions/analyze-wine-menu/index.ts",
+    "lint": "deno lint functions/analyze-wine-menu functions/feedback",
+    "check": "deno check functions/analyze-wine-menu/index.ts functions/feedback/index.ts",
     "test": "deno test --allow-env functions/analyze-wine-menu/domain"
   },
   "devDependencies": {

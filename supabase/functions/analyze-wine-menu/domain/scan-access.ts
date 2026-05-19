@@ -1,10 +1,11 @@
 import {
   checkFreeScanAllowance,
-  upsertAppInstallation,
   type FreeScanAllowance,
+  upsertAppInstallation,
 } from "./app-installations.ts";
-import {checkEntitlement, type EntitlementState} from "./adapty.ts";
-import {RequestError} from "./types.ts";
+import { availableRetryCredit, type RetryCredit } from "./retry-credits.ts";
+import { checkEntitlement, type EntitlementState } from "./adapty.ts";
+import { RequestError } from "./types.ts";
 
 export type ScanAccessRequest = {
   action: "scan_access";
@@ -15,6 +16,7 @@ export type ScanAccessRequest = {
 export type ScanAccessResponse = {
   hasActiveEntitlement: boolean;
   hasFreeScanAllowance: boolean;
+  hasRetryCredit: boolean;
   freeScansUsed: number;
   freeScanLimit: number;
 };
@@ -31,6 +33,7 @@ type ScanAccessDependencies = {
     appUserId: string,
     freeScanLimit: number,
   ) => Promise<FreeScanAllowance>;
+  availableRetryCredit?: (appUserId: string) => Promise<RetryCredit | null>;
 };
 
 export function validateScanAccessRequest(input: unknown): ScanAccessRequest {
@@ -71,7 +74,7 @@ export function validateScanAccessRequest(input: unknown): ScanAccessRequest {
   return {
     action,
     appUserId,
-    ...(buildConfiguration == null ? {} : {buildConfiguration}),
+    ...(buildConfiguration == null ? {} : { buildConfiguration }),
   };
 }
 
@@ -96,15 +99,21 @@ export async function scanAccessForRequest(
     return {
       hasActiveEntitlement: true,
       hasFreeScanAllowance: false,
+      hasRetryCredit: false,
       freeScansUsed: 0,
       freeScanLimit,
     };
   }
 
   if (freeScanLimit <= 0) {
+    const retryCredit = await (
+      dependencies.availableRetryCredit ?? availableRetryCredit
+    )(request.appUserId);
+
     return {
       hasActiveEntitlement: false,
       hasFreeScanAllowance: false,
+      hasRetryCredit: retryCredit != null,
       freeScansUsed: 0,
       freeScanLimit,
     };
@@ -113,10 +122,16 @@ export async function scanAccessForRequest(
   const allowance = await (
     dependencies.checkFreeScanAllowance ?? checkFreeScanAllowance
   )(request.appUserId, freeScanLimit);
+  const retryCredit = allowance.allowed
+    ? null
+    : await (dependencies.availableRetryCredit ?? availableRetryCredit)(
+      request.appUserId,
+    );
 
   return {
     hasActiveEntitlement: false,
     hasFreeScanAllowance: allowance.allowed,
+    hasRetryCredit: retryCredit != null,
     freeScansUsed: allowance.freeScansUsed,
     freeScanLimit,
   };
