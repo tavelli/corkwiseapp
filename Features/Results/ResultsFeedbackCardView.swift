@@ -34,9 +34,16 @@ struct ResultsFeedbackCardView: View {
             case .comment:
                 commentContent
             case .positiveThanks:
-                Text("Thanks - glad it helped.")
-                    .font(.subheadline.weight(.medium))
-                    .foregroundStyle(Color.wineMutedText)
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Love to hear that")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(Color.wineText)
+
+                    Text("Thanks for your feedback.")
+                        .font(.subheadline)
+                        .foregroundStyle(Color.wineMutedText)
+                    
+                }
             case .feedbackThanks:
                 Text("Thanks - feedback helps improve CorkWise.")
                     .font(.subheadline.weight(.medium))
@@ -104,51 +111,23 @@ struct ResultsFeedbackCardView: View {
                     }
                 }
 
-            HStack(spacing: 10) {
-                quietButton("Send feedback") {
-                    submitNegativeFeedbackComment()
-                }
-
-                Button("Skip") {
-                    withAnimation(.easeInOut(duration: 0.18)) {
-                        state = .feedbackThanks
-                        errorMessage = nil
-                    }
-                }
-                .font(.subheadline.weight(.medium))
-                .foregroundStyle(Color.wineMutedText)
-                .disabled(isSubmitting)
+            prominentFeedbackButton("Send feedback") {
+                submitNegativeFeedbackComment()
             }
         }
     }
 
     private var retryOfferContent: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Want another try?")
+        VStack(alignment: .leading, spacing: 18) {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Give Corkwise another try")
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(Color.wineText)
 
-                Text("Thanks for the feedback. You can run one more complimentary analysis.")
+                Text("Sorry this one missed the mark. We’ve added one more complimentary analysis for you to try us again on another list.")
                     .font(.subheadline)
                     .foregroundStyle(Color.wineMutedText)
-            }
-
-            HStack(spacing: 10) {
-                quietButton("Try again") {
-                    Task {
-                        await entitlementManager.refreshScanAccess()
-                        retryAction()
-                    }
-                }
-
-                Button("Maybe later") {
-                    withAnimation(.easeInOut(duration: 0.18)) {
-                        state = .feedbackThanks
-                    }
-                }
-                .font(.subheadline.weight(.medium))
-                .foregroundStyle(Color.wineMutedText)
+                
             }
         }
     }
@@ -198,6 +177,31 @@ struct ResultsFeedbackCardView: View {
         }
         .buttonStyle(.plain)
         .disabled(isSubmitting)
+    }
+
+    private func prominentFeedbackButton(_ title: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(title)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(Color.resultHeroIvory)
+                .padding(.horizontal, 16)
+                .frame(height: 38)
+                .background(
+                    LinearGradient(
+                        colors: [Color.resultHeroTop, Color.resultHeroBottom],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+                .clipShape(.rect(cornerRadius: 10))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.resultHeroIvory.opacity(0.28), lineWidth: 1)
+                }
+        }
+        .buttonStyle(.plain)
+        .disabled(isSubmitting)
+        .opacity(isSubmitting ? 0.72 : 1)
     }
 
     private func submitPositiveFeedback() {
@@ -340,3 +344,48 @@ struct ResultsFeedbackCardView: View {
     }
     .environment(EntitlementManager())
 }
+#Preview("Positive Feedback Submitted") {
+    ZStack {
+        mainScreenBackground
+            .ignoresSafeArea()
+
+        ResultsFeedbackCardView(
+            analysisId: UUID().uuidString,
+            retryAction: {},
+            initialState: .positiveThanks
+        )
+        .padding()
+    }
+    .environment(EntitlementManager())
+}
+
+#Preview("Feedback Submitted") {
+    ZStack {
+        mainScreenBackground
+            .ignoresSafeArea()
+
+        ResultsFeedbackCardView(
+            analysisId: UUID().uuidString,
+            retryAction: {},
+            initialState: .feedbackThanks
+        )
+        .padding()
+    }
+    .environment(EntitlementManager())
+}
+
+#Preview("Retry Granted") {
+    ZStack {
+        mainScreenBackground
+            .ignoresSafeArea()
+
+        ResultsFeedbackCardView(
+            analysisId: UUID().uuidString,
+            retryAction: {},
+            initialState: .retryOffer
+        )
+        .padding()
+    }
+    .environment(EntitlementManager())
+}
+
