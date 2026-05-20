@@ -1,4 +1,5 @@
 import Adapty
+import StoreKit
 import SwiftUI
 
 struct PaywallView: View {
@@ -89,7 +90,7 @@ private struct CustomPaywallContent: View {
                     .padding(.horizontal, 12)
             }
 
-            ProductSelectionCard(product: paywall.displayProduct)
+            ProductSelectionCard(product: paywall.product)
                 .padding(.top, 28)
 
             VStack(spacing: 24) {
@@ -141,7 +142,7 @@ private struct CustomPaywallContent: View {
 }
 
 private struct ProductSelectionCard: View {
-    let product: CustomPaywallProduct
+    let product: any AdaptyPaywallProduct
 
     var body: some View {
         HStack(spacing: 18) {
@@ -356,15 +357,46 @@ private struct PaywallRetryButtonStyle: ButtonStyle {
 extension CustomPaywall {
     static let previewLoaded = CustomPaywall(
         id: "preview-annual-paywall",
-        displayProduct: CustomPaywallProduct(
+        product: PreviewPaywallProduct(
             vendorProductId: "corkwise.premium.annual.preview",
             localizedTitle: "Annual",
             localizedDescription: "A smarter way to choose the bottle",
             localizedPrice: "$99/year",
-            adaptyProductType: "annual",
-            subscriptionPeriod: nil
+            price: 99,
+            adaptyProductType: "annual"
         ),
         remoteConfig: .init(dictionary: ["cta_text": "Get Premium"])
     )
+}
+
+struct PreviewPaywallProduct: AdaptyPaywallProduct {
+    let vendorProductId: String
+    let localizedTitle: String
+    let localizedDescription: String
+    let localizedPrice: String?
+    let price: Decimal
+    let adaptyProductType: String
+
+    var sk1Product: StoreKit.SKProduct? { nil }
+
+    @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, visionOS 1.0, *)
+    var sk2Product: StoreKit.Product? { nil }
+
+    var currencyCode: String? { "USD" }
+    var currencySymbol: String? { "$" }
+    var regionCode: String? { "US" }
+    var priceLocale: Locale { Locale(identifier: "en_US") }
+    var isFamilyShareable: Bool { false }
+    var subscriptionPeriod: AdaptySubscriptionPeriod? { nil }
+    var subscriptionGroupIdentifier: String? { nil }
+    var localizedSubscriptionPeriod: String? { "year" }
+    var adaptyProductId: String { "preview_annual" }
+    var accessLevelId: String { "premium" }
+    var paywallProductIndex: Int { 0 }
+    var variationId: String { "preview_variation" }
+    var paywallABTestName: String { "Preview A/B Test" }
+    var paywallName: String { "Preview Paywall" }
+    var subscriptionOffer: AdaptySubscriptionOffer? { nil }
+    var description: String { "(vendorProductId: \(vendorProductId), localizedPrice: \(localizedPrice ?? ""))" }
 }
 #endif
