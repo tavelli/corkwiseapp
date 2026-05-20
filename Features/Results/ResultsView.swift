@@ -146,13 +146,13 @@ struct ResultsContentView: View {
                         }
                     }
 
-                    if result.analysisId != nil {
+                    if let analysisId = result.analysisId {
                         ResultsFeedbackCardView(
-                            result: result,
+                            analysisId: analysisId,
                             retryAction: showRetryAction
                         )
                     }
-                    
+
                     if showsSoftPaywall {
                         ResultsSoftPaywallCardView(premiumAction: showPremiumAction)
                     }
@@ -221,216 +221,6 @@ enum ResultsScrollTarget: Hashable {
     case category(key: String)
 }
 
-private struct ResultsFeedbackCardView: View {
-    @Environment(EntitlementManager.self) private var entitlementManager
-
-    let result: WineScanResult
-    let retryAction: () -> Void
-
-    @State private var state: FeedbackState = .initial
-    @State private var comment = ""
-    @State private var isSubmitting = false
-    @State private var errorMessage: String?
-
-    private let feedbackService = FeedbackService()
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            switch state {
-            case .initial:
-                initialContent
-            case .comment:
-                commentContent
-            case .positiveThanks:
-                Text("Thanks - glad it helped.")
-                    .font(.subheadline.weight(.medium))
-                    .foregroundStyle(Color.wineMutedText)
-            case .feedbackThanks:
-                Text("Thanks - feedback helps improve CorkWise.")
-                    .font(.subheadline.weight(.medium))
-                    .foregroundStyle(Color.wineMutedText)
-            case .retryOffer:
-                retryOfferContent
-            }
-
-            if let errorMessage {
-                Text(errorMessage)
-                    .font(.caption)
-                    .foregroundStyle(Color.wineMutedText)
-            }
-        }
-        .padding(16)
-        .background(Color.wineOptionBackground.opacity(0.62))
-        .clipShape(.rect(cornerRadius: 16))
-        .overlay {
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.wineBorder.opacity(0.55), lineWidth: 1)
-        }
-    }
-
-    private var initialContent: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Was this result useful?")
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(Color.wineText)
-
-            HStack(spacing: 10) {
-                quietButton("Yes") {
-                    submit(rating: .useful, comment: nil)
-                }
-
-                quietButton("Not really") {
-                    withAnimation(.easeInOut(duration: 0.18)) {
-                        state = .comment
-                        errorMessage = nil
-                    }
-                }
-            }
-        }
-    }
-
-    private var commentContent: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("What felt off?")
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(Color.wineText)
-
-            TextEditor(text: $comment)
-                .font(.subheadline)
-                .foregroundStyle(Color.wineText)
-                .frame(minHeight: 82)
-                .padding(8)
-                .scrollContentBackground(.hidden)
-                .background(Color.resultCardBackground.opacity(0.8))
-                .clipShape(.rect(cornerRadius: 12))
-                .overlay(alignment: .topLeading) {
-                    if comment.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                        Text("Missing wines, wrong prices, weak picks, or something else?")
-                            .font(.subheadline)
-                            .foregroundStyle(Color.wineMutedText.opacity(0.78))
-                            .padding(.horizontal, 13)
-                            .padding(.vertical, 16)
-                            .allowsHitTesting(false)
-                    }
-                }
-
-            HStack(spacing: 10) {
-                quietButton("Send feedback") {
-                    submit(
-                        rating: .notUseful,
-                        comment: comment.trimmingCharacters(in: .whitespacesAndNewlines)
-                    )
-                }
-                .disabled(comment.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-
-                Button("Skip") {
-                    withAnimation(.easeInOut(duration: 0.18)) {
-                        state = .feedbackThanks
-                        errorMessage = nil
-                    }
-                }
-                .font(.subheadline.weight(.medium))
-                .foregroundStyle(Color.wineMutedText)
-                .disabled(isSubmitting)
-            }
-        }
-    }
-
-    private var retryOfferContent: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Want another try?")
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(Color.wineText)
-
-                Text("Thanks for the feedback. You can run one more complimentary analysis.")
-                    .font(.subheadline)
-                    .foregroundStyle(Color.wineMutedText)
-            }
-
-            HStack(spacing: 10) {
-                quietButton("Try again") {
-                    Task {
-                        await entitlementManager.refreshScanAccess()
-                        retryAction()
-                    }
-                }
-
-                Button("Maybe later") {
-                    withAnimation(.easeInOut(duration: 0.18)) {
-                        state = .feedbackThanks
-                    }
-                }
-                .font(.subheadline.weight(.medium))
-                .foregroundStyle(Color.wineMutedText)
-            }
-        }
-    }
-
-    private func quietButton(_ title: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Text(title)
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(Color.wineText)
-                .padding(.horizontal, 13)
-                .frame(height: 34)
-                .background(Color.resultCardBackground.opacity(0.78))
-                .clipShape(.rect(cornerRadius: 10))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.wineBorder.opacity(0.7), lineWidth: 1)
-                }
-        }
-        .buttonStyle(.plain)
-        .disabled(isSubmitting)
-    }
-
-    private func submit(rating: AnalysisFeedbackRequest.Rating, comment: String?) {
-        guard let analysisId = result.analysisId else { return }
-
-        isSubmitting = true
-        errorMessage = nil
-
-        Task {
-            do {
-                let response = try await feedbackService.submitFeedback(
-                    analysisId: analysisId,
-                    rating: rating,
-                    comment: comment
-                )
-
-                await MainActor.run {
-                    isSubmitting = false
-                    withAnimation(.easeInOut(duration: 0.18)) {
-                        if response.retryGranted {
-                            state = .retryOffer
-                        } else {
-                            state = rating == .useful ? .positiveThanks : .feedbackThanks
-                        }
-                    }
-                }
-
-                if response.retryGranted {
-                    await entitlementManager.refreshScanAccess()
-                }
-            } catch {
-                await MainActor.run {
-                    isSubmitting = false
-                    errorMessage = "Couldn't send feedback. Please try again."
-                }
-            }
-        }
-    }
-
-    private enum FeedbackState {
-        case initial
-        case comment
-        case positiveThanks
-        case feedbackThanks
-        case retryOffer
-    }
-}
-
 #Preview {
     ResultsView(
         result: WineScanResult.sample(
@@ -448,6 +238,51 @@ private struct ResultsFeedbackCardView: View {
     )
     .environment(AppState())
     .environment(EntitlementManager())
+}
+
+#Preview("Results With Feedback Card") {
+    ResultsView(
+        result: WineScanResult.sampleWithFeedback(
+            for: .glass,
+            preferences: UserWinePreferences(
+                preferredStyles: [WineStylePreference.crispRefreshing.rawValue],
+                choiceStyle: ChoiceStyle.bestValue.rawValue,
+                usualPurchasePreference: UsualPurchasePreference.glass.rawValue,
+                hasCompletedOnboarding: true
+            )
+        ),
+        purchaseMode: .glass,
+        categoryPreference: .reds,
+        viewedAt: .now
+    )
+    .environment(AppState())
+    .environment(EntitlementManager())
+}
+
+private extension WineScanResult {
+    static func sampleWithFeedback(
+        for purchaseMode: PurchaseMode,
+        preferences: UserWinePreferences
+    ) -> WineScanResult {
+        let sample = WineScanResult.sample(
+            for: purchaseMode,
+            preferences: preferences
+        )
+
+        return WineScanResult(
+            analysisId: "00000000-0000-0000-0000-000000000001",
+            modelVersion: sample.modelVersion,
+            promptVersion: sample.promptVersion,
+            freeScanUsed: sample.freeScanUsed,
+            restaurantName: sample.restaurantName,
+            currencyCode: sample.currencyCode,
+            summary: sample.summary,
+            recommendations: sample.recommendations,
+            categoryRecommendations: sample.categoryRecommendations,
+            notes: sample.notes,
+            debugInfo: sample.debugInfo
+        )
+    }
 }
 
 #if DEBUG

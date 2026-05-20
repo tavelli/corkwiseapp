@@ -17,6 +17,7 @@ const corsHeaders = {
 };
 
 type FeedbackRequest = {
+  feedbackId: string | null;
   analysisId: string;
   appUserId: string;
   rating: "useful" | "not_useful";
@@ -56,30 +57,28 @@ Deno.serve(async (req) => {
       );
     }
 
-    const feedbackId = await insertFeedback({
-      ...payload,
-      supabaseAuthUserId: authUser.id,
-      keychainAppUserId: analysis.keychain_app_user_id,
-      freeScanUsed: analysis.free_scan_used,
-    });
-
-    let retryCreditId: string | null = null;
-    if (isRetryEligible(payload)) {
-      retryCreditId = await maybeCreateRetryCredit({
-        feedbackId,
+    const feedbackId = payload.feedbackId == null
+      ? await insertFeedback({
+        ...payload,
         supabaseAuthUserId: authUser.id,
+        keychainAppUserId: analysis.keychain_app_user_id,
+        freeScanUsed: analysis.free_scan_used,
+      })
+      : await updateFeedback({
+        ...payload,
         keychainAppUserId: analysis.keychain_app_user_id,
       });
 
-      if (retryCreditId != null) {
-        await markRetryGranted(feedbackId);
-      }
-    }
+    const retryGranted = isRetryEligible(payload)
+      ? await grantRetryIfEligible({
+        feedbackId,
+        supabaseAuthUserId: authUser.id,
+        keychainAppUserId: analysis.keychain_app_user_id,
+      })
+      : false;
 
     return Response.json(
-      retryCreditId == null
-        ? { ok: true, retryGranted: false }
-        : { ok: true, retryGranted: true, retryCreditId },
+      { ok: true, feedbackId, retryGranted },
       { status: 200, headers: corsHeaders },
     );
   } catch (error) {
@@ -117,11 +116,21 @@ function validateFeedbackRequest(input: unknown): FeedbackRequest {
   }
 
   const candidate = input as Record<string, unknown>;
+  const feedbackId = stringOrNull(candidate.feedbackId);
   const analysisId = stringOrNull(candidate.analysisId);
   const appUserId = stringOrNull(candidate.appUserId);
   const rating = stringOrNull(candidate.rating);
   const source = stringOrNull(candidate.source) ?? "result_end_card";
   const comment = stringOrNull(candidate.comment);
+
+  if (feedbackId != null && isUUID(feedbackId) === false) {
+    throw new RequestError(
+      400,
+      "invalid_request",
+      "feedbackId must be a valid UUID.",
+      false,
+    );
+  }
 
   if (analysisId == null || isUUID(analysisId) === false) {
     throw new RequestError(
@@ -160,6 +169,7 @@ function validateFeedbackRequest(input: unknown): FeedbackRequest {
   }
 
   return {
+    feedbackId,
     analysisId,
     appUserId,
     rating,
@@ -234,6 +244,116 @@ async function insertFeedback(
   return row.id;
 }
 
+async function grantRetryIfEligible(input: {
+  feedbackId: string;
+  supabaseAuthUserId: string;
+  keychainAppUserId: string;
+}): Promise<boolean> {
+  if (await feedbackAlreadyGrantedRetry(input.feedbackId)) {
+    return true;
+  }
+
+  const retryCreditId = await maybeCreateRetryCredit(input);
+  if (retryCreditId == null) {
+    return false;
+  }
+
+  await markRetryGranted(input.feedbackId);
+  return true;
+}
+
+async function updateFeedback(
+  input: FeedbackRequest & {
+    keychainAppUserId: string;
+  },
+): Promise<string> {
+  if (input.feedbackId == null) {
+    throw new RequestError(
+      400,
+      "invalid_request",
+      "feedbackId is required when updating feedback.",
+      false,
+    );
+  }
+
+  if (input.rating !== "not_useful") {
+    throw new RequestError(
+      400,
+      "invalid_request",
+      "Only negative feedback can be updated.",
+      false,
+    );
+  }
+
+  const existingFeedback = await feedbackForUpdate(
+    input.feedbackId,
+    input.analysisId,
+    input.keychainAppUserId,
+  );
+
+  if (existingFeedback == null) {
+    throw new RequestError(
+      403,
+      "invalid_request",
+      "Feedback does not match this analysis.",
+      false,
+    );
+  }
+
+  const response = await fetch(
+    `${restURL()}/analysis_feedback?id=eq.${input.feedbackId}`,
+    {
+      method: "PATCH",
+      headers: restHeaders(),
+      body: JSON.stringify({
+        comment: input.comment,
+      }),
+    },
+  );
+
+  if (response.ok === false) {
+    throw new RequestError(
+      500,
+      "feedback_failed",
+      "Something went wrong while saving feedback.",
+      true,
+    );
+  }
+
+  return input.feedbackId;
+}
+
+async function feedbackForUpdate(
+  feedbackId: string,
+  analysisId: string,
+  keychainAppUserId: string,
+): Promise<{ retry_granted: boolean } | null> {
+  const query = new URL(`${restURL()}/analysis_feedback`);
+  query.searchParams.set("select", "retry_granted");
+  query.searchParams.set("id", `eq.${feedbackId}`);
+  query.searchParams.set("analysis_id", `eq.${analysisId}`);
+  query.searchParams.set("keychain_app_user_id", `eq.${keychainAppUserId}`);
+  query.searchParams.set("rating", "eq.not_useful");
+  query.searchParams.set("limit", "1");
+
+  const response = await fetch(query, {
+    method: "GET",
+    headers: restHeaders(),
+  });
+
+  if (response.ok === false) {
+    throw new RequestError(
+      500,
+      "feedback_failed",
+      "Something went wrong while saving feedback.",
+      true,
+    );
+  }
+
+  const [row] = await response.json() as Array<{ retry_granted: boolean }>;
+  return row ?? null;
+}
+
 async function maybeCreateRetryCredit(input: {
   feedbackId: string;
   supabaseAuthUserId: string;
@@ -295,6 +415,30 @@ async function hasRecentRetryGrant(appUserId: string): Promise<boolean> {
 
   const rows = await response.json() as Array<{ id: string }>;
   return rows.length > 0;
+}
+
+async function feedbackAlreadyGrantedRetry(feedbackId: string): Promise<boolean> {
+  const query = new URL(`${restURL()}/analysis_feedback`);
+  query.searchParams.set("select", "retry_granted");
+  query.searchParams.set("id", `eq.${feedbackId}`);
+  query.searchParams.set("limit", "1");
+
+  const response = await fetch(query, {
+    method: "GET",
+    headers: restHeaders(),
+  });
+
+  if (response.ok === false) {
+    throw new RequestError(
+      500,
+      "feedback_failed",
+      "Something went wrong while saving feedback.",
+      true,
+    );
+  }
+
+  const [row] = await response.json() as Array<{ retry_granted: boolean }>;
+  return row?.retry_granted === true;
 }
 
 async function markRetryGranted(feedbackId: string): Promise<void> {

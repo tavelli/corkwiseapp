@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		37539B0B2FBC01ED00F67C2C /* ResultsSoftPaywallCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37539B0A2FBC01ED00F67C2C /* ResultsSoftPaywallCardView.swift */; };
+		37539B0D2FBC0D4800F67C2C /* ResultsFeedbackCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37539B0C2FBC0D4800F67C2C /* ResultsFeedbackCardView.swift */; };
 		375DE5ED2FA97D83008D4574 /* Adapty in Frameworks */ = {isa = PBXBuildFile; productRef = 375DE5EC2FA97D83008D4574 /* Adapty */; };
 		375DE5EF2FAB9D92008D4574 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 375DE5EE2FAB9D92008D4574 /* Launch Screen.storyboard */; };
 		375DE5F32FAE2729008D4574 /* Auth in Frameworks */ = {isa = PBXBuildFile; productRef = 375DE5F22FAE2729008D4574 /* Auth */; };
@@ -57,6 +58,7 @@
 
 /* Begin PBXFileReference section */
 		37539B0A2FBC01ED00F67C2C /* ResultsSoftPaywallCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsSoftPaywallCardView.swift; sourceTree = "<group>"; };
+		37539B0C2FBC0D4800F67C2C /* ResultsFeedbackCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsFeedbackCardView.swift; sourceTree = "<group>"; };
 		375DE4FE2FA675A7008D4574 /* winebottle1.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = winebottle1.svg; sourceTree = "<group>"; };
 		375DE5EE2FAB9D92008D4574 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		375DE5F02FAC2097008D4574 /* AGENTS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = AGENTS.md; sourceTree = "<group>"; };
@@ -210,6 +212,7 @@
 				379399AE2FA3CC7400246506 /* RecommendationCardView.swift */,
 				379399FD2FA3F10000246506 /* BestPickHeroView.swift */,
 				379399FE2FA3F10000246506 /* CategoryHighlightsView.swift */,
+				37539B0C2FBC0D4800F67C2C /* ResultsFeedbackCardView.swift */,
 				37539B0A2FBC01ED00F67C2C /* ResultsSoftPaywallCardView.swift */,
 			);
 			path = Results;
@@ -379,6 +382,7 @@
 				375DE5F72FAE4094008D4574 /* SupabaseAuthService.swift in Sources */,
 				375DE5FD2FBAC2E9008D4574 /* ScanAccessService.swift in Sources */,
 				37939A032FA3F10000246506 /* CameraPicker.swift in Sources */,
+				37539B0D2FBC0D4800F67C2C /* ResultsFeedbackCardView.swift in Sources */,
 				37539B0B2FBC01ED00F67C2C /* ResultsSoftPaywallCardView.swift in Sources */,
 				37939A042FA3F10000246506 /* BestPickHeroView.swift in Sources */,
 				37939A052FA3F10000246506 /* CategoryHighlightsView.swift in Sources */,

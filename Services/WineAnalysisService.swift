@@ -176,6 +176,7 @@ enum FeedbackServiceError: Error {
 }
 
 struct AnalysisFeedbackRequest: Codable {
+    let feedbackId: String?
     let analysisId: String
     let appUserId: String
     let rating: Rating
@@ -188,11 +189,13 @@ struct AnalysisFeedbackRequest: Codable {
     }
 
     init(
+        feedbackId: String? = nil,
         analysisId: String,
         appUserId: String,
         rating: Rating,
         comment: String?
     ) {
+        self.feedbackId = feedbackId
         self.analysisId = analysisId
         self.appUserId = appUserId
         self.rating = rating
@@ -203,25 +206,26 @@ struct AnalysisFeedbackRequest: Codable {
 
 struct AnalysisFeedbackResponse: Codable, Hashable {
     let ok: Bool
+    let feedbackId: String
     let retryGranted: Bool
-    let retryCreditId: String?
 
     private enum CodingKeys: String, CodingKey {
         case ok
+        case feedbackId
         case retryGranted
-        case retryCreditId
     }
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         ok = try container.decode(Bool.self, forKey: .ok)
+        feedbackId = try container.decode(String.self, forKey: .feedbackId)
         retryGranted = try container.decode(Bool.self, forKey: .retryGranted)
-        retryCreditId = try container.decodeIfPresent(String.self, forKey: .retryCreditId)
     }
 }
 
 struct FeedbackService {
     func submitFeedback(
+        feedbackId: String? = nil,
         analysisId: String,
         rating: AnalysisFeedbackRequest.Rating,
         comment: String?
@@ -231,6 +235,7 @@ struct FeedbackService {
         }
 
         let requestBody = AnalysisFeedbackRequest(
+            feedbackId: feedbackId,
             analysisId: analysisId,
             appUserId: try appUserID(),
             rating: rating,

@@ -197,15 +197,15 @@ final class EntitlementManager {
     }
 
     func purchaseSelectedPaywallProduct() async {
-        guard let paywall else { return }
+        guard let paywall, let product = paywall.product else { return }
 
         startPurchase()
 
         do {
-            let result = try await Adapty.makePurchase(product: paywall.product)
+            let result = try await Adapty.makePurchase(product: product)
             finishPurchase(result)
         } catch {
-            Self.logPaywallError(error, context: "purchase \(paywall.product.vendorProductId)")
+            Self.logPaywallError(error, context: "purchase \(product.vendorProductId)")
             failPurchase()
         }
     }
@@ -351,21 +351,60 @@ final class EntitlementManager {
 struct CustomPaywall {
     let id: String
     let adaptyPaywall: AdaptyPaywall?
-    let product: any AdaptyPaywallProduct
+    let product: (any AdaptyPaywallProduct)?
+    let displayProduct: CustomPaywallProduct
     let remoteConfig: CustomPaywallRemoteConfig
 
     init(paywall: AdaptyPaywall, product: any AdaptyPaywallProduct, remoteConfig: CustomPaywallRemoteConfig) {
         id = paywall.instanceIdentity
         adaptyPaywall = paywall
         self.product = product
+        displayProduct = CustomPaywallProduct(product: product)
         self.remoteConfig = remoteConfig
     }
 
-    init(id: String, product: any AdaptyPaywallProduct, remoteConfig: CustomPaywallRemoteConfig) {
+    init(id: String, displayProduct: CustomPaywallProduct, remoteConfig: CustomPaywallRemoteConfig) {
         self.id = id
         adaptyPaywall = nil
-        self.product = product
+        product = nil
+        self.displayProduct = displayProduct
         self.remoteConfig = remoteConfig
+    }
+}
+
+struct CustomPaywallProduct {
+    let vendorProductId: String
+    let localizedTitle: String
+    let localizedDescription: String
+    let localizedPrice: String?
+    let adaptyProductType: String
+    let subscriptionPeriod: AdaptySubscriptionPeriod?
+
+    init(
+        vendorProductId: String,
+        localizedTitle: String,
+        localizedDescription: String,
+        localizedPrice: String?,
+        adaptyProductType: String,
+        subscriptionPeriod: AdaptySubscriptionPeriod?
+    ) {
+        self.vendorProductId = vendorProductId
+        self.localizedTitle = localizedTitle
+        self.localizedDescription = localizedDescription
+        self.localizedPrice = localizedPrice
+        self.adaptyProductType = adaptyProductType
+        self.subscriptionPeriod = subscriptionPeriod
+    }
+
+    init(product: any AdaptyPaywallProduct) {
+        self.init(
+            vendorProductId: product.vendorProductId,
+            localizedTitle: product.localizedTitle,
+            localizedDescription: product.localizedDescription,
+            localizedPrice: product.localizedPrice,
+            adaptyProductType: product.adaptyProductType,
+            subscriptionPeriod: product.subscriptionPeriod
+        )
     }
 }
 
