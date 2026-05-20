@@ -20,7 +20,7 @@ export function validateAnalyzeRequest(input: unknown): AnalyzeWineMenuRequest {
   }
 
   const candidate = input as Record<string, unknown>;
-  const appUserId = stringOrNull(candidate.appUserId);
+  const appUserId = stringOrNull(candidate.appUserId)?.toLowerCase() ?? null;
   const buildConfiguration = buildConfigurationOrNull(
     candidate.buildConfiguration,
   );

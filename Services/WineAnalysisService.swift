@@ -241,6 +241,10 @@ struct FeedbackService {
             rating: rating,
             comment: comment
         )
+        
+        #if DEBUG
+        print("FeedbackService response request body: \(requestBody)")
+        #endif
 
         var request = URLRequest(url: endpoint)
         request.httpMethod = "POST"
@@ -264,6 +268,12 @@ struct FeedbackService {
         guard let httpResponse = response as? HTTPURLResponse else {
             throw FeedbackServiceError.invalidResponse(nil)
         }
+        
+        #if DEBUG
+        let responseText = String(data: responseData, encoding: .utf8) ?? "<non-utf8 response>"
+        print("FeedbackService response status: \(httpResponse.statusCode)")
+        print("FeedbackService response body: \(responseText)")
+        #endif
 
         let decoder = JSONDecoder()
 

@@ -48,7 +48,7 @@ export function validateScanAccessRequest(input: unknown): ScanAccessRequest {
 
   const candidate = input as Record<string, unknown>;
   const action = stringOrNull(candidate.action);
-  const appUserId = stringOrNull(candidate.appUserId);
+  const appUserId = stringOrNull(candidate.appUserId)?.toLowerCase() ?? null;
   const buildConfiguration = buildConfigurationOrNull(
     candidate.buildConfiguration,
   );

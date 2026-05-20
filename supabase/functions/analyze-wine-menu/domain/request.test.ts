@@ -58,6 +58,19 @@ Deno.test("validateAnalyzeRequest accepts menu URLs", () => {
   }
 });
 
+Deno.test("validateAnalyzeRequest normalizes app user IDs", () => {
+  const request = validateAnalyzeRequest({
+    appUserId: appUserId.toUpperCase(),
+    menuUrl: "https://example.com/wine-list",
+    purchaseMode: "bottle",
+    userPreferences: validPreferences(),
+  });
+
+  if (request.appUserId !== appUserId) {
+    throw new Error("Expected lowercase app user ID.");
+  }
+});
+
 Deno.test("validateAnalyzeRequest accepts ordered JPEG attachments", () => {
   const request = validateAnalyzeRequest({
     appUserId,

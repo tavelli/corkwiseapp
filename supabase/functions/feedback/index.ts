@@ -118,7 +118,7 @@ function validateFeedbackRequest(input: unknown): FeedbackRequest {
   const candidate = input as Record<string, unknown>;
   const feedbackId = stringOrNull(candidate.feedbackId);
   const analysisId = stringOrNull(candidate.analysisId);
-  const appUserId = stringOrNull(candidate.appUserId);
+  const appUserId = stringOrNull(candidate.appUserId)?.toLowerCase() ?? null;
   const rating = stringOrNull(candidate.rating);
   const source = stringOrNull(candidate.source) ?? "result_end_card";
   const comment = stringOrNull(candidate.comment);
