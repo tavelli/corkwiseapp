@@ -1,7 +1,112 @@
 import SwiftUI
 
 struct ResultsSoftPaywallCardView: View {
+    enum Theme {
+        case standard
+        case paywallSheet
+
+        var titleColor: Color {
+            switch self {
+            case .standard:
+                Color.wineText
+            case .paywallSheet:
+                Color(red: 0.98, green: 0.93, blue: 0.86)
+            }
+        }
+
+        var subtitleColor: Color {
+            switch self {
+            case .standard:
+                Color.wineMutedText
+            case .paywallSheet:
+                Color(red: 0.90, green: 0.82, blue: 0.74)
+            }
+        }
+
+        var buttonTextColor: Color {
+            switch self {
+            case .standard:
+                Color.white
+            case .paywallSheet:
+                Color(red: 0.16, green: 0.10, blue: 0.08)
+            }
+        }
+
+        var buttonBackground: LinearGradient {
+            switch self {
+            case .standard:
+                LinearGradient(
+                    colors: [Color.wineAccent, Color.wineAccent],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            case .paywallSheet:
+                LinearGradient(
+                    colors: [
+                        Color(red: 0.95, green: 0.76, blue: 0.42),
+                        Color(red: 0.82, green: 0.60, blue: 0.30),
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            }
+        }
+
+        var cardBackground: LinearGradient {
+            switch self {
+            case .standard:
+                LinearGradient(
+                    colors: [Color.resultCardBackground, Color.resultCardBackground],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            case .paywallSheet:
+                LinearGradient(
+                    colors: [
+                        Color(red: 0.34, green: 0.05, blue: 0.12),
+                        Color(red: 0.16, green: 0.04, blue: 0.07),
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            }
+        }
+
+        var crownBackground: Color {
+            switch self {
+            case .standard:
+                Color.resultCardBackground
+            case .paywallSheet:
+                Color(red: 0.20, green: 0.08, blue: 0.10).opacity(0.64)
+            }
+        }
+
+        var borderColor: Color {
+            switch self {
+            case .standard:
+                Color.wineBorder.opacity(0.8)
+            case .paywallSheet:
+                Color(red: 0.92, green: 0.68, blue: 0.38).opacity(0.88)
+            }
+        }
+
+        var shadowColor: Color {
+            switch self {
+            case .standard:
+                Color.black.opacity(0.04)
+            case .paywallSheet:
+                Color(red: 0.90, green: 0.60, blue: 0.28).opacity(0.20)
+            }
+        }
+    }
+
+    let theme: Theme
     let premiumAction: () -> Void
+
+    init(theme: Theme = .standard, premiumAction: @escaping () -> Void) {
+        self.theme = theme
+        self.premiumAction = premiumAction
+    }
 
     var body: some View {
         VStack(spacing: 14) {
@@ -12,13 +117,13 @@ struct ResultsSoftPaywallCardView: View {
                     .font(.system(.title3, design: .serif))
                     .bold()
                     .multilineTextAlignment(.center)
-                    .foregroundStyle(Color.wineText)
+                    .foregroundStyle(theme.titleColor)
                     .fixedSize(horizontal: false, vertical: true)
 
                 Text("results.softPaywall.subtitle")
                     .font(.subheadline)
                     .multilineTextAlignment(.center)
-                    .foregroundStyle(Color.wineMutedText)
+                    .foregroundStyle(theme.subtitleColor)
                     .fixedSize(horizontal: false, vertical: true)
             }
 
@@ -26,10 +131,10 @@ struct ResultsSoftPaywallCardView: View {
                 Text("results.softPaywall.premiumButton")
                     .font(.headline)
                     .bold()
-                    .foregroundStyle(Color.white)
+                    .foregroundStyle(theme.buttonTextColor)
                     .frame(maxWidth: .infinity)
                     .frame(minHeight: 44)
-                    .background(Color.wineAccent)
+                    .background(theme.buttonBackground)
                     .clipShape(.capsule)
             }
             .buttonStyle(.plain)
@@ -38,13 +143,13 @@ struct ResultsSoftPaywallCardView: View {
         }
         .padding(20)
         .frame(maxWidth: .infinity)
-        .background(Color.resultCardBackground)
+        .background(theme.cardBackground)
         .clipShape(.rect(cornerRadius: 22))
         .overlay {
             RoundedRectangle(cornerRadius: 22)
-                .stroke(Color.wineBorder.opacity(0.8), lineWidth: 1)
+                .stroke(theme.borderColor, lineWidth: 1)
         }
-        .shadow(color: Color.black.opacity(0.04), radius: 12, y: 6)
+        .shadow(color: theme.shadowColor, radius: 12, y: 6)
     }
 
     private var crownDivider: some View {
@@ -57,7 +162,7 @@ struct ResultsSoftPaywallCardView: View {
                 .font(.headline)
                 .foregroundStyle(Color(red: 0.83, green: 0.55, blue: 0.18))
                 .frame(width: 38, height: 38)
-                .background(Color.resultCardBackground)
+                .background(theme.crownBackground)
                 .clipShape(.circle)
                 .overlay {
                     Circle()
@@ -89,7 +194,11 @@ struct ResultsSoftPaywallCardView: View {
         mainScreenBackground
             .ignoresSafeArea()
 
-        ResultsSoftPaywallCardView(premiumAction: {})
+        VStack(spacing: 20) {
+            ResultsSoftPaywallCardView(premiumAction: {})
+
+            ResultsSoftPaywallCardView(theme: .paywallSheet, premiumAction: {})
+        }
         .padding()
     }
 }

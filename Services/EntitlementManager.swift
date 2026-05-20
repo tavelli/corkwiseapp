@@ -370,17 +370,44 @@ struct CustomPaywall {
 }
 
 struct CustomPaywallRemoteConfig {
+    private static let fallbackEyebrowText = String(localized: "CORKWISE PREMIUM")
+    private static let fallbackHeadlineText = String(localized: "Know what’s worth ordering")
+    private static let fallbackSubheadlineText = String(localized: "Expert guidance for every wine list.")
     private static let fallbackCTAText = "Join Corkwise"
 
+    let eyebrowText: String
+    let headlineText: String
+    let subheadlineText: String
     let ctaText: String
 
     init(dictionary: [String: Any]?) {
-        if let ctaText = dictionary?["cta_text"] as? String {
-            let trimmedCTAText = ctaText.trimmingCharacters(in: .whitespacesAndNewlines)
-            self.ctaText = trimmedCTAText.isEmpty ? Self.fallbackCTAText : trimmedCTAText
-        } else {
-            ctaText = Self.fallbackCTAText
-        }
+        eyebrowText = Self.stringValue(
+            forKey: "eyebrow_text",
+            in: dictionary,
+            fallback: Self.fallbackEyebrowText
+        )
+        headlineText = Self.stringValue(
+            forKey: "headline_text",
+            in: dictionary,
+            fallback: Self.fallbackHeadlineText
+        )
+        subheadlineText = Self.stringValue(
+            forKey: "subheadline_text",
+            in: dictionary,
+            fallback: Self.fallbackSubheadlineText
+        )
+        ctaText = Self.stringValue(
+            forKey: "cta_text",
+            in: dictionary,
+            fallback: Self.fallbackCTAText
+        )
+    }
+
+    private static func stringValue(forKey key: String, in dictionary: [String: Any]?, fallback: String) -> String {
+        guard let value = dictionary?[key] as? String else { return fallback }
+
+        let trimmedValue = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmedValue.isEmpty ? fallback : trimmedValue
     }
 }
 

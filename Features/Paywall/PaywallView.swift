@@ -70,12 +70,12 @@ private struct CustomPaywallContent: View {
             Spacer(minLength: 28)
 
             VStack(spacing: 12) {
-                Text("CORKWISE PREMIUM")
+                Text(paywall.remoteConfig.eyebrowText)
                     .font(.caption.bold())
                     .tracking(2.4)
                     .foregroundStyle(Color(red: 0.86, green: 0.68, blue: 0.38))
 
-                Text("Know what’s worth ordering")
+                Text(paywall.remoteConfig.headlineText)
                     .font(.largeTitle)
                     .bold()
                     .multilineTextAlignment(.center)
@@ -83,7 +83,7 @@ private struct CustomPaywallContent: View {
                     .lineLimit(3)
                     .minimumScaleFactor(0.82)
 
-                Text("Expert guidance for every wine list.")
+                Text(paywall.remoteConfig.subheadlineText)
                     .font(.callout)
                     .multilineTextAlignment(.center)
                     .foregroundStyle(Color(red: 0.90, green: 0.82, blue: 0.74))
@@ -286,15 +286,16 @@ private struct PaywallMessageView: View {
 private struct PaywallFallbackView: View {
     let errorMessage: String?
     let retryAction: () -> Void
+    private let messageColor = Color(red: 0.90, green: 0.82, blue: 0.74)
 
     var body: some View {
         VStack(spacing: 14) {
-            Image("headerlogo4")
-                .resizable()
-                .scaledToFit()
-                .frame(height: 55)
-
             if let errorMessage {
+                Image("headerlogo4")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 55)
+
                 Text(errorMessage)
                     .font(.footnote)
                     .foregroundStyle(Color(red: 1.0, green: 0.48, blue: 0.44))
@@ -306,7 +307,8 @@ private struct PaywallFallbackView: View {
             } else {
                 ProgressView(String(localized: .paywallLoadingSubscriptionOptions))
                     .font(.footnote)
-                    .foregroundStyle(Color(red: 0.90, green: 0.82, blue: 0.74))
+                    .foregroundStyle(messageColor)
+                    .tint(messageColor)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

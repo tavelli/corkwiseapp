@@ -154,7 +154,7 @@ struct ResultsContentView: View {
                     }
 
                     if showsSoftPaywall {
-                        ResultsSoftPaywallCardView(premiumAction: showPremiumAction)
+                        ResultsSoftPaywallCardView(theme: .paywallSheet, premiumAction: showPremiumAction)
                     }
 
                     #if DEBUG
