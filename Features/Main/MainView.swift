@@ -511,21 +511,21 @@ struct MainView: View {
                     .frame(width: 76, height: 76)
                     .foregroundStyle(Color.wineSoftPeach)
 
-                Text(selectedFilterSummary)
-                    .font(.subheadline.weight(.medium))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.82)
-                    .foregroundStyle(Color.wineSoftPeach.opacity(0.82))
+//                Text(selectedFilterSummary)
+//                    .font(.subheadline.weight(.medium))
+//                    .lineLimit(1)
+//                    .minimumScaleFactor(0.82)
+//                    .foregroundStyle(Color.wineSoftPeach.opacity(0.82))
 
                 Text(.mainScanAnalyzeWineList)
-                    .font(.system(size: 28, weight: .semibold, design: .default))
+                    .font(.system(size: 24, weight: .semibold, design: .default))
                     .tracking(1.2)
                     .lineLimit(1)
                     .minimumScaleFactor(0.82)
                     .foregroundStyle(Color.wineSoftPeach)
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 180)
+            .frame(height: 160)
         }
         .buttonStyle(ScanHeroButtonStyle())
     }
@@ -608,7 +608,7 @@ struct MainView: View {
                     .foregroundStyle(Color.wineText)
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 78)
+            .frame(height: 68)
             .background(Color.wineOptionBackground)
             .clipShape(.rect(cornerRadius: 18))
             .overlay {
@@ -680,10 +680,11 @@ private struct ScanHeroButtonStyle: ButtonStyle {
                     .blendMode(.overlay)
                     .opacity(configuration.isPressed ? 0.45 : 0.55)
             }
-            .clipShape(.rect(cornerRadius: 22))
+            .clipShape(.rect(cornerRadius: 35))
             .shadow(
-                color: Color.wineDeep.opacity(0.14),
+                color: Color.wineDeep.opacity(configuration.isPressed ? 0.08 : 0.16),
                 radius: configuration.isPressed ? 8 : 14,
+                x: 0,
                 y: configuration.isPressed ? 4 : 8
             )
             .scaleEffect(configuration.isPressed ? 0.995 : 1)
