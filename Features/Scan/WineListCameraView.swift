@@ -55,31 +55,17 @@ struct WineListCameraView: View {
             Color.black.opacity(0.18)
                 .ignoresSafeArea()
 
-            VStack {
-                Spacer()
-
-                LinearGradient(
-                    colors: [
-                        .clear,
-                        .black.opacity(0.22),
-                        .black.opacity(0.5),
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .frame(height: 320)
-            }
-            .ignoresSafeArea()
+            bottomControlFoundation
 
             VStack(spacing: 0) {
                 topBar
+                    .padding(.horizontal, 18)
+                    .padding(.top, 16)
 
                 Spacer()
 
                 bottomControls
             }
-            .padding(.horizontal, 18)
-            .padding(.vertical, 16)
         }
         .background(Color.black.ignoresSafeArea())
         .task {
@@ -152,6 +138,66 @@ struct WineListCameraView: View {
         }
     }
 
+    private var bottomControlFoundation: some View {
+        GeometryReader { proxy in
+            VStack {
+                Spacer()
+
+                LinearGradient(
+                    stops: [
+                        .init(color: .clear, location: 0),
+                        .init(color: Color(red: 0.18, green: 0.10, blue: 0.06).opacity(0.71), location: 0.34),
+                        .init(color: Color(red: 0.10, green: 0.06, blue: 0.04).opacity(0.73), location: 0.72),
+                        .init(color: .black.opacity(0.78), location: 1),
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: max(proxy.size.height * 0.42, 320))
+            }
+            .ignoresSafeArea()
+        }
+        .allowsHitTesting(false)
+    }
+
+    private var controlTrayBackground: some View {
+        UnevenRoundedRectangle(
+            cornerRadii: .init(
+                topLeading: 38,
+                bottomLeading: 38,
+                bottomTrailing: 38,
+                topTrailing: 38
+            ),
+            style: .continuous
+        )
+            .fill(.ultraThinMaterial)
+            .overlay {
+                UnevenRoundedRectangle(
+                    cornerRadii: .init(
+                        topLeading: 38,
+                        bottomLeading: 38,
+                        bottomTrailing: 38,
+                        topTrailing: 38
+                    ),
+                    style: .continuous
+                )
+                    .fill(Color(red: 0.10, green: 0.06, blue: 0.04).opacity(0.64))
+            }
+            .overlay {
+                UnevenRoundedRectangle(
+                    cornerRadii: .init(
+                        topLeading: 38,
+                        bottomLeading: 38,
+                        bottomTrailing: 38,
+                        topTrailing: 38
+                    ),
+                    style: .continuous
+                )
+                    .stroke(Color(red: 0.92, green: 0.82, blue: 0.62).opacity(0.08), lineWidth: 1)
+            }
+            .shadow(color: .black.opacity(0.22), radius: 22, y: 10)
+    }
+
     private var bottomControls: some View {
         VStack(spacing: 16) {
             if cameraModel.hasReachedPageLimit {
@@ -163,19 +209,19 @@ struct WineListCameraView: View {
                     .background(.black.opacity(0.46))
                     .clipShape(.capsule)
             } else if cameraModel.capturedPages.isEmpty {
-                Text(.cameraCaptureHint)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.white.opacity(0.92))
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 8)
-                    .background(.black.opacity(0.34))
-                    .clipShape(.capsule)
+//                Text(.cameraCaptureHint)
+//                    .font(.subheadline.weight(.semibold))
+//                    .foregroundStyle(.white.opacity(0.92))
+//                    .padding(.horizontal, 14)
+//                    .padding(.vertical, 8)
+//                    .background(.black.opacity(0.34))
+//                    .clipShape(.capsule)
             }
 
             HStack(alignment: .center) {
                 if cameraModel.capturedPages.isEmpty {
                     Color.clear
-                        .frame(width: 112, height: 52)
+                        .frame(width: 88, height: 52)
                 } else {
                     pageStackButton
                         .transition(.opacity.combined(with: .move(edge: .leading)))
@@ -192,11 +238,19 @@ struct WineListCameraView: View {
                         .transition(.opacity.combined(with: .move(edge: .trailing)))
                 } else {
                     Color.clear
-                        .frame(width: 112, height: 52)
+                        .frame(width: 88, height: 52)
                 }
+            }
+            .padding(.horizontal, 20)
+            .frame(height: 100)
+            .frame(maxWidth: .infinity)
+            .background {
+                controlTrayBackground
             }
             .animation(.easeOut(duration: 0.18), value: cameraModel.canAnalyze)
         }
+        .frame(maxWidth: .infinity)
+        .padding(5)
     }
 
     private var pageStackButton: some View {
@@ -204,7 +258,7 @@ struct WineListCameraView: View {
             showingPageTray = true
         } label: {
             CapturedPageStackPreview(pages: cameraModel.capturedPages)
-                .frame(width: 112, height: 86, alignment: .leading)
+                .frame(width: 88, height: 68, alignment: .center).padding(.top, 8)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(String(localized: .cameraReviewPagesAccessibilityLabel))
@@ -216,34 +270,35 @@ struct WineListCameraView: View {
             dismiss()
             onAnalyze(images)
         } label: {
-            HStack(spacing: 6) {
+            HStack(spacing: 4) {
                 Text(String(localized: .cameraAnalyze))
                     .font(.subheadline.weight(.regular))
 
                 Image(systemName: "arrow.right")
                     .font(.subheadline.weight(.regular))
             }
-            .foregroundStyle(Color.wineAccent)
-            .frame(width: 110, height: 52)
+            .foregroundStyle(Color(red: 0.82, green: 0.68, blue: 0.47))
+            .frame(width: 98, height: 46)
             .background {
-                RoundedRectangle(cornerRadius: 17, style: .continuous)
-                    .fill(.ultraThinMaterial)
+                Capsule(style: .continuous)
+                    .fill(Color(red: 0.34, green: 0.08, blue: 0.11).opacity(0.94))
                     .overlay {
-                        RoundedRectangle(cornerRadius: 17, style: .continuous)
-                            .fill(.white.opacity(0.84))
+                        LinearGradient(
+                            colors: [
+                                Color.white.opacity(0.08),
+                                Color.black.opacity(0.12),
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .clipShape(Capsule(style: .continuous))
                     }
             }
-            .glassEffect(
-                .regular
-                    .tint(.white.opacity(0.54))
-                    .interactive(),
-                in: .rect(cornerRadius: 17)
-            )
             .overlay {
-                RoundedRectangle(cornerRadius: 17, style: .continuous)
-                    .stroke(.white.opacity(0.72), lineWidth: 1)
+                Capsule(style: .continuous)
+                    .stroke(Color(red: 0.82, green: 0.70, blue: 0.49).opacity(0.92), lineWidth: 1.2)
             }
-            .shadow(color: .black.opacity(0.16), radius: 14, y: 7)
+            .shadow(color: .black.opacity(0.3), radius: 12, y: 6)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(String(localized: .cameraAnalyzePagesAccessibilityLabel))
@@ -255,12 +310,18 @@ struct WineListCameraView: View {
         } label: {
             ZStack {
                 Circle()
-                    .stroke(.white.opacity(cameraModel.canCapture ? 0.9 : 0.36), lineWidth: 4)
-                    .frame(width: 78, height: 78)
+                    .fill(Color.black.opacity(cameraModel.canCapture ? 0.62 : 0.34))
+                    .frame(width: 74, height: 74)
+                    .overlay {
+                        Circle()
+                            .stroke(Color(red: 0.89, green: 0.81, blue: 0.64).opacity(cameraModel.canCapture ? 0.78 : 0.28), lineWidth: 2.6)
+                    }
+                    .shadow(color: .black.opacity(0.22), radius: 10, y: 5)
 
                 Circle()
-                    .fill(cameraModel.canCapture ? Color.white : Color.white.opacity(0.28))
-                    .frame(width: 62, height: 62)
+                    .fill(cameraModel.canCapture ? Color(red: 0.98, green: 0.95, blue: 0.87) : Color.white.opacity(0.28))
+                    .frame(width: 58, height: 58)
+                    .shadow(color: .white.opacity(cameraModel.canCapture ? 0.18 : 0), radius: 6)
             }
         }
         .buttonStyle(.plain)
@@ -280,9 +341,10 @@ struct WineListCameraView: View {
 private struct CapturedPageStackPreview: View {
     let pages: [CapturedWineListPage]
 
-    private let thumbnailSize = CGSize(width: 62, height: 80)
-    private let cornerRadius: CGFloat = 13
+    private let thumbnailSize = CGSize(width: 48, height: 62)
+    private let cornerRadius: CGFloat = 10
     private let backingRotationStep: Double = -5
+    private let goldStroke = Color(red: 0.82, green: 0.70, blue: 0.49)
 
     private var latestPage: CapturedWineListPage? {
         pages.last
@@ -299,7 +361,7 @@ private struct CapturedPageStackPreview: View {
                     let depth = visibleBackingCount - index
 
                     RoundedRectangle(cornerRadius: cornerRadius)
-                        .stroke(.white.opacity(0.88), lineWidth: 1.5)
+                        .stroke(goldStroke.opacity(0.92), lineWidth: 1.2)
                         .frame(width: thumbnailSize.width, height: thumbnailSize.height)
                         .rotationEffect(.degrees(Double(depth) * backingRotationStep))
                 }
@@ -312,20 +374,24 @@ private struct CapturedPageStackPreview: View {
                         .clipShape(.rect(cornerRadius: cornerRadius))
                         .overlay {
                             RoundedRectangle(cornerRadius: cornerRadius)
-                                .stroke(.white.opacity(0.88), lineWidth: 1.5)
+                                .stroke(goldStroke.opacity(0.92), lineWidth: 1.2)
                         }
                 }
             }
-            .frame(width: 78, height: 90, alignment: .topTrailing)
+            .frame(width: 62, height: 70, alignment: .topTrailing)
             .shadow(color: .black.opacity(0.2), radius: 5, y: 3)
 
             Text("\(pages.count)")
-                .font(.caption.bold())
-                .foregroundStyle(.white.opacity(0.92))
-                .frame(width: 26, height: 26)
-                .background(Color.wineAccent)
+                .font(.caption2.bold())
+                .foregroundStyle(goldStroke)
+                .frame(width: 22, height: 22)
+                .background(Color.black)
                 .clipShape(.circle)
-                .offset(x: 10, y: -10)
+                .overlay {
+                    Circle()
+                        .stroke(goldStroke.opacity(0.82), lineWidth: 1)
+                }
+                .offset(x: 8, y: -8)
         }
     }
 }
