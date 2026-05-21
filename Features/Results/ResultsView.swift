@@ -92,7 +92,10 @@ struct ResultsContentView: View {
                     }
 
                     if snapshotText.isEmpty == false {
-                        MenuSnapshotView(text: snapshotText)
+                        MenuSnapshotView(
+                            text: snapshotText,
+                            pricingContextSummary: result.pricingContextSummary
+                        )
                             .id(ResultsScrollTarget.summary)
                     }
 
@@ -277,6 +280,7 @@ private extension WineScanResult {
             restaurantName: sample.restaurantName,
             currencyCode: sample.currencyCode,
             summary: sample.summary,
+            pricingContextSummary: sample.pricingContextSummary,
             recommendations: sample.recommendations,
             categoryRecommendations: sample.categoryRecommendations,
             notes: sample.notes,
@@ -329,6 +333,7 @@ private struct DebugScanInfoView: View {
 
 private struct MenuSnapshotView: View {
     let text: String
+    let pricingContextSummary: PricingContextSummary?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -349,6 +354,8 @@ private struct MenuSnapshotView: View {
                 .lineSpacing(2)
                 .foregroundStyle(Color.wineText)
                 .fixedSize(horizontal: false, vertical: true)
+
+           //  WineDataTagRow(tags: medianMarkupTags)
         }
         .padding(.horizontal, 22)
         .padding(.vertical, 18)
@@ -362,5 +369,21 @@ private struct MenuSnapshotView: View {
                 .stroke(Color.wineBorder.opacity(0.85), lineWidth: 1)
         }
         .shadow(color: Color.black.opacity(0.035), radius: 12, y: 6)
+    }
+
+    private var formattedMedianMarkup: String? {
+        guard let medianEstimatedMarkup = pricingContextSummary?.medianEstimatedMarkup else {
+            return nil
+        }
+
+        return medianEstimatedMarkup.formatted(.number.precision(.fractionLength(1)))
+    }
+
+    private var medianMarkupTags: [String] {
+        guard let formattedMedianMarkup else {
+            return []
+        }
+
+        return [String(localized: .resultsSnapshotMedianMarkup(formattedMedianMarkup))]
     }
 }

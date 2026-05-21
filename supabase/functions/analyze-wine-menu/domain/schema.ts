@@ -12,6 +12,19 @@ export const modelResponseSchema = {
       },
       required: ["headline"],
     },
+    visiblePricingSample: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        properties: {
+          menuPrice: { type: ["number", "null"] },
+          menuPriceUnit: { type: "string", enum: ["glass", "bottle"] },
+          estimatedRetail: { type: ["number", "null"] },
+        },
+        required: ["menuPrice", "menuPriceUnit", "estimatedRetail"],
+      },
+    },
     recommendations: {
       type: "array",
       items: {
@@ -103,6 +116,7 @@ export const modelResponseSchema = {
     "restaurantName",
     "currencyCode",
     "summary",
+    "visiblePricingSample",
     "recommendations",
     "categoryRecommendations",
     "notes",

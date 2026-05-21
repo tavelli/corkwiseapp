@@ -1,10 +1,10 @@
-import { RequestError } from "./types.ts";
+import {RequestError} from "./types.ts";
 
 const ADAPTY_PROFILE_URL =
   "https://api.adapty.io/api/v2/server-side-api/profile/";
 const ADAPTY_SECRET_API_KEY = Deno.env.get("ADAPTY_SECRET_API_KEY");
-const ADAPTY_ACCESS_LEVEL_ID = Deno.env.get("ADAPTY_ACCESS_LEVEL_ID") ??
-  "premium";
+const ADAPTY_ACCESS_LEVEL_ID =
+  Deno.env.get("ADAPTY_ACCESS_LEVEL_ID") ?? "premium";
 
 export type EntitlementState = {
   isPaid: boolean;
@@ -76,20 +76,20 @@ export async function checkEntitlement(
     );
   }
 
-  const body = await response.json() as AdaptyProfileResponse;
+  const body = (await response.json()) as AdaptyProfileResponse;
   const accessLevels = normalizeAccessLevels(
     body.data?.access_levels ?? body.data?.paid_access_levels,
   );
-  const activeAccessLevel = accessLevels?.find((accessLevel) =>
-    accessLevel.access_level_id === ADAPTY_ACCESS_LEVEL_ID &&
-    accessLevelIsActive(accessLevel)
+  const activeAccessLevel = accessLevels?.find(
+    (accessLevel) =>
+      accessLevel.access_level_id === ADAPTY_ACCESS_LEVEL_ID &&
+      accessLevelIsActive(accessLevel),
   );
 
   console.log("adapty entitlement checked", {
     requestedAccessLevelID: ADAPTY_ACCESS_LEVEL_ID,
-    returnedAccessLevelIDs: accessLevels?.map((accessLevel) =>
-      accessLevel.access_level_id
-    ) ?? [],
+    returnedAccessLevelIDs:
+      accessLevels?.map((accessLevel) => accessLevel.access_level_id) ?? [],
     isPaid: activeAccessLevel != null,
   });
 
@@ -97,16 +97,16 @@ export async function checkEntitlement(
     isPaid: activeAccessLevel != null,
     appleOriginalTransactionId:
       appleOriginalTransactionId(activeAccessLevel, body.data?.subscriptions) ??
-        null,
+      null,
   };
 }
 
 function appleOriginalTransactionId(
   accessLevel:
-    | { store?: string; store_original_transaction_id?: string | null }
+    | {store?: string; store_original_transaction_id?: string | null}
     | undefined,
   subscriptions:
-    | Array<{ store?: string; store_original_transaction_id?: string | null }>
+    | Array<{store?: string; store_original_transaction_id?: string | null}>
     | undefined,
 ): string | undefined {
   if (
@@ -116,10 +116,13 @@ function appleOriginalTransactionId(
     return accessLevel.store_original_transaction_id;
   }
 
-  return subscriptions?.find((subscription) =>
-    subscription.store === "app_store" &&
-    subscription.store_original_transaction_id != null
-  )?.store_original_transaction_id ?? undefined;
+  return (
+    subscriptions?.find(
+      (subscription) =>
+        subscription.store === "app_store" &&
+        subscription.store_original_transaction_id != null,
+    )?.store_original_transaction_id ?? undefined
+  );
 }
 
 function normalizeAccessLevels(

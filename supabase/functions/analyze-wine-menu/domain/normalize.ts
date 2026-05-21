@@ -4,6 +4,8 @@ import {
   type WineScanResult,
 } from "./types.ts";
 
+const MINIMUM_MARKUP_SAMPLE_SIZE = 3;
+
 export function normalizeScanResult(
   input: unknown,
   purchaseMode: PurchaseMode,
@@ -32,10 +34,15 @@ export function normalizeScanResult(
   ).map((entry) => normalizeCategorySection(entry, purchaseMode));
   const normalizedNotes = stringArrayOrEmpty(candidate.notes);
   const summary = normalizeSummary(candidate.summary);
+  const pricingContextSummary = normalizePricingContextSummary(
+    candidate.visiblePricingSample,
+    purchaseMode,
+  );
 
   const result: WineScanResult = {
     restaurantName: stringOrNull(candidate.restaurantName),
     currencyCode: currencyCodeOrDefault(candidate.currencyCode),
+    pricingContextSummary,
     summary,
     recommendations: normalizedRecommendations,
     categoryRecommendations: normalizedCategoryRecommendations,
@@ -47,6 +54,33 @@ export function normalizeScanResult(
   }
 
   return result;
+}
+
+function normalizePricingContextSummary(
+  input: unknown,
+  purchaseMode: PurchaseMode,
+): WineScanResult["pricingContextSummary"] {
+  const markups = arrayOrEmpty(input).flatMap((entry) => {
+    if (entry == null || typeof entry !== "object") {
+      return [];
+    }
+
+    const candidate = entry as Record<string, unknown>;
+    const derivedMarkup = deriveMarkup({
+      menuPriceUnit: purchaseModeOrDefault(candidate.menuPriceUnit, purchaseMode),
+      menuPrice: numberOrNull(candidate.menuPrice),
+      estimatedRetail: numberOrNull(candidate.estimatedRetail),
+    });
+
+    return derivedMarkup == null ? [] : [derivedMarkup.value];
+  });
+
+  return {
+    medianEstimatedMarkup: markups.length >= MINIMUM_MARKUP_SAMPLE_SIZE
+      ? median(markups)
+      : null,
+    markupSampleSize: markups.length,
+  };
 }
 
 function normalizeSummary(input: unknown): WineScanResult["summary"] {
@@ -282,6 +316,19 @@ function currencyCodeOrDefault(value: unknown): string {
 
 function roundToSingleDecimal(value: number): number {
   return Math.round(value * 10) / 10;
+}
+
+function median(values: number[]): number {
+  const sortedValues = [...values].sort((left, right) => left - right);
+  const midpoint = Math.floor(sortedValues.length / 2);
+
+  if (sortedValues.length % 2 === 1) {
+    return sortedValues[midpoint];
+  }
+
+  return roundToSingleDecimal(
+    (sortedValues[midpoint - 1] + sortedValues[midpoint]) / 2,
+  );
 }
 
 function formatSingleDecimal(value: number): string {

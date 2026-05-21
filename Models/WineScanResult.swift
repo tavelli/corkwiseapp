@@ -45,6 +45,7 @@ struct WineScanResult: Codable, Hashable {
     let restaurantName: String?
     let currencyCode: String
     let summary: ScanSummary
+    let pricingContextSummary: PricingContextSummary?
     let recommendations: [WineRecommendation]
     let categoryRecommendations: [RecommendationCategorySection]
     let notes: [String]
@@ -58,6 +59,7 @@ struct WineScanResult: Codable, Hashable {
         case restaurantName
         case currencyCode
         case summary
+        case pricingContextSummary
         case recommendations
         case categoryRecommendations
         case notes
@@ -72,6 +74,7 @@ struct WineScanResult: Codable, Hashable {
         restaurantName: String?,
         currencyCode: String = "USD",
         summary: ScanSummary,
+        pricingContextSummary: PricingContextSummary? = nil,
         recommendations: [WineRecommendation],
         categoryRecommendations: [RecommendationCategorySection],
         notes: [String],
@@ -84,6 +87,7 @@ struct WineScanResult: Codable, Hashable {
         self.restaurantName = restaurantName
         self.currencyCode = currencyCode
         self.summary = summary
+        self.pricingContextSummary = pricingContextSummary
         self.recommendations = recommendations
         self.categoryRecommendations = categoryRecommendations
         self.notes = notes
@@ -99,6 +103,7 @@ struct WineScanResult: Codable, Hashable {
         restaurantName = try container.decodeIfPresent(String.self, forKey: .restaurantName)
         currencyCode = try container.decodeIfPresent(String.self, forKey: .currencyCode) ?? "USD"
         summary = try container.decode(ScanSummary.self, forKey: .summary)
+        pricingContextSummary = try container.decodeIfPresent(PricingContextSummary.self, forKey: .pricingContextSummary)
         recommendations = try container.decode([WineRecommendation].self, forKey: .recommendations)
         categoryRecommendations = try container.decode([RecommendationCategorySection].self, forKey: .categoryRecommendations)
         notes = try container.decode([String].self, forKey: .notes)
@@ -108,6 +113,11 @@ struct WineScanResult: Codable, Hashable {
 
 struct ScanSummary: Codable, Hashable {
     let headline: String
+}
+
+struct PricingContextSummary: Codable, Hashable {
+    let medianEstimatedMarkup: Double?
+    let markupSampleSize: Int
 }
 
 struct WineRecommendation: Codable, Identifiable, Hashable {
@@ -262,6 +272,10 @@ extension WineScanResult {
             summary: ScanSummary(
                 headline: "A thoughtful list featuring benchmark producers and exceptional value in the Rhone and Bordeaux sections."
             ),
+            pricingContextSummary: PricingContextSummary(
+                medianEstimatedMarkup: 2.8,
+                markupSampleSize: 18
+            ),
             recommendations: [
                 WineRecommendation(
                     rank: 1,
@@ -275,7 +289,7 @@ extension WineScanResult {
                     menuPriceUnit: .bottle,
                     estimatedRetail: 60,
                     valueScore: 9.5,
-                    why: "A benchmark producer with bottle age that restaurants often price more aggressively than retail availability would suggest."
+                    why: "A benchmark producer with bottle age, savory depth, and the kind of Rioja profile that can anchor the table without feeling obvious."
                 ),
                 WineRecommendation(
                     rank: 2,
@@ -289,7 +303,7 @@ extension WineScanResult {
                     menuPriceUnit: .bottle,
                     estimatedRetail: 25,
                     valueScore: 8.6,
-                    why: "A strong producer in a category that can still offer honest restaurant pricing and food-friendly versatility."
+                    why: "A strong producer in a category built for seafood, salty snacks, and bright starters, with more personality than the usual safe white."
                 ),
                 WineRecommendation(
                     rank: 3,
@@ -303,7 +317,7 @@ extension WineScanResult {
                     menuPriceUnit: .bottle,
                     estimatedRetail: 38,
                     valueScore: 7.9,
-                    why: "The markup is still reasonable, and the producer quality is meaningfully stronger than some similarly priced alternatives."
+                    why: "A polished Ribera del Duero with enough structure for richer dishes and a producer profile that stands above the simpler reds nearby."
                 )
             ],
             categoryRecommendations: [
@@ -323,7 +337,7 @@ extension WineScanResult {
                             menuPriceUnit: .bottle,
                             estimatedRetail: 25,
                             valueScore: 8.6,
-                            why: "Strong producer quality and honest restaurant pricing make this the clearest value play."
+                            why: "Strong producer quality, coastal freshness, and easy food range make this the clearest smart move for the table."
                         )
                     ]
                 ),
@@ -343,7 +357,7 @@ extension WineScanResult {
                             menuPriceUnit: .bottle,
                             estimatedRetail: 38,
                             valueScore: 7.9,
-                            why: "If you want to spend a bit more, this gives a more serious bottle without entering trophy pricing."
+                            why: "This brings a more serious, structured red profile while staying grounded enough for a real dinner table."
                         )
                     ]
                 ),
@@ -403,7 +417,7 @@ extension WineScanResult {
                             menuPriceUnit: .bottle,
                             estimatedRetail: 38,
                             valueScore: 7.9,
-                            why: "A solid wine, but the menu price is less compelling than the stronger values around it."
+                            why: "A solid wine, but the menu price is less compelling than the more distinctive options around it."
                         )
                     ]
                 ),

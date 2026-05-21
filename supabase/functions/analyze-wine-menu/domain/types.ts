@@ -59,6 +59,10 @@ export type WineScanResult = {
   freeScanUsed?: boolean;
   restaurantName: string | null;
   currencyCode: string;
+  pricingContextSummary: {
+    medianEstimatedMarkup: number | null;
+    markupSampleSize: number;
+  };
   summary: {
     headline: string;
   };

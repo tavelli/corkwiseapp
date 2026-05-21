@@ -3337,6 +3337,29 @@
         }
       }
     },
+    "results.snapshot.medianMarkup" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "List median markup %@x"
+          }
+        },
+        "en-AU" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "List median markup %@x"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "List median markup %@x"
+          }
+        }
+      }
+    },
     "results.snapshot.title" : {
       "extractionState" : "manual",
       "localizations" : {
