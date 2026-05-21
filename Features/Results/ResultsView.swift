@@ -152,8 +152,14 @@ struct ResultsContentView: View {
                     if let analysisId = result.analysisId {
                         ResultsFeedbackCardView(
                             analysisId: analysisId,
-                            retryAction: showRetryAction
+                            retryAction: showRetryAction,
+                            requestVisibility: {
+                                withAnimation(.easeInOut(duration: 0.24)) {
+                                    proxy.scrollTo(ResultsScrollTarget.feedback, anchor: .bottom)
+                                }
+                            }
                         )
+                        .id(ResultsScrollTarget.feedback)
                     }
 
                     if showsSoftPaywall {
@@ -168,6 +174,7 @@ struct ResultsContentView: View {
                 }
                 .padding(20)
             }
+            .scrollDismissesKeyboard(.interactively)
             .task(id: scriptedScrollSequence?.isEnabled ?? false) {
                 guard
                     let scriptedScrollSequence,
@@ -222,6 +229,7 @@ enum ResultsScrollTarget: Hashable {
     case summary
     case highlyRecommendCard(index: Int)
     case category(key: String)
+    case feedback
 }
 
 #Preview {

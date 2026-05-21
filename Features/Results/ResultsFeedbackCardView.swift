@@ -5,23 +5,27 @@ struct ResultsFeedbackCardView: View {
 
     let analysisId: String
     let retryAction: () -> Void
+    let requestVisibility: () -> Void
 
     @State private var state: FeedbackState = .initial
     @State private var comment = ""
     @State private var isSubmitting = false
     @State private var errorMessage: String?
     @State private var negativeFeedbackId: String?
+    @FocusState private var isCommentFocused: Bool
 
     private let feedbackService = FeedbackService()
 
     init(
         analysisId: String,
         retryAction: @escaping () -> Void,
+        requestVisibility: @escaping () -> Void = {},
         initialState: FeedbackState = .initial,
         initialNegativeFeedbackId: String? = nil
     ) {
         self.analysisId = analysisId
         self.retryAction = retryAction
+        self.requestVisibility = requestVisibility
         _state = State(initialValue: initialState)
         _negativeFeedbackId = State(initialValue: initialNegativeFeedbackId)
     }
@@ -66,6 +70,19 @@ struct ResultsFeedbackCardView: View {
             RoundedRectangle(cornerRadius: 16)
                 .stroke(Color.wineBorder.opacity(0.55), lineWidth: 1)
         }
+        .onChange(of: isCommentFocused) { _, isFocused in
+            guard isFocused else { return }
+            revealAfterKeyboardBeginsPresenting()
+        }
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+
+                Button("Done") {
+                    isCommentFocused = false
+                }
+            }
+        }
     }
 
     private var initialContent: some View {
@@ -97,6 +114,7 @@ struct ResultsFeedbackCardView: View {
                 .foregroundStyle(Color.wineText)
                 .frame(minHeight: 82)
                 .padding(8)
+                .focused($isCommentFocused)
                 .scrollContentBackground(.hidden)
                 .background(Color.resultCardBackground.opacity(0.8))
                 .clipShape(.rect(cornerRadius: 12))
@@ -257,6 +275,7 @@ struct ResultsFeedbackCardView: View {
                     withAnimation(.easeInOut(duration: 0.18)) {
                         state = .comment
                     }
+                    revealAfterExpansion()
                 }
             } catch {
                 await MainActor.run {
@@ -303,6 +322,20 @@ struct ResultsFeedbackCardView: View {
                     errorMessage = "Couldn't send feedback. Please try again."
                 }
             }
+        }
+    }
+
+    private func revealAfterExpansion() {
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(80))
+            requestVisibility()
+        }
+    }
+
+    private func revealAfterKeyboardBeginsPresenting() {
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(250))
+            requestVisibility()
         }
     }
 
@@ -388,4 +421,3 @@ struct ResultsFeedbackCardView: View {
     }
     .environment(EntitlementManager())
 }
-
