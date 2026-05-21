@@ -3,6 +3,7 @@ import SwiftUI
 import UIKit
 
 private let wineListCameraPageLimit = 4
+private let wineListCameraSideControlWidth: CGFloat = 98
 
 struct WineListCameraView: View {
     @Environment(\.dismiss) private var dismiss
@@ -170,7 +171,7 @@ struct WineListCameraView: View {
             ),
             style: .continuous
         )
-            .fill(.ultraThinMaterial)
+            .fill(.ultraThinMaterial.opacity(0.65))
             .overlay {
                 UnevenRoundedRectangle(
                     cornerRadii: .init(
@@ -221,10 +222,11 @@ struct WineListCameraView: View {
             HStack(alignment: .center) {
                 if cameraModel.capturedPages.isEmpty {
                     Color.clear
-                        .frame(width: 88, height: 52)
+                        .frame(width: wineListCameraSideControlWidth, height: 68)
                 } else {
                     pageStackButton
-                        .transition(.opacity.combined(with: .move(edge: .leading)))
+                        .frame(width: wineListCameraSideControlWidth, height: 68)
+                        .transition(.opacity.combined(with: .move(edge: .trailing)))
                 }
 
                 Spacer()
@@ -235,15 +237,16 @@ struct WineListCameraView: View {
 
                 if cameraModel.canAnalyze {
                     analyzeButton
-                        .transition(.opacity.combined(with: .move(edge: .trailing)))
+                        .frame(width: wineListCameraSideControlWidth, height: 68)
+                        .transition(.opacity.combined(with: .move(edge: .leading)))
                 } else {
                     Color.clear
-                        .frame(width: 88, height: 52)
+                        .frame(width: wineListCameraSideControlWidth, height: 68)
                 }
             }
             .padding(.horizontal, 20)
             .frame(height: 100)
-            .frame(maxWidth: .infinity)
+            .frame(maxWidth: cameraModel.capturedPages.isEmpty ? 150 : .infinity)
             .background {
                 controlTrayBackground
             }
