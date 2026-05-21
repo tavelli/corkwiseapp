@@ -18,6 +18,10 @@ type ModelPricing = {
 };
 
 const GEMINI_PRICING_BY_MODEL: Record<string, ModelPricing> = {
+  "gemini-3.5-flash": {
+    inputPricePer1MTokens: 1.5,
+    outputPricePer1MTokens: 9.0,
+  },
   "gemini-3-flash-preview": {
     inputPricePer1MTokens: 0.5,
     outputPricePer1MTokens: 3.0,
@@ -51,13 +55,17 @@ export class GeminiProvider implements WineModelProvider {
 
     try {
       const requestPayload: Record<string, unknown> = {
+        systemInstruction: {
+          parts: [
+            {
+              text: buildSystemPrompt(requestBody),
+            },
+          ],
+        },
         contents: [
           {
             role: "user",
             parts: [
-              {
-                text: buildSystemPrompt(requestBody),
-              },
               menuInstructionPart(requestBody),
               ...menuSourceParts(requestBody),
             ],

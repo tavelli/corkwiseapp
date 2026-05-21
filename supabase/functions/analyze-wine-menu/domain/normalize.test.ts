@@ -69,7 +69,7 @@ Deno.test("normalizeScanResult defaults missing currency code", () => {
   }
 });
 
-Deno.test("normalizeScanResult uses recommendation menu price unit for markup", () => {
+Deno.test("normalizeScanResult filters bottle recommendations when user selected glass", () => {
   const result = normalizeScanResult(
     {
       summary: {
@@ -78,6 +78,20 @@ Deno.test("normalizeScanResult uses recommendation menu price unit for markup", 
       recommendations: [
         {
           rank: 1,
+          wineName: "Estate Chardonnay",
+          extractedText: "Producer Estate Chardonnay glass 18",
+          producer: "Producer",
+          region: "Willamette Valley",
+          vintage: 2021,
+          varietal: "Chardonnay",
+          menuPrice: 18,
+          menuPriceUnit: "glass",
+          estimatedRetail: 45,
+          valueScore: 92,
+          why: "A glass value surfaced from the by-the-glass section.",
+        },
+        {
+          rank: 2,
           wineName: "Estate Pinot Noir",
           extractedText: "Producer Estate Pinot Noir bottle 72",
           producer: "Producer",
@@ -91,21 +105,130 @@ Deno.test("normalizeScanResult uses recommendation menu price unit for markup", 
           why: "A bottle value surfaced even though the user asked for glass.",
         },
       ],
+      categoryRecommendations: [
+        {
+          key: "best_value",
+          title: "Best Value",
+          recommendations: [
+            {
+              rank: 1,
+              wineName: "Estate Chardonnay",
+              extractedText: "Producer Estate Chardonnay glass 18",
+              producer: "Producer",
+              region: "Willamette Valley",
+              vintage: 2021,
+              varietal: "Chardonnay",
+              menuPrice: 18,
+              menuPriceUnit: "glass",
+              estimatedRetail: 45,
+              valueScore: 92,
+              why: "A glass value surfaced from the by-the-glass section.",
+            },
+            {
+              rank: 2,
+              wineName: "Estate Pinot Noir",
+              extractedText: "Producer Estate Pinot Noir bottle 72",
+              producer: "Producer",
+              region: "Willamette Valley",
+              vintage: 2021,
+              varietal: "Pinot Noir",
+              menuPrice: 72,
+              menuPriceUnit: "bottle",
+              estimatedRetail: 36,
+              valueScore: 91,
+              why:
+                "A bottle value surfaced even though the user asked for glass.",
+            },
+          ],
+        },
+        {
+          key: "worth_the_splurge",
+          title: "Worth the Splurge",
+          recommendations: [
+            {
+              rank: 1,
+              wineName: "Reserve Pinot Noir",
+              extractedText: "Producer Reserve Pinot Noir bottle 120",
+              producer: "Producer",
+              region: "Willamette Valley",
+              vintage: 2018,
+              varietal: "Pinot Noir",
+              menuPrice: 120,
+              menuPriceUnit: "bottle",
+              estimatedRetail: 60,
+              valueScore: 88,
+              why: "A bottle-only section should be removed for glass orders.",
+            },
+          ],
+        },
+      ],
     },
     "glass",
   );
 
-  const [recommendation] = result.recommendations;
-  if (recommendation.menuPriceUnit !== "bottle") {
+  if (result.recommendations.length !== 1) {
     throw new Error(
-      `Expected bottle price unit, got ${recommendation.menuPriceUnit}`,
+      `Expected 1 glass recommendation, got ${result.recommendations.length}`,
     );
   }
 
-  if (recommendation.estimatedMarkup !== 2) {
+  const [recommendation] = result.recommendations;
+  if (recommendation.menuPriceUnit !== "glass") {
     throw new Error(
-      `Expected 2x markup, got ${recommendation.estimatedMarkup}`,
+      `Expected glass price unit, got ${recommendation.menuPriceUnit}`,
     );
+  }
+
+  if (result.categoryRecommendations.length !== 1) {
+    throw new Error(
+      `Expected 1 category section, got ${result.categoryRecommendations.length}`,
+    );
+  }
+
+  const [categoryRecommendation] = result.categoryRecommendations[0]
+    .recommendations;
+  if (categoryRecommendation.menuPriceUnit !== "glass") {
+    throw new Error(
+      `Expected category glass price unit, got ${categoryRecommendation.menuPriceUnit}`,
+    );
+  }
+});
+
+Deno.test("normalizeScanResult rejects bottle-only recommendations when user selected glass", () => {
+  let error: unknown;
+
+  try {
+    normalizeScanResult(
+      {
+        summary: {
+          headline: "Best values on the list",
+        },
+        recommendations: [
+          {
+            rank: 1,
+            wineName: "Estate Pinot Noir",
+            extractedText: "Producer Estate Pinot Noir bottle 72",
+            producer: "Producer",
+            region: "Willamette Valley",
+            vintage: 2021,
+            varietal: "Pinot Noir",
+            menuPrice: 72,
+            menuPriceUnit: "bottle",
+            estimatedRetail: 36,
+            valueScore: 92,
+            why:
+              "A bottle value surfaced even though the user asked for glass.",
+          },
+        ],
+      },
+      "glass",
+    );
+  } catch (caughtError) {
+    error = caughtError;
+  }
+
+  if (!(error instanceof Error) || error.message.length === 0) {
+    throw new Error("Expected bottle-only glass result to be rejected.");
   }
 });
 

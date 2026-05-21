@@ -26,12 +26,19 @@ export function normalizeScanResult(
     );
   }
 
-  const normalizedRecommendations = recommendations.map((entry, index) =>
-    normalizeRecommendation(entry, index, purchaseMode)
+  const normalizedRecommendations = filterRecommendationsForPurchaseMode(
+    recommendations.map((entry, index) =>
+      normalizeRecommendation(entry, index, purchaseMode)
+    ),
+    purchaseMode,
   );
-  const normalizedCategoryRecommendations = arrayOrEmpty(
-    candidate.categoryRecommendations,
-  ).map((entry) => normalizeCategorySection(entry, purchaseMode));
+  const normalizedCategoryRecommendations =
+    filterCategorySectionsForPurchaseMode(
+      arrayOrEmpty(
+        candidate.categoryRecommendations,
+      ).map((entry) => normalizeCategorySection(entry, purchaseMode)),
+      purchaseMode,
+    );
   const normalizedNotes = stringArrayOrEmpty(candidate.notes);
   const summary = normalizeSummary(candidate.summary);
   const pricingContextSummary = normalizePricingContextSummary(
@@ -53,7 +60,48 @@ export function normalizeScanResult(
     throw genericAnalysisFailure();
   }
 
+  if (result.recommendations.length === 0) {
+    throw new RequestError(
+      422,
+      "no_wines_detected",
+      "We couldn’t identify enough wine listings to generate recommendations.",
+      true,
+    );
+  }
+
   return result;
+}
+
+function filterRecommendationsForPurchaseMode(
+  recommendations: WineScanResult["recommendations"],
+  purchaseMode: PurchaseMode,
+): WineScanResult["recommendations"] {
+  if (purchaseMode !== "glass") {
+    return recommendations;
+  }
+
+  return recommendations.filter((recommendation) =>
+    recommendation.menuPriceUnit === "glass"
+  );
+}
+
+function filterCategorySectionsForPurchaseMode(
+  sections: WineScanResult["categoryRecommendations"],
+  purchaseMode: PurchaseMode,
+): WineScanResult["categoryRecommendations"] {
+  if (purchaseMode !== "glass") {
+    return sections;
+  }
+
+  return sections
+    .map((section) => ({
+      ...section,
+      recommendations: filterRecommendationsForPurchaseMode(
+        section.recommendations,
+        purchaseMode,
+      ),
+    }))
+    .filter((section) => section.recommendations.length > 0);
 }
 
 function normalizePricingContextSummary(
@@ -67,7 +115,10 @@ function normalizePricingContextSummary(
 
     const candidate = entry as Record<string, unknown>;
     const derivedMarkup = deriveMarkup({
-      menuPriceUnit: purchaseModeOrDefault(candidate.menuPriceUnit, purchaseMode),
+      menuPriceUnit: purchaseModeOrDefault(
+        candidate.menuPriceUnit,
+        purchaseMode,
+      ),
       menuPrice: numberOrNull(candidate.menuPrice),
       estimatedRetail: numberOrNull(candidate.estimatedRetail),
     });
