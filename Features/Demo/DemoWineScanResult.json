@@ -1,138 +1,90 @@
 {
-  "restaurantName": "The Ashford Room",
-  "currencyCode": "USD",
+  "notes": [
+    
+  ],
   "summary": {
-    "headline": "A polished downtown list with the strongest value clustered in classic European reds, plus one standout white for the table."
+    "headline": "This list offers a broad selection of well-known domestic and international reds, with solid value found in the regional European sections compared to the steeper markups on premium California Cabernets and Pinot Noirs."
   },
+  "analysisId": "0714c8e2-1d3f-4529-bc75-fad6988aac6e",
+  "currencyCode": "USD",
+  "freeScanUsed": false,
+  "modelVersion": "gemini-3.1-pro-preview",
+  "promptVersion": "2026-05-21",
+  "restaurantName": "Max's Oyster Bar",
   "recommendations": [
     {
+      "why": "This Barbaresco from Giuseppe Cortese is a masterful expression of Nebbiolo, offering classic structure and elegance that effortlessly commands the Italian section of this list.",
       "rank": 1,
-      "wineName": "Domaine Tempier Bandol Rouge",
-      "displayName": "Domaine Tempier Bandol Rouge",
-      "extractedText": "Domaine Tempier Bandol Rouge, Provence 2020",
-      "producer": "Domaine Tempier",
-      "region": "Bandol, Provence, France",
-      "vintage": 2020,
-      "varietal": "Mourvedre blend",
-      "menuPrice": 118,
-      "menuPriceUnit": "bottle",
-      "estimatedRetail": 82,
-      "valueScore": 9.4,
-      "why": "A benchmark producer with enough bottle age to feel special, bringing savory depth and a classic Bandol profile to the table."
-    },
-    {
-      "rank": 2,
-      "wineName": "Arnot-Roberts Chardonnay Watson Ranch",
-      "displayName": "Watson Ranch Chardonnay",
-      "extractedText": "Arnot-Roberts Watson Ranch Chardonnay, Napa Valley 2022",
-      "producer": "Arnot-Roberts",
-      "region": "Napa Valley, California",
+      "region": "Piedmont",
       "vintage": 2022,
-      "varietal": "Chardonnay",
-      "menuPrice": 86,
+      "producer": "Giuseppe Cortese",
+      "varietal": null,
+      "wineName": "Barbaresco",
+      "menuPrice": 130,
+      "valueScore": 8.5,
+      "displayName": "Barbaresco",
+      "extractedText": "GIUSEPPE CORTESE Barbaresco 2022 Piedmont 130",
       "menuPriceUnit": "bottle",
-      "estimatedRetail": 54,
-      "valueScore": 8.8,
-      "why": "Bright, mineral Chardonnay from a respected producer that should work across seafood, salads, and richer starters."
+      "estimatedMarkup": 1.7,
+      "estimatedRetail": 75
     },
     {
-      "rank": 3,
-      "wineName": "Produttori del Barbaresco Langhe Nebbiolo",
-      "displayName": "Produttori Langhe Nebbiolo",
-      "extractedText": "Produttori del Barbaresco Langhe Nebbiolo 2021",
-      "producer": "Produttori del Barbaresco",
-      "region": "Piedmont, Italy",
+      "why": "Cru Beaujolais from a benchmark producer like Desvignes provides exceptional depth and versatility for the table, making it a standout value among the French reds.",
+      "rank": 2,
+      "region": "Beaujolais",
       "vintage": 2021,
-      "varietal": "Nebbiolo",
-      "menuPrice": 74,
+      "producer": "Louis-Claude Desvignes",
+      "varietal": null,
+      "wineName": "LaVoûte Saint Vincent",
+      "menuPrice": 58,
+      "valueScore": 9,
+      "displayName": "LaVoûte Saint Vincent",
+      "extractedText": "LOUIS-CLAUDE DESVIGNES Morgon LaVoûte Saint Vincent 2021 Beaujolais 58",
       "menuPriceUnit": "bottle",
-      "estimatedRetail": 34,
-      "valueScore": 8.2,
-      "why": "A reliable producer and a versatile red for the table, with enough lift and structure for pasta, roast chicken, and lighter meat dishes."
+      "estimatedMarkup": 1.7,
+      "estimatedRetail": 35
+    },
+    {
+      "why": "With excellent bottle age, this 2015 Chianti Rufina Riserva offers beautifully developed, savory Tuscan character that sets it apart from younger alternatives on the menu.",
+      "rank": 3,
+      "region": "Tuscany",
+      "vintage": 2015,
+      "producer": "Fattoria di Basciano",
+      "varietal": null,
+      "wineName": "Chianti Rufina Riserva",
+      "menuPrice": 77,
+      "valueScore": 8,
+      "displayName": "Chianti Rufina Riserva",
+      "extractedText": "FATTORIA DI BASCIANO Chianti Rufina Riserva 2015 Tuscany 77",
+      "menuPriceUnit": "bottle",
+      "estimatedMarkup": 2.6,
+      "estimatedRetail": 30
     }
   ],
+  "pricingContextSummary": {
+    "markupSampleSize": 16,
+    "medianEstimatedMarkup": 2.1
+  },
   "categoryRecommendations": [
     {
       "key": "best_value",
       "title": "Best Value",
       "recommendations": [
         {
+          "why": "This top-tier Morgon brings serious Cru Beaujolais complexity and food-friendly acidity without the premium typical of more famous French appellations on this list.",
           "rank": 1,
-          "wineName": "Domaine Tempier Bandol Rouge",
-          "displayName": "Domaine Tempier Bandol Rouge",
-          "extractedText": "Domaine Tempier Bandol Rouge, Provence 2020",
-          "producer": "Domaine Tempier",
-          "region": "Bandol, Provence, France",
-          "vintage": 2020,
-          "varietal": "Mourvedre blend",
-          "menuPrice": 118,
-          "menuPriceUnit": "bottle",
-          "estimatedRetail": 82,
-          "valueScore": 9.4,
-          "why": "A benchmark Bandol from a producer with real recognition, bottle age, and enough character to stand out among the classic reds."
-        }
-      ]
-    },
-    {
-      "key": "white_wine_pick",
-      "title": "White Wine Pick",
-      "recommendations": [
-        {
-          "rank": 2,
-          "wineName": "Arnot-Roberts Chardonnay Watson Ranch",
-          "displayName": "Watson Ranch Chardonnay",
-          "extractedText": "Arnot-Roberts Watson Ranch Chardonnay, Napa Valley 2022",
-          "producer": "Arnot-Roberts",
-          "region": "Napa Valley, California",
-          "vintage": 2022,
-          "varietal": "Chardonnay",
-          "menuPrice": 86,
-          "menuPriceUnit": "bottle",
-          "estimatedRetail": 54,
-          "valueScore": 8.8,
-          "why": "A flexible, high-energy white that gives the table range without feeling like a compromise."
-        }
-      ]
-    },
-    {
-      "key": "crowd_pleaser",
-      "title": "Crowd Pleaser",
-      "recommendations": [
-        {
-          "rank": 3,
-          "wineName": "Produttori del Barbaresco Langhe Nebbiolo",
-          "displayName": "Produttori Langhe Nebbiolo",
-          "extractedText": "Produttori del Barbaresco Langhe Nebbiolo 2021",
-          "producer": "Produttori del Barbaresco",
-          "region": "Piedmont, Italy",
+          "region": "Beaujolais",
           "vintage": 2021,
-          "varietal": "Nebbiolo",
-          "menuPrice": 74,
+          "producer": "Louis-Claude Desvignes",
+          "varietal": null,
+          "wineName": "Morgon LaVoûte Saint Vincent",
+          "menuPrice": 58,
+          "valueScore": 9,
+          "displayName": "Morgon LaVoûte Saint Vincent",
+          "extractedText": "LOUIS-CLAUDE DESVIGNES Morgon LaVoûte Saint Vincent 2021 Beaujolais 58",
           "menuPriceUnit": "bottle",
-          "estimatedRetail": 34,
-          "valueScore": 8.2,
-          "why": "Elegant enough for wine-focused guests but still friendly with pasta, roast chicken, and lighter meat dishes."
-        }
-      ]
-    },
-    {
-      "key": "hidden_gem",
-      "title": "Hidden Gem",
-      "recommendations": [
-        {
-          "rank": 4,
-          "wineName": "Chateau Yvonne Saumur-Champigny",
-          "displayName": "Chateau Yvonne Saumur-Champigny",
-          "extractedText": "Chateau Yvonne Saumur-Champigny, Loire Valley 2019",
-          "producer": "Chateau Yvonne",
-          "region": "Saumur-Champigny, Loire Valley, France",
-          "vintage": 2019,
-          "varietal": "Cabernet Franc",
-          "menuPrice": 92,
-          "menuPriceUnit": "bottle",
-          "estimatedRetail": 58,
-          "valueScore": 8.7,
-          "why": "A quieter Loire pick with real depth, savory lift, and enough polish to outperform the more obvious names nearby."
+          "estimatedMarkup": 1.7,
+          "estimatedRetail": 35
         }
       ]
     },
@@ -141,19 +93,64 @@
       "title": "Worth the Splurge",
       "recommendations": [
         {
-          "rank": 5,
-          "wineName": "Domaine Dujac Morey-Saint-Denis",
-          "displayName": "Dujac Morey-Saint-Denis",
-          "extractedText": "Domaine Dujac Morey-Saint-Denis, Burgundy 2018",
-          "producer": "Domaine Dujac",
-          "region": "Morey-Saint-Denis, Burgundy, France",
-          "vintage": 2018,
-          "varietal": "Pinot Noir",
-          "menuPrice": 210,
+          "why": "Vieux Télégraphe is an absolute icon of the Southern Rhône, delivering profound depth, earthy spice, and a truly premium drinking experience that justifies stepping up.",
+          "rank": 1,
+          "region": "Rhône",
+          "vintage": 2021,
+          "producer": "Vieux Télégraphe",
+          "varietal": null,
+          "wineName": "Châteauneuf-du-Pape",
+          "menuPrice": 215,
+          "valueScore": 7.5,
+          "displayName": "Châteauneuf-du-Pape",
+          "extractedText": "VIEUX TÉLÉGRAPHE Chateauneuf-du-Pape 2021 Rhône 215",
           "menuPriceUnit": "bottle",
-          "estimatedRetail": 145,
+          "estimatedMarkup": 1.9,
+          "estimatedRetail": 115
+        }
+      ]
+    },
+    {
+      "key": "crowd_pleaser",
+      "title": "Crowd Pleaser",
+      "recommendations": [
+        {
+          "why": "This classic Rioja balances approachable dark fruit with signature oak influence, making it a reliable and universally appealing choice for a mixed table of red drinkers.",
+          "rank": 1,
+          "region": "Spain",
+          "vintage": 2020,
+          "producer": "Marques de Riscal",
+          "varietal": null,
+          "wineName": "Rioja Reserva",
+          "menuPrice": 64,
+          "valueScore": 8,
+          "displayName": "Rioja Reserva",
+          "extractedText": "MARQUES DE RISCAL Rioja Reserva 2020 Spain 64",
+          "menuPriceUnit": "bottle",
+          "estimatedMarkup": 2.6,
+          "estimatedRetail": 25
+        }
+      ]
+    },
+    {
+      "key": "hidden_gem",
+      "title": "Hidden Gem",
+      "recommendations": [
+        {
+          "why": "Tucked away in the global reds section, this Portuguese field blend offers fascinating mineral tension and vibrant fruit that easily outclasses more predictable choices.",
+          "rank": 1,
+          "region": "Portugal",
+          "vintage": 2021,
+          "producer": "Pormenor",
+          "varietal": null,
+          "wineName": "Douro Tinto Canuco",
+          "menuPrice": 60,
           "valueScore": 8.5,
-          "why": "Producer pedigree, Burgundy detail, and a 2018 vintage make this the bottle to choose when the table wants something more serious."
+          "displayName": "Douro Tinto Canuco",
+          "extractedText": "PORMENOR Douro Tinto Canuco 2021 Portugal 60",
+          "menuPriceUnit": "bottle",
+          "estimatedMarkup": 2.4,
+          "estimatedRetail": 25
         }
       ]
     },
@@ -162,24 +159,22 @@
       "title": "Overpriced Here",
       "recommendations": [
         {
-          "rank": 6,
-          "wineName": "Silver Oak Alexander Valley Cabernet Sauvignon",
-          "displayName": "Silver Oak Alexander Valley Cabernet",
-          "extractedText": "Silver Oak Alexander Valley Cabernet Sauvignon 2019",
+          "why": "While undeniably famous, this carries a significant restaurant markup, making it a less strategic choice when compared to the high-quality Bordeaux or premium Rhone options available.",
+          "rank": 1,
+          "region": "Napa Valley",
+          "vintage": 2018,
           "producer": "Silver Oak",
-          "region": "Alexander Valley, California",
-          "vintage": 2019,
-          "varietal": "Cabernet Sauvignon",
-          "menuPrice": 198,
+          "varietal": "CABERNET SAUVIGNON",
+          "wineName": "Napa Valley",
+          "menuPrice": 310,
+          "valueScore": 3,
+          "displayName": "Napa Valley",
+          "extractedText": "SILVER OAK 2018 Napa Valley 310",
           "menuPriceUnit": "bottle",
-          "estimatedRetail": 78,
-          "valueScore": 5.9,
-          "why": "A familiar bottle, but the menu price asks too much when more distinctive options around it deliver better value."
+          "estimatedMarkup": 2.1,
+          "estimatedRetail": 150
         }
       ]
     }
-  ],
-  "notes": [
-    
   ]
 }
