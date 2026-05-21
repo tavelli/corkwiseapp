@@ -49,9 +49,10 @@ final class AppState {
         _ result: WineScanResult,
         purchaseMode: PurchaseMode,
         categoryPreference: WineCategoryPreference,
-        viewedAt: Date = .now
+        viewedAt: Date = .now,
+        hidesFeedbackOnOpen: Bool = false
     ) {
-        navigationPath.append(.results(result, purchaseMode, categoryPreference, viewedAt))
+        navigationPath.append(.results(result, purchaseMode, categoryPreference, viewedAt, hidesFeedbackOnOpen))
     }
 
     func showPreferences() {

@@ -28,12 +28,13 @@ struct AppRouter: View {
             }
             .navigationDestination(for: AppDestination.self) { destination in
                 switch destination {
-                case .results(let result, let purchaseMode, let categoryPreference, let viewedAt):
+                case .results(let result, let purchaseMode, let categoryPreference, let viewedAt, let hidesFeedbackOnOpen):
                     ResultsView(
                         result: result,
                         purchaseMode: purchaseMode,
                         categoryPreference: categoryPreference,
-                        viewedAt: viewedAt
+                        viewedAt: viewedAt,
+                        hidesFeedbackOnOpen: hidesFeedbackOnOpen
                     )
                 case .scanProgress(let id):
                     ScanProgressResultsView(scanID: id)

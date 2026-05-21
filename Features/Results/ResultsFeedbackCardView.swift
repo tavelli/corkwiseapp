@@ -6,6 +6,7 @@ struct ResultsFeedbackCardView: View {
     let analysisId: String
     let retryAction: () -> Void
     let requestVisibility: () -> Void
+    let onFeedbackSubmitted: () -> Void
 
     @State private var state: FeedbackState = .initial
     @State private var comment = ""
@@ -20,12 +21,14 @@ struct ResultsFeedbackCardView: View {
         analysisId: String,
         retryAction: @escaping () -> Void,
         requestVisibility: @escaping () -> Void = {},
+        onFeedbackSubmitted: @escaping () -> Void = {},
         initialState: FeedbackState = .initial,
         initialNegativeFeedbackId: String? = nil
     ) {
         self.analysisId = analysisId
         self.retryAction = retryAction
         self.requestVisibility = requestVisibility
+        self.onFeedbackSubmitted = onFeedbackSubmitted
         _state = State(initialValue: initialState)
         _negativeFeedbackId = State(initialValue: initialNegativeFeedbackId)
     }
@@ -74,15 +77,6 @@ struct ResultsFeedbackCardView: View {
             guard isFocused else { return }
             revealAfterKeyboardBeginsPresenting()
         }
-        .toolbar {
-            ToolbarItemGroup(placement: .keyboard) {
-                Spacer()
-
-                Button("Done") {
-                    isCommentFocused = false
-                }
-            }
-        }
     }
 
     private var initialContent: some View {
@@ -109,25 +103,15 @@ struct ResultsFeedbackCardView: View {
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(Color.wineText)
 
-            TextEditor(text: $comment)
+            TextField("Was anything inaccurate, missing, or unclear?", text: $comment, axis: .vertical)
                 .font(.subheadline)
                 .foregroundStyle(Color.wineText)
-                .frame(minHeight: 82)
+                .lineLimit(3...5)
+                .frame(minHeight: 82, alignment: .topLeading)
                 .padding(8)
                 .focused($isCommentFocused)
-                .scrollContentBackground(.hidden)
                 .background(Color.resultCardBackground.opacity(0.8))
                 .clipShape(.rect(cornerRadius: 12))
-                .overlay(alignment: .topLeading) {
-                    if comment.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                        Text("Was anything inaccurate, missing, or unclear?")
-                            .font(.subheadline)
-                            .foregroundStyle(Color.wineMutedText.opacity(0.78))
-                            .padding(.horizontal, 13)
-                            .padding(.vertical, 16)
-                            .allowsHitTesting(false)
-                    }
-                }
 
             prominentFeedbackButton("Send feedback") {
                 submitNegativeFeedbackComment()
@@ -235,6 +219,7 @@ struct ResultsFeedbackCardView: View {
                 )
 
                 await MainActor.run {
+                    onFeedbackSubmitted()
                     isSubmitting = false
                     withAnimation(.easeInOut(duration: 0.18)) {
                         if response.retryGranted {
@@ -270,6 +255,7 @@ struct ResultsFeedbackCardView: View {
                 )
 
                 await MainActor.run {
+                    onFeedbackSubmitted()
                     negativeFeedbackId = response.feedbackId
                     isSubmitting = false
                     withAnimation(.easeInOut(duration: 0.18)) {

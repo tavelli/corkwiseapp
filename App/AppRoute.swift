@@ -6,7 +6,7 @@ enum AppRoute {
 }
 
 enum AppDestination: Hashable {
-    case results(WineScanResult, PurchaseMode, WineCategoryPreference, Date)
+    case results(WineScanResult, PurchaseMode, WineCategoryPreference, Date, Bool)
     case scanProgress(UUID)
     case preferences
     case allScans

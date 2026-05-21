@@ -1,3 +1,4 @@
+import SwiftData
 import SwiftUI
 
 struct ResultsView: View {
@@ -8,6 +9,7 @@ struct ResultsView: View {
     let purchaseMode: PurchaseMode
     let categoryPreference: WineCategoryPreference
     let viewedAt: Date
+    var hidesFeedbackOnOpen = false
 
     @State private var isShowingPaywall = false
 
@@ -34,6 +36,7 @@ struct ResultsView: View {
         ResultsContentView(
             result: result,
             purchaseMode: purchaseMode,
+            hidesFeedbackOnOpen: hidesFeedbackOnOpen,
             showsSoftPaywall: showsSoftPaywall,
             showRetryAction: showScanEntry,
             showPremiumAction: showPaywall
@@ -69,8 +72,11 @@ struct ResultsView: View {
 }
 
 struct ResultsContentView: View {
+    @Environment(\.modelContext) private var modelContext
+
     let result: WineScanResult
     let purchaseMode: PurchaseMode
+    var hidesFeedbackOnOpen = false
     var scriptedScrollSequence: ResultsScriptedScrollSequence? = nil
     var showsSoftPaywall = false
     var showRetryAction: () -> Void = {}
@@ -149,7 +155,7 @@ struct ResultsContentView: View {
                         }
                     }
 
-                    if let analysisId = result.analysisId {
+                    if hidesFeedbackOnOpen == false, let analysisId = result.analysisId {
                         ResultsFeedbackCardView(
                             analysisId: analysisId,
                             retryAction: showRetryAction,
@@ -157,7 +163,8 @@ struct ResultsContentView: View {
                                 withAnimation(.easeInOut(duration: 0.24)) {
                                     proxy.scrollTo(ResultsScrollTarget.feedback, anchor: .bottom)
                                 }
-                            }
+                            },
+                            onFeedbackSubmitted: markFeedbackSubmitted
                         )
                         .id(ResultsScrollTarget.feedback)
                     }
@@ -196,6 +203,24 @@ struct ResultsContentView: View {
 
     private var snapshotText: String {
         result.summary.headline.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private func markFeedbackSubmitted() {
+        guard let analysisId = result.analysisId else {
+            return
+        }
+
+        let descriptor = FetchDescriptor<WineScan>(
+            predicate: #Predicate { scan in
+                scan.analysisId == analysisId
+            }
+        )
+
+        guard let scan = try? modelContext.fetch(descriptor).first else { return }
+        guard scan.hasSubmittedFeedback == false else { return }
+
+        scan.hasSubmittedFeedback = true
+        try? modelContext.save()
     }
 }
 

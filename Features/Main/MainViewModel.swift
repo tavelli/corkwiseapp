@@ -238,6 +238,7 @@ final class MainViewModel {
 
         let scan = WineScan(
             createdAt: .now,
+            analysisId: result.analysisId,
             restaurantName: result.restaurantName,
             purchaseMode: purchaseMode.rawValue,
             bottleContext: purchaseMode == .bottle ? bottleContext.rawValue : nil,

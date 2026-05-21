@@ -36,7 +36,8 @@ struct AllScansView: View {
             result,
             purchaseMode: scan.purchaseModeValue,
             categoryPreference: scan.categoryPreferenceValue,
-            viewedAt: scan.createdAt
+            viewedAt: scan.createdAt,
+            hidesFeedbackOnOpen: scan.hasSubmittedFeedback
         )
     }
 }
