@@ -13,6 +13,7 @@ struct ScanFailureState: Identifiable, Hashable {
 @Observable
 final class MainViewModel {
     private static let lastScanCategoryPreferenceKey = "lastScanCategoryPreference"
+    private static let lastScanPurchaseModeKey = "lastScanPurchaseMode"
 
     var purchaseMode: PurchaseMode = .bottle
     var bottleContext: BottleContext = .forMe
@@ -31,6 +32,30 @@ final class MainViewModel {
     private var scanTask: Task<Void, Never>?
     private var pendingAttachments: [AnalyzeWineMenuAttachment]?
     private var hasConfiguredInitialCategoryPreference = false
+    private var hasConfiguredInitialPurchaseMode = false
+
+    func configureInitialPurchaseMode(
+        preferences: UserWinePreferences?,
+        latestScan: WineScan?
+    ) {
+        guard hasConfiguredInitialPurchaseMode == false else { return }
+        hasConfiguredInitialPurchaseMode = true
+
+        if let storedPurchaseMode = UserDefaults.standard.string(forKey: Self.lastScanPurchaseModeKey),
+           let purchaseMode = PurchaseMode(rawValue: storedPurchaseMode) {
+            self.purchaseMode = purchaseMode
+            return
+        }
+
+        if let latestScan {
+            purchaseMode = latestScan.purchaseModeValue
+            return
+        }
+
+        if let preferredPurchaseMode = preferences?.usualPurchasePreferenceValue.defaultPurchaseMode {
+            purchaseMode = preferredPurchaseMode
+        }
+    }
 
     func configureInitialCategoryPreference(
         preferences: UserWinePreferences?,
@@ -223,6 +248,10 @@ final class MainViewModel {
 
         modelContext.insert(scan)
         try modelContext.save()
+        UserDefaults.standard.set(
+            purchaseMode.rawValue,
+            forKey: Self.lastScanPurchaseModeKey
+        )
         UserDefaults.standard.set(
             categoryPreference.rawValue,
             forKey: Self.lastScanCategoryPreferenceKey

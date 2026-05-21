@@ -130,12 +130,15 @@ struct MainView: View {
         ) { result in
             handleImportedFile(result)
         }
-        .task(id: preferences?.usualPurchasePreference) {
-            guard let preferredPurchaseMode = preferences?.usualPurchasePreferenceValue.defaultPurchaseMode else {
+        .task(id: purchaseModeSeedID) {
+            guard preferences != nil || recentScans.isEmpty == false else {
                 return
             }
 
-            viewModel.purchaseMode = preferredPurchaseMode
+            viewModel.configureInitialPurchaseMode(
+                preferences: preferences,
+                latestScan: recentScans.first
+            )
         }
         .task(id: categoryPreferenceSeedID) {
             guard preferences != nil || recentScans.isEmpty == false else {
@@ -162,6 +165,14 @@ struct MainView: View {
             appState.dismissScanProgress(id: activeScanID)
             self.activeScanID = nil
         }
+    }
+
+    private var purchaseModeSeedID: String {
+        [
+            preferences?.usualPurchasePreference ?? "",
+            recentScans.first?.purchaseMode ?? "",
+            recentScans.first?.createdAt.ISO8601Format() ?? "",
+        ].joined(separator: "|")
     }
 
     private var categoryPreferenceSeedID: String {
