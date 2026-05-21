@@ -27,7 +27,8 @@ This app expects a public Supabase Edge Function at:
    - `OPENAI_REASONING_EFFORT` (optional, set to `off` to disable)
    - `OPENAI_TEXT_VERBOSITY` (optional, set to `off` to disable)
    - `GEMINI_API_KEY` when using Gemini
-   - `GEMINI_MODEL` (optional, defaults to `gemini-2.5-flash`)
+   - `GEMINI_MODEL` (optional, defaults to `gemini-3-flash-preview`)
+   - `GEMINI_THINKING_LEVEL` (optional, supports `low`, `medium`, or `high`; Gemini 3+ models only)
    - `FREE_SCAN_LIMIT=1` to allow one unpaid scan before subscription is required
    - `ADAPTY_SECRET_API_KEY` for backend entitlement checks
    - `ADAPTY_ACCESS_LEVEL_ID` (optional, defaults to `premium`)

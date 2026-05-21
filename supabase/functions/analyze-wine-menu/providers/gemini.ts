@@ -9,7 +9,8 @@ import {
 } from "../domain/types.ts";
 
 const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
-const GEMINI_MODEL = Deno.env.get("GEMINI_MODEL") ?? "gemini-2.5-flash";
+const GEMINI_MODEL = Deno.env.get("GEMINI_MODEL") ?? "gemini-3-flash-preview";
+const GEMINI_THINKING_LEVEL = Deno.env.get("GEMINI_THINKING_LEVEL")?.trim();
 const GEMINI_TIMEOUT_MS = 90_000;
 
 type ModelPricing = {
@@ -77,6 +78,16 @@ export class GeminiProvider implements WineModelProvider {
         },
       };
 
+      if (GEMINI_THINKING_LEVEL != null) {
+        const generationConfig = requestPayload.generationConfig as Record<
+          string,
+          unknown
+        >;
+        generationConfig.thinkingConfig = {
+          thinkingLevel: GEMINI_THINKING_LEVEL,
+        };
+      }
+
       if (requestBody.source.kind === "url") {
         requestPayload.tools = [
           {
@@ -87,6 +98,7 @@ export class GeminiProvider implements WineModelProvider {
 
       console.log("calling Gemini", {
         model: GEMINI_MODEL,
+        thinkingLevel: GEMINI_THINKING_LEVEL ?? "disabled",
         timeoutMs: GEMINI_TIMEOUT_MS,
         sourceKind: requestBody.source.kind,
       });
