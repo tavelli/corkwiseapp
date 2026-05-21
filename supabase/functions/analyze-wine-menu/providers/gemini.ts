@@ -1,5 +1,5 @@
-import { buildSystemPrompt } from "../domain/prompt.ts";
-import { modelResponseSchema } from "../domain/schema.ts";
+import {buildSystemPrompt} from "../domain/prompt.ts";
+import {modelResponseSchema} from "../domain/schema.ts";
 import {
   type AnalyzeWineMenuRequest,
   type ProviderAnalysisResult,
@@ -27,13 +27,9 @@ const GEMINI_PRICING_BY_MODEL: Record<string, ModelPricing> = {
     inputPricePer1MTokens: 0.5,
     outputPricePer1MTokens: 3.0,
   },
-  "gemini-2.5-flash": {
-    inputPricePer1MTokens: 0.3,
-    outputPricePer1MTokens: 2.5,
-  },
-  "gemini-2.5-flash-lite": {
-    inputPricePer1MTokens: 0.1,
-    outputPricePer1MTokens: 0.4,
+  "gemini-3.1-pro-preview": {
+    inputPricePer1MTokens: 2,
+    outputPricePer1MTokens: 12,
   },
 };
 
@@ -213,15 +209,15 @@ function menuInstructionPart(
 ): Record<string, unknown> {
   if (requestBody.source.kind === "url") {
     return {
-      text:
-        "Analyze the restaurant wine list available at the provided URL and return only the requested JSON.",
+      text: "Analyze the restaurant wine list available at the provided URL and return only the requested JSON.",
     };
   }
 
   return {
-    text: requestBody.source.attachments.length > 1
-      ? "Analyze these ordered restaurant wine list page photos as one continuous wine list and return only the requested JSON."
-      : "Analyze this restaurant wine list attachment and return only the requested JSON.",
+    text:
+      requestBody.source.attachments.length > 1
+        ? "Analyze these ordered restaurant wine list page photos as one continuous wine list and return only the requested JSON."
+        : "Analyze this restaurant wine list attachment and return only the requested JSON.",
   };
 }
 
@@ -229,12 +225,14 @@ function menuSourceParts(
   requestBody: AnalyzeWineMenuRequest,
 ): Array<Record<string, unknown>> {
   if (requestBody.source.kind === "url") {
-    return [{
-      text: `Menu URL: ${requestBody.source.menuUrl}`,
-    }];
+    return [
+      {
+        text: `Menu URL: ${requestBody.source.menuUrl}`,
+      },
+    ];
   }
 
-  const { attachments } = requestBody.source;
+  const {attachments} = requestBody.source;
   if (attachments.length > 1) {
     return attachments.flatMap((attachment, index) => [
       {
@@ -247,12 +245,10 @@ function menuSourceParts(
   return [attachmentPart(attachments[0])];
 }
 
-function attachmentPart(
-  attachment: {
-    base64Data: string;
-    mimeType: "image/jpeg" | "application/pdf";
-  },
-): Record<string, unknown> {
+function attachmentPart(attachment: {
+  base64Data: string;
+  mimeType: "image/jpeg" | "application/pdf";
+}): Record<string, unknown> {
   return {
     inline_data: {
       mime_type: attachment.mimeType,

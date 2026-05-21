@@ -10,7 +10,7 @@ struct RecommendationCardView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: categoryLabel == nil ? 14 : 16) {
             if let categoryLabel, let categorySystemImage {
-                HStack(spacing: 8) {
+                HStack(spacing: 6) {
                     Image(systemName: categorySystemImage)
                         .font(.caption.weight(.bold))
                         .foregroundStyle(Color.wineAccent)
