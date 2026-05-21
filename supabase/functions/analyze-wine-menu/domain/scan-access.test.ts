@@ -137,13 +137,14 @@ Deno.test("validateScanAccessRequest rejects invalid app user IDs", () => {
   throw new Error("Expected invalid app user ID to throw.");
 });
 
-Deno.test("validateScanAccessRequest normalizes app user IDs", () => {
+Deno.test("validateScanAccessRequest preserves app user ID casing", () => {
+  const uppercaseAppUserId = appUserId.toUpperCase();
   const request = validateScanAccessRequest({
     action: "scan_access",
-    appUserId: appUserId.toUpperCase(),
+    appUserId: uppercaseAppUserId,
   });
 
-  if (request.appUserId !== appUserId) {
-    throw new Error("Expected lowercase app user ID.");
+  if (request.appUserId !== uppercaseAppUserId) {
+    throw new Error("Expected original app user ID casing.");
   }
 });

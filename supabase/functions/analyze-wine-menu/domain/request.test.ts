@@ -58,16 +58,17 @@ Deno.test("validateAnalyzeRequest accepts menu URLs", () => {
   }
 });
 
-Deno.test("validateAnalyzeRequest normalizes app user IDs", () => {
+Deno.test("validateAnalyzeRequest preserves app user ID casing", () => {
+  const uppercaseAppUserId = appUserId.toUpperCase();
   const request = validateAnalyzeRequest({
-    appUserId: appUserId.toUpperCase(),
+    appUserId: uppercaseAppUserId,
     menuUrl: "https://example.com/wine-list",
     purchaseMode: "bottle",
     userPreferences: validPreferences(),
   });
 
-  if (request.appUserId !== appUserId) {
-    throw new Error("Expected lowercase app user ID.");
+  if (request.appUserId !== uppercaseAppUserId) {
+    throw new Error("Expected original app user ID casing.");
   }
 });
 

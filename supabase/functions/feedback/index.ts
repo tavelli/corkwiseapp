@@ -47,7 +47,7 @@ Deno.serve(async (req) => {
 
     if (
       analysis == null ||
-      analysis.keychain_app_user_id !== payload.appUserId
+      sameUUID(analysis.keychain_app_user_id, payload.appUserId) === false
     ) {
       throw new RequestError(
         403,
@@ -118,7 +118,7 @@ function validateFeedbackRequest(input: unknown): FeedbackRequest {
   const candidate = input as Record<string, unknown>;
   const feedbackId = stringOrNull(candidate.feedbackId);
   const analysisId = stringOrNull(candidate.analysisId);
-  const appUserId = stringOrNull(candidate.appUserId)?.toLowerCase() ?? null;
+  const appUserId = stringOrNull(candidate.appUserId);
   const rating = stringOrNull(candidate.rating);
   const source = stringOrNull(candidate.source) ?? "result_end_card";
   const comment = stringOrNull(candidate.comment);
@@ -473,6 +473,10 @@ function stringOrNull(value: unknown): string | null {
 
   const trimmedValue = value.trim();
   return trimmedValue.length === 0 ? null : trimmedValue;
+}
+
+function sameUUID(lhs: string, rhs: string): boolean {
+  return lhs.toLowerCase() === rhs.toLowerCase();
 }
 
 function isUUID(value: string): boolean {
