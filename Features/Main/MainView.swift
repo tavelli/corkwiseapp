@@ -588,13 +588,13 @@ struct MainView: View {
 //                ) {
 //                    isShowingURLImporter = true
 //                }
-                optionButton(
-                    title: .mainImportLinkTitle,
-                    subtitle: .mainImportMenuLinkSubtitle,
-                    systemImage: "link"
-                ) {
-                    openURLImporter()
-                }
+//                optionButton(
+//                    title: .mainImportLinkTitle,
+//                    subtitle: .mainImportMenuLinkSubtitle,
+//                    systemImage: "link"
+//                ) {
+//                    openURLImporter()
+//                }
             }
         }
     }
@@ -613,10 +613,10 @@ struct MainView: View {
                     .frame(width: 22, height: 22)
 
                 Text(title)
-                    .font(.subheadline.weight(.regular))
+                    .font(.subheadline.weight(.semibold))
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
-                    .foregroundStyle(Color.wineText)
+                    .foregroundStyle(Color.wineAccent)
             }
             .frame(maxWidth: .infinity)
             .frame(height: 68)
@@ -693,10 +693,10 @@ private struct ScanHeroButtonStyle: ButtonStyle {
             }
             .clipShape(.rect(cornerRadius: 35))
             .shadow(
-                color: Color.wineDeep.opacity(configuration.isPressed ? 0.08 : 0.16),
-                radius: configuration.isPressed ? 8 : 14,
+                color: Color.wineDeep.opacity(configuration.isPressed ? 0.10 : 0.22),
+                radius: configuration.isPressed ? 8 : 16,
                 x: 0,
-                y: configuration.isPressed ? 4 : 8
+                y: configuration.isPressed ? 4 : 10
             )
             .scaleEffect(configuration.isPressed ? 0.995 : 1)
             .animation(.easeOut(duration: 0.18), value: configuration.isPressed)
