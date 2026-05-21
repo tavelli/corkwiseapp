@@ -40,7 +40,7 @@ struct DemoRecordingView: View {
         guard result == nil else { return }
 
         do {
-            let demoResult = try Self.decodeDemoResult()
+            let demoResult = try Self.decodeDemoResult().hidingFeedbackForDemo()
             try await Task.sleep(for: .seconds(4))
             guard Task.isCancelled == false else { return }
             result = demoResult
@@ -56,6 +56,25 @@ struct DemoRecordingView: View {
 
         let data = try Data(contentsOf: url)
         return try JSONDecoder().decode(WineScanResult.self, from: data)
+    }
+}
+
+private extension WineScanResult {
+    func hidingFeedbackForDemo() -> WineScanResult {
+        WineScanResult(
+            analysisId: nil,
+            modelVersion: modelVersion,
+            promptVersion: promptVersion,
+            freeScanUsed: freeScanUsed,
+            restaurantName: restaurantName,
+            currencyCode: currencyCode,
+            summary: summary,
+            pricingContextSummary: pricingContextSummary,
+            recommendations: recommendations,
+            categoryRecommendations: categoryRecommendations,
+            notes: notes,
+            debugInfo: debugInfo
+        )
     }
 }
 

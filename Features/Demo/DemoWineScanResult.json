@@ -159,22 +159,44 @@
       "title": "Overpriced Here",
       "recommendations": [
         {
-          "why": "While undeniably famous, this carries a significant restaurant markup, making it a less strategic choice when compared to the high-quality Bordeaux or premium Rhone options available.",
+          "why": "While a familiar name for fans of bold blends, this selection faces stiff competition on this list from producers offering more regional specificity and character.",
           "rank": 1,
-          "region": "Napa Valley",
-          "vintage": 2018,
-          "producer": "Silver Oak",
-          "varietal": "CABERNET SAUVIGNON",
-          "wineName": "Napa Valley",
-          "menuPrice": 310,
-          "valueScore": 3,
-          "displayName": "Napa Valley",
-          "extractedText": "SILVER OAK 2018 Napa Valley 310",
+          "region": "Napa",
+          "vintage": 2024,
+          "producer": "Prisoner Wine Co.",
+          "varietal": "Red Blend",
+          "wineName": "The Prisoner",
+          "menuPrice": 125,
+          "valueScore": 4.2,
+          "displayName": "The Prisoner",
+          "extractedText": "PRISONER WINE CO. Red Blend The Prisoner 2024 Napa 125",
           "menuPriceUnit": "bottle",
-          "estimatedMarkup": 2.1,
-          "estimatedRetail": 150
+          "estimatedMarkup": 2.5,
+          "estimatedRetail": 50
         }
       ]
-    }
+    },
+    {
+          "key": "try_something_new",
+          "title": "Try Something New",
+          "recommendations": [
+            {
+              "why": "Moving away from the ripe style of South America, this Cahors offers a more rustic and savory interpretation of Malbec that highlights the grape's historical French roots.",
+              "rank": 1,
+              "region": "France",
+              "vintage": 2021,
+              "producer": "Château Combel-la-Serre",
+              "varietal": null,
+              "wineName": "Cahors Petit du Causse",
+              "menuPrice": 45,
+              "valueScore": 8.1,
+              "displayName": "Cahors Petit du Causse",
+              "extractedText": "CHÂTEAU COMBEL-LA-SERRE Cahors Petit du Causse 2021 France 45",
+              "menuPriceUnit": "bottle",
+              "estimatedMarkup": 2,
+              "estimatedRetail": 22
+            }
+          ]
+        }
   ]
 }
