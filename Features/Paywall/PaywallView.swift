@@ -342,6 +342,8 @@ private struct PaywallRetryButtonStyle: ButtonStyle {
     }
 }
 
+#if DEBUG
+
 #Preview {
     PaywallView(preferences: nil)
         .environment(EntitlementManager())
@@ -355,7 +357,7 @@ private struct PaywallRetryButtonStyle: ButtonStyle {
         .environment(entitlementManager)
 }
 
-#if DEBUG
+
 extension CustomPaywall {
     static let previewLoaded = CustomPaywall(
         id: "preview-annual-paywall",

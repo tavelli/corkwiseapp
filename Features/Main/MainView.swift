@@ -869,6 +869,15 @@ private struct MenuURLImportSheet: View {
     }
 }
 
+var mainScreenBackground: some View {
+    LinearGradient(
+        colors: [Color.wineCanvasTop, Color.wineCanvasBottom],
+        startPoint: .top,
+        endPoint: .bottom
+    )
+}
+
+
 #Preview {
     let configuration = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: UserWinePreferences.self, WineScan.self, configurations: configuration)
@@ -963,6 +972,8 @@ private struct MenuURLImportSheet: View {
         .modelContainer(container)
 }
 
+#if DEBUG
+
 #Preview("Paywall Sheet - Loaded") {
     let configuration = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: UserWinePreferences.self, WineScan.self, configurations: configuration)
@@ -989,10 +1000,5 @@ private struct MenuURLImportSheet: View {
         .modelContainer(container)
 }
 
-var mainScreenBackground: some View {
-    LinearGradient(
-        colors: [Color.wineCanvasTop, Color.wineCanvasBottom],
-        startPoint: .top,
-        endPoint: .bottom
-    )
-}
+#endif
+

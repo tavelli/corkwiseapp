@@ -781,6 +781,8 @@ private final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegat
     }
 }
 
+#if DEBUG
+
 #Preview("No photos") {
     WineListCameraView(
         previewBackgroundImage: WineListCameraPreviewImages.cameraBackground,
@@ -845,3 +847,5 @@ private enum WineListCameraPreviewImages {
         }
     }
 }
+
+#endif
