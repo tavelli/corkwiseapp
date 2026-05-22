@@ -452,6 +452,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6SZ57G9BS7;
 				ENABLE_PREVIEWS = YES;
+				EXCLUDED_SOURCE_FILE_NAMES = "DemoCategoryCardsView.swift DemoRecordingView.swift DemoWineScanResult.json CorkwiseStorekitConfig.storekit";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "CorkWise-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Corkwise;

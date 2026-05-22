@@ -8,78 +8,72 @@ struct PreferencesView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
+            VStack(alignment: .leading, spacing: 40) {
                 if let preferences = preferenceRecords.first {
-                    PreferenceSection(title: .preferencesSectionPreferredStyles) {
-                        VStack(spacing: 12) {
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text(.preferencesSectionPreferredStyles)
+                            .font(.title3.weight(.bold))
+                            .foregroundStyle(Color.wineText)
+
+                        VStack(spacing: 0) {
                             ForEach(WineStylePreference.allCases) { style in
-                                Button {
+                                let isSelected = preferences.preferredStyleValues.contains(style)
+
+                                PreferenceOptionRow(
+                                    title: style.title,
+                                    isSelected: isSelected,
+                                    isLast: style == WineStylePreference.allCases.last
+                                ) {
                                     toggleStyle(style, preferences: preferences)
-                                } label: {
-                                    HStack {
-                                        Text(style.title)
-                                            .font(.subheadline.weight(.semibold))
-                                            .foregroundStyle(Color.wineText)
-
-                                        Spacer()
-
-                                        Image(systemName: preferences.preferredStyleValues.contains(style) ? "checkmark.square.fill" : "square")
-                                            .foregroundStyle(preferences.preferredStyleValues.contains(style) ? Color.wineAccent : .secondary)
-                                    }
-                                    .padding(16)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .background(Color.white.opacity(0.7))
-                                    .clipShape(.rect(cornerRadius: 18))
                                 }
-                                .buttonStyle(.plain)
                             }
+                        }
+                        .background(Color.white.opacity(0.72))
+                        .clipShape(.rect(cornerRadius: 8))
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Color.wineBorder, lineWidth: 1)
                         }
                     }
 
-                    PreferenceSection(title: .preferencesSectionFavoriteVarietals) {
-                        VStack(alignment: .leading, spacing: 18) {
+                    VStack(alignment: .leading, spacing: 20) {
+                        Text(.preferencesSectionFavoriteVarietals)
+                            .font(.title3.weight(.bold))
+                            .foregroundStyle(Color.wineText)
+
+                        VStack(alignment: .leading, spacing: 30) {
                             ForEach(WineVarietalCategory.allCases) { category in
-                                VStack(alignment: .leading, spacing: 2) {
+                                VStack(alignment: .leading, spacing: 12) {
                                     Text(category.title)
                                         .font(.headline)
                                         .foregroundStyle(Color.wineText)
 
-                                    ForEach(category.varietals) { varietal in
-                                        Button {
-                                            toggleVarietal(varietal, preferences: preferences)
-                                        } label: {
-                                            HStack(spacing: 12) {
-                                                Text(varietal.title)
-                                                    .font(.subheadline.weight(.semibold))
-                                                    .foregroundStyle(Color.wineText)
+                                    VStack(spacing: 0) {
+                                        ForEach(category.varietals) { varietal in
+                                            let isSelected = preferences.favoriteVarietalValues.contains(varietal)
 
-                                                Spacer()
-
-                                                Image(systemName: preferences.favoriteVarietalValues.contains(varietal) ? "checkmark.square.fill" : "square")
-                                                    .foregroundStyle(preferences.favoriteVarietalValues.contains(varietal) ? Color.wineAccent : .secondary)
+                                            PreferenceOptionRow(
+                                                title: varietal.title,
+                                                isSelected: isSelected,
+                                                isLast: varietal == category.varietals.last
+                                            ) {
+                                                toggleVarietal(varietal, preferences: preferences)
                                             }
-                                            .padding(16)
-                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                            .background(Color.white.opacity(0.7))
-                                            .clipShape(.rect(cornerRadius: 18))
                                         }
-                                        .buttonStyle(.plain)
+                                    }
+                                    .background(Color.white.opacity(0.72))
+                                    .clipShape(.rect(cornerRadius: 8))
+                                    .overlay {
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .stroke(Color.wineBorder, lineWidth: 1)
                                     }
                                 }
                             }
                         }
                     }
 
-//                    PreferenceSection(title: "Decision Style") {
-//                        Picker("Decision Style", selection: binding(for: preferences, keyPath: \.choiceStyle, defaultValue: ChoiceStyle.bestValue.rawValue)) {
-//                            ForEach(ChoiceStyle.allCases) { style in
-//                                Text(style.title).tag(style.rawValue)
-//                            }
-//                        }
-//                        .pickerStyle(.menu)
-//                        .tint(Color.wineAccent)
-//                    }
 
+                    #if DEBUG
                     PreferenceSection(title: .preferencesSectionTone) {
                         VStack(spacing: 12) {
                             ForEach(TonePreference.allCases) { tone in
@@ -113,6 +107,7 @@ struct PreferencesView: View {
                             }
                         }
                     }
+                    #endif
 
                     #if DEBUG
                     PreferenceSection(title: .preferencesSectionDebug) {
@@ -222,6 +217,41 @@ struct PreferencesView: View {
 
         try? modelContext.save()
         appState.resetMainNavigation()
+    }
+}
+
+private struct PreferenceOptionRow: View {
+    let title: String
+    let isSelected: Bool
+    let isLast: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 0) {
+                HStack {
+                    Text(title)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(isSelected ? Color.wineAccent : Color.wineText)
+
+                    Spacer()
+
+                    Image(systemName: isSelected ? "checkmark.square.fill" : "square")
+                        .foregroundStyle(isSelected ? Color.wineAccent : Color.wineMutedText.opacity(0.45))
+                }
+                .padding(.horizontal)
+                .padding(.vertical, 14)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .contentShape(.rect)
+                .background(isSelected ? Color.wineSoftPeach.opacity(0.24) : Color.clear)
+
+                if isLast == false {
+                    Divider()
+                        .overlay(Color.wineDivider)
+                }
+            }
+        }
+        .buttonStyle(.plain)
     }
 }
 
