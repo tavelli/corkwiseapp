@@ -789,7 +789,7 @@ private final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegat
     )
 }
 
-#Preview("Two photos captured", traits: .fixedLayout(width: 393, height: 852)) {
+#Preview("One photo captured", traits: .fixedLayout(width: 393, height: 852)) {
     WineListCameraView(
         previewCapturedImages: WineListCameraPreviewImages.twoPages,
         previewBackgroundImage: WineListCameraPreviewImages.cameraBackground,
@@ -800,13 +800,11 @@ private final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegat
 
 private enum WineListCameraPreviewImages {
     static var cameraBackground: UIImage? {
-        UIImage(contentsOfFile: "/Users/dan/Documents/PXL_20260509_001111784.jpg")
+        UIImage(contentsOfFile: "/Users/dan/Documents/corkwise-camera-preview.png")
     }
 
     static var twoPages: [UIImage] {
         [
-            samplePage(title: "By the Glass", tint: UIColor(red: 0.98, green: 0.77, blue: 0.63, alpha: 1)),
-            samplePage(title: "By the Glass", tint: UIColor(red: 0.98, green: 0.77, blue: 0.63, alpha: 1)),
             samplePage(title: "By the Glass", tint: UIColor(red: 0.98, green: 0.77, blue: 0.63, alpha: 1)),
             samplePage(title: "Reds", tint: UIColor(red: 0.45, green: 0.07, blue: 0.09, alpha: 1)),
         ]
