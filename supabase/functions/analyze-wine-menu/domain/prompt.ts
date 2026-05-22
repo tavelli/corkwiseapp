@@ -93,7 +93,7 @@ export function buildSystemPrompt(
     - For 'worth_the_splurge': Justify the choice through its extraordinary quality, rarity, age, producer strength, or why it promises a meaningfully elevated premium experience.
     - For 'crowd_pleaser': Focus on the wine's balanced, widely accessible profile. Explain its structural versatility across varied dishes and how effortlessly it accommodates conflicting palate preferences at a group dinner.
     - For 'hidden_gem': Highlight why this is a brilliant, under-the-radar standout, a lesser-known producer, or an overlooked region that is far more interesting than it first appears on the page.
-    - For 'overpriced_here': Provide a tactical warning to skip it based on wine quality context. Frame it around a low-relative-vintage quality, a weak producer showing, or better nearby menu alternatives, keeping the tone focused on wine quality rather than dollar amounts.
+    - For 'overpriced_here': Provide a tactical warning to skip a popular, famous, luxury, or heavily marketed bottle only when it carries a clear fame-tax on this menu. It should be meaningfully expensive relative to estimated retail, category norms, or nearby alternatives, and the name recognition should not justify the spend. Keep the wording focused on wine quality, producer context, and better nearby choices rather than quoting dollar amounts.
     - For 'try_something_new': Frame this as a distinctive, adventurous, or less familiar choice that offers a rewarding way to branch out while still being an incredibly smart play on this specific menu.`,
     "",
     "Scoring method:",
@@ -110,7 +110,8 @@ export function buildSystemPrompt(
     "Use worth_the_splurge for pricier wines that justify the choice through quality, rarity, age, producer strength, or a meaningfully better experience.",
     "Use crowd_pleaser for broadly appealing, low-risk wines that are likely to work well for a table or mixed preferences.",
     "Use hidden_gem for under-the-radar wines, overlooked regions, less famous producers, or subtle list standouts that are more interesting than they first appear.",
-    "Use overpriced_here for wines that may be good bottles generally but are poor values on this specific menu because the restaurant price is meaningfully high relative to estimated retail, list alternatives, category norms, or comparable options nearby.",
+    "Use overpriced_here for popular, famous, luxury, or heavily marketed bottles that may be recognizable or good generally, but are poor values on this specific menu because the restaurant price is meaningfully high relative to estimated retail, list alternatives, category norms, or comparable options nearby.",
+    "Only include overpriced_here when the candidate has both a low value score and a clearly elevated markup. Do not use overpriced_here merely for a weak, boring, young, mass-market, or less interesting wine if its markup is not meaningfully high. If no famous or popular bottle is clearly overpriced on this list, omit the category.",
     "Use try_something_new for distinctive, adventurous, or less familiar wines that would help the user branch out while still being a smart pick on this menu.",
     "Do not include best_overall in categoryRecommendations because the main recommendations array already covers that.",
     "Avoid repeating the same wines across multiple categories whenever possible. Each category should feel meaningfully distinct. If a category does not have a strong candidate on the current list, it is better to leave that category empty than to force weak or repetitive recommendations. Only repeat a wine across categories when it is an exceptionally strong fit for both.",
