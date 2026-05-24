@@ -24,15 +24,6 @@ struct RecommendationCardView: View {
             }
 
             HStack(alignment: .center, spacing: 14) {
-//                Text(recommendation.valueScore.formatted(.number.precision(.fractionLength(1))))
-//                    .font(.headline.weight(.bold))
-//                    .foregroundStyle(Color.resultScoreText)
-//                    .frame(width: 42, height: 42)
-//                    .background(
-//                        Circle()
-//                            .fill(scoreBackground)
-//                    )
-
                 VStack(alignment: .leading, spacing: 6) {
                     Text(recommendation.displayTitle)
                         .font(.system(size: 20, weight: .bold, design: .serif))
@@ -71,19 +62,6 @@ struct RecommendationCardView: View {
                 .stroke(Color.wineBorder.opacity(0.8), lineWidth: 1)
         }
         .shadow(color: Color.black.opacity(0.04), radius: 12, y: 6)
-    }
-
-    private var scoreBackground: Color {
-        switch recommendation.valueScore {
-        case 9.0...:
-            return .resultScoreTopTier
-        case 8.5..<9.0:
-            return .resultScoreUpperMid
-        case 8.0..<8.5:
-            return .resultScoreMid
-        default:
-            return .resultScoreLow
-        }
     }
 
     private var wineDataTags: [String] {
@@ -399,4 +377,3 @@ extension WineRecommendation {
         .padding()
     }
 }
-

@@ -2,7 +2,7 @@
   "scripts": {
     "lint": "deno lint functions/analyze-wine-menu functions/feedback",
     "check": "deno check functions/analyze-wine-menu/index.ts functions/feedback/index.ts",
-    "test": "deno test --allow-env functions/analyze-wine-menu/domain"
+    "test": "deno test --allow-env --allow-read=functions/analyze-wine-menu/domain/prompt.xml functions/analyze-wine-menu/domain"
   },
   "devDependencies": {
     "supabase": "^2.98.0"

@@ -7,6 +7,7 @@ project_id = "supabase"
 
 [functions.analyze-wine-menu]
 verify_jwt = true
+static_files = [ "./functions/analyze-wine-menu/domain/prompt.xml" ]
 
 [functions.feedback]
 verify_jwt = true

@@ -120,6 +120,22 @@ struct PricingContextSummary: Codable, Hashable {
     let markupSampleSize: Int
 }
 
+struct WineRecommendationScores: Codable, Hashable {
+    let markupFairness: Int?
+    let producerPedigree: Int?
+    let menuStandout: Int?
+    let crowdAppeal: Int?
+    let personalFit: Int?
+
+    static let sample = WineRecommendationScores(
+        markupFairness: 8,
+        producerPedigree: 8,
+        menuStandout: 8,
+        crowdAppeal: 8,
+        personalFit: 8
+    )
+}
+
 struct WineRecommendation: Codable, Identifiable, Hashable {
     var id: String { "\(rank)-\(wineName)" }
     var displayTitle: String { displayName ?? wineName }
@@ -135,7 +151,7 @@ struct WineRecommendation: Codable, Identifiable, Hashable {
     let menuPrice: Double?
     let menuPriceUnit: PurchaseMode?
     let estimatedRetail: Double?
-    let valueScore: Double
+    let scores: WineRecommendationScores
     let why: String
 
     private enum CodingKeys: String, CodingKey {
@@ -152,7 +168,7 @@ struct WineRecommendation: Codable, Identifiable, Hashable {
         case estimatedRetail
         case estimatedRetailLow
         case estimatedRetailHigh
-        case valueScore
+        case scores
         case why
     }
 
@@ -168,7 +184,7 @@ struct WineRecommendation: Codable, Identifiable, Hashable {
         menuPrice: Double?,
         menuPriceUnit: PurchaseMode? = nil,
         estimatedRetail: Double?,
-        valueScore: Double,
+        scores: WineRecommendationScores,
         why: String
     ) {
         self.rank = rank
@@ -182,7 +198,7 @@ struct WineRecommendation: Codable, Identifiable, Hashable {
         self.menuPrice = menuPrice
         self.menuPriceUnit = menuPriceUnit
         self.estimatedRetail = estimatedRetail
-        self.valueScore = valueScore
+        self.scores = scores
         self.why = why
     }
 
@@ -198,7 +214,7 @@ struct WineRecommendation: Codable, Identifiable, Hashable {
         varietal = try container.decodeIfPresent(String.self, forKey: .varietal)
         menuPrice = try container.decodeIfPresent(Double.self, forKey: .menuPrice)
         menuPriceUnit = try container.decodeIfPresent(PurchaseMode.self, forKey: .menuPriceUnit)
-        valueScore = try container.decode(Double.self, forKey: .valueScore)
+        scores = try container.decode(WineRecommendationScores.self, forKey: .scores)
         why = try container.decode(String.self, forKey: .why)
 
         if let estimatedRetail = try container.decodeIfPresent(Double.self, forKey: .estimatedRetail) {
@@ -234,7 +250,7 @@ struct WineRecommendation: Codable, Identifiable, Hashable {
         try container.encodeIfPresent(menuPrice, forKey: .menuPrice)
         try container.encodeIfPresent(menuPriceUnit, forKey: .menuPriceUnit)
         try container.encodeIfPresent(estimatedRetail, forKey: .estimatedRetail)
-        try container.encode(valueScore, forKey: .valueScore)
+        try container.encode(scores, forKey: .scores)
         try container.encode(why, forKey: .why)
     }
 }
@@ -288,7 +304,7 @@ extension WineScanResult {
                     menuPrice: 88,
                     menuPriceUnit: .bottle,
                     estimatedRetail: 60,
-                    valueScore: 9.5,
+                    scores: .sample,
                     why: "A benchmark producer with bottle age, savory depth, and the kind of Rioja profile that can anchor the table without feeling obvious."
                 ),
                 WineRecommendation(
@@ -302,7 +318,7 @@ extension WineScanResult {
                     menuPrice: 54,
                     menuPriceUnit: .bottle,
                     estimatedRetail: 25,
-                    valueScore: 8.6,
+                    scores: .sample,
                     why: "A strong producer in a category built for seafood, salty snacks, and bright starters, with more personality than the usual safe white."
                 ),
                 WineRecommendation(
@@ -316,7 +332,7 @@ extension WineScanResult {
                     menuPrice: 76,
                     menuPriceUnit: .bottle,
                     estimatedRetail: 38,
-                    valueScore: 7.9,
+                    scores: .sample,
                     why: "A polished Ribera del Duero with enough structure for richer dishes and a producer profile that stands above the simpler reds nearby."
                 )
             ],
@@ -336,7 +352,7 @@ extension WineScanResult {
                             menuPrice: 54,
                             menuPriceUnit: .bottle,
                             estimatedRetail: 25,
-                            valueScore: 8.6,
+                            scores: .sample,
                             why: "Strong producer quality, coastal freshness, and easy food range make this the clearest smart move for the table."
                         )
                     ]
@@ -356,7 +372,7 @@ extension WineScanResult {
                             menuPrice: 76,
                             menuPriceUnit: .bottle,
                             estimatedRetail: 38,
-                            valueScore: 7.9,
+                            scores: .sample,
                             why: "This brings a more serious, structured red profile while staying grounded enough for a real dinner table."
                         )
                     ]
@@ -376,7 +392,7 @@ extension WineScanResult {
                             menuPrice: 54,
                             menuPriceUnit: .bottle,
                             estimatedRetail: 25,
-                            valueScore: 8.6,
+                            scores: .sample,
                             why: "A broad-appeal bottle with strong restaurant utility and low risk."
                         )
                     ]
@@ -396,7 +412,7 @@ extension WineScanResult {
                             menuPrice: 88,
                             menuPriceUnit: .bottle,
                             estimatedRetail: 60,
-                            valueScore: 9.5,
+                            scores: .sample,
                             why: "Age, style, and producer profile make this the most compelling conversation bottle on the list."
                         )
                     ]
@@ -416,7 +432,7 @@ extension WineScanResult {
                             menuPrice: 76,
                             menuPriceUnit: .bottle,
                             estimatedRetail: 38,
-                            valueScore: 7.9,
+                            scores: .sample,
                             why: "A solid wine, but the menu price is less compelling than the more distinctive options around it."
                         )
                     ]
@@ -436,7 +452,7 @@ extension WineScanResult {
                             menuPrice: 54,
                             menuPriceUnit: .bottle,
                             estimatedRetail: 25,
-                            valueScore: 8.6,
+                            scores: .sample,
                             why: "A crisp, coastal white that is a more interesting move than the usual by-the-bottle defaults."
                         )
                     ]

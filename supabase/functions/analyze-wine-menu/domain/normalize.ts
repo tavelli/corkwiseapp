@@ -1,8 +1,4 @@
-import {
-  type PurchaseMode,
-  RequestError,
-  type WineScanResult,
-} from "./types.ts";
+import {type PurchaseMode, RequestError, type WineScanResult} from "./types.ts";
 
 const MINIMUM_MARKUP_SAMPLE_SIZE = 3;
 
@@ -28,15 +24,15 @@ export function normalizeScanResult(
 
   const normalizedRecommendations = filterRecommendationsForPurchaseMode(
     recommendations.map((entry, index) =>
-      normalizeRecommendation(entry, index, purchaseMode)
+      normalizeRecommendation(entry, index, purchaseMode),
     ),
     purchaseMode,
   );
   const normalizedCategoryRecommendations =
     filterCategorySectionsForPurchaseMode(
-      arrayOrEmpty(
-        candidate.categoryRecommendations,
-      ).map((entry) => normalizeCategorySection(entry, purchaseMode)),
+      arrayOrEmpty(candidate.categoryRecommendations).map((entry) =>
+        normalizeCategorySection(entry, purchaseMode),
+      ),
       purchaseMode,
     );
   const normalizedNotes = stringArrayOrEmpty(candidate.notes);
@@ -80,8 +76,8 @@ function filterRecommendationsForPurchaseMode(
     return recommendations;
   }
 
-  return recommendations.filter((recommendation) =>
-    recommendation.menuPriceUnit === "glass"
+  return recommendations.filter(
+    (recommendation) => recommendation.menuPriceUnit === "glass",
   );
 }
 
@@ -127,9 +123,8 @@ function normalizePricingContextSummary(
   });
 
   return {
-    medianEstimatedMarkup: markups.length >= MINIMUM_MARKUP_SAMPLE_SIZE
-      ? median(markups)
-      : null,
+    medianEstimatedMarkup:
+      markups.length >= MINIMUM_MARKUP_SAMPLE_SIZE ? median(markups) : null,
     markupSampleSize: markups.length,
   };
 }
@@ -171,6 +166,7 @@ function normalizeRecommendation(
   const producer = stringOrNull(candidate.producer);
   const region = stringOrNull(candidate.region);
   const varietal = stringOrNull(candidate.varietal);
+  const scores = objectOrEmpty(candidate.scores);
 
   return {
     rank: positiveInt(candidate.rank) ?? index + 1,
@@ -191,7 +187,13 @@ function normalizeRecommendation(
     menuPriceUnit,
     estimatedRetail,
     estimatedMarkup: derivedMarkup?.value ?? null,
-    valueScore: boundedScore(candidate.valueScore),
+    scores: {
+      markupFairness: nullableScore(scores.markupFairness),
+      producerPedigree: nullableScore(scores.producerPedigree),
+      menuStandout: nullableScore(scores.menuStandout),
+      crowdAppeal: nullableScore(scores.crowdAppeal),
+      personalFit: nullableScore(scores.personalFit),
+    },
     why: requiredString(candidate.why),
   };
 }
@@ -211,7 +213,7 @@ function normalizeCategorySection(
     recommendations: arrayOrEmpty(candidate.recommendations)
       .slice(0, 2)
       .map((entry, index) =>
-        normalizeRecommendation(entry, index, purchaseMode)
+        normalizeRecommendation(entry, index, purchaseMode),
       ),
   };
 }
@@ -223,7 +225,7 @@ function deriveDisplayName(input: {
   varietal: string | null;
   extractedText: string;
 }): string {
-  const { producer, region, varietal, extractedText } = input;
+  const {producer, region, varietal, extractedText} = input;
   const wineName = distinctPart(input.wineName, [producer, varietal]);
 
   if (wineName != null) {
@@ -257,26 +259,27 @@ function distinctPart(
     return null;
   }
 
-  const knownParts = existingParts.filter((part): part is string =>
-    part != null && part.trim().length > 0
+  const knownParts = existingParts.filter(
+    (part): part is string => part != null && part.trim().length > 0,
   );
-  const trimmedValue = knownParts.reduce<string>(
-    (candidate, part) =>
-      candidate.replace(
-        new RegExp(`\\b${escapeRegExp(part)}\\b`, "gi"),
-        " ",
-      ),
-    value,
-  ).trim().replace(/\s+/g, " ");
+  const trimmedValue = knownParts
+    .reduce<string>(
+      (candidate, part) =>
+        candidate.replace(new RegExp(`\\b${escapeRegExp(part)}\\b`, "gi"), " "),
+      value,
+    )
+    .trim()
+    .replace(/\s+/g, " ");
 
   if (trimmedValue.length === 0) {
     return null;
   }
 
   if (
-    knownParts.some((part) =>
-      sameDisplayValue(trimmedValue, part) ||
-      includesDisplayValue(part, trimmedValue)
+    knownParts.some(
+      (part) =>
+        sameDisplayValue(trimmedValue, part) ||
+        includesDisplayValue(part, trimmedValue),
     )
   ) {
     return null;
@@ -313,8 +316,8 @@ function deriveMarkup(input: {
   menuPriceUnit: PurchaseMode;
   menuPrice: number | null;
   estimatedRetail: number | null;
-}): { value: number; display: string } | null {
-  const { menuPriceUnit, menuPrice, estimatedRetail } = input;
+}): {value: number; display: string} | null {
+  const {menuPriceUnit, menuPrice, estimatedRetail} = input;
 
   if (
     menuPrice == null ||
@@ -452,14 +455,22 @@ function vintageOrNull(value: unknown): number | null {
   return value;
 }
 
-function boundedScore(value: unknown): number {
-  if (typeof value !== "number" || Number.isFinite(value) === false) {
-    throw genericAnalysisFailure();
+function nullableScore(value: unknown): number | null {
+  const score = numberOrNull(value);
+
+  if (score == null) {
+    return null;
   }
 
-  return Math.min(10, Math.max(1, value));
+  return Math.min(10, Math.max(1, Math.round(score)));
 }
 
 function arrayOrEmpty(value: unknown): unknown[] {
   return Array.isArray(value) ? value : [];
+}
+
+function objectOrEmpty(value: unknown): Record<string, unknown> {
+  return value != null && typeof value === "object"
+    ? value as Record<string, unknown>
+    : {};
 }

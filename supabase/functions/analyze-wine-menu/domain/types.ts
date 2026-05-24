@@ -14,13 +14,13 @@ export type AnalyzeWineMenuAttachment = {
 
 export type AnalyzeWineMenuSource =
   | {
-    kind: "attachment";
-    attachments: AnalyzeWineMenuAttachment[];
-  }
+      kind: "attachment";
+      attachments: AnalyzeWineMenuAttachment[];
+    }
   | {
-    kind: "url";
-    menuUrl: string;
-  };
+      kind: "url";
+      menuUrl: string;
+    };
 
 export type AnalyzeWineMenuRequest = {
   appUserId: string;
@@ -79,7 +79,13 @@ export type WineScanResult = {
     menuPriceUnit: PurchaseMode;
     estimatedRetail: number | null;
     estimatedMarkup: number | null;
-    valueScore: number;
+    scores: {
+      markupFairness: number | null;
+      producerPedigree: number | null;
+      menuStandout: number | null;
+      crowdAppeal: number | null;
+      personalFit: number | null;
+    };
     why: string;
   }>;
   categoryRecommendations: Array<{
@@ -98,7 +104,13 @@ export type WineScanResult = {
       menuPriceUnit: PurchaseMode;
       estimatedRetail: number | null;
       estimatedMarkup: number | null;
-      valueScore: number;
+      scores: {
+        markupFairness: number | null;
+        producerPedigree: number | null;
+        menuStandout: number | null;
+        crowdAppeal: number | null;
+        personalFit: number | null;
+      };
       why: string;
     }>;
   }>;
@@ -146,6 +158,6 @@ export class RequestError extends Error {
   ) {
     super(message);
     this.status = status;
-    this.responseBody = { error, message, retrySuggested };
+    this.responseBody = {error, message, retrySuggested};
   }
 }
