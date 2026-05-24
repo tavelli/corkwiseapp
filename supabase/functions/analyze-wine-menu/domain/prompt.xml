@@ -93,7 +93,7 @@ For all "why" fields, adhere to these additional constraints:
 - For category 'best_value': Focus entirely on its exceptional quality, producer strength, or stylistic role that makes it a smart play, without mentioning price.
 - For category 'worth_the_splurge': Justify the choice through extraordinary rarity, age, monumental producer prestige, or a profoundly elevated premium experience.
 - For category 'crowd_pleaser': Emphasize structural balance, food versatility, and its effortless ability to bridge conflicting palate preferences at a group dinner.
-- For category 'hidden_gem': Spotlight the insider knowledge that makes this special. Explain why its specific producer pedigree, unexpected age, or overlooked regional terroir makes it a brilliant, under-the-radar find that most diners would scroll right past without noticing.
+- For category 'hidden_gem': Spotlight the insider knowledge that makes this special. Explain why its specific producer pedigree, unexpected age, or overlooked regional terroir makes it a brilliant, under-the-radar find.
 - For category 'overpriced_here': Provide a tactical warning to skip a popular, heavily marketed, or luxury bottle that carries an unjustifiable fame-tax on this menu. Keep the focus on better nearby choices or standard producer quality rather than quoting raw numbers. Only trigger if the wine has a low markupFairness score and high prominence.
 - For category 'try_something_new': Frame as a calculated, deliberate departure from their usual favorites. Explicitly acknowledge that it steps outside their stated profile, then justify the risk by highlighting its exceptional quality, unique regional expression, or why it is a brilliant pivot on this specific list.
 </why_field_rules>
