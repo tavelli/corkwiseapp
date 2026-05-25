@@ -23,7 +23,7 @@ struct BestPickHeroView: View {
             }
 
             HStack(alignment: .center, spacing: 14) {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: 2) {
                     Text(recommendation.displayTitle)
                         .font(.system(size: 22, weight: .bold, design: .serif))
                         .foregroundStyle(Color.white.opacity(0.95))

@@ -24,7 +24,7 @@ struct RecommendationCardView: View {
             }
 
             HStack(alignment: .center, spacing: 14) {
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: 3) {
                     Text(recommendation.displayTitle)
                         .font(.system(size: 20, weight: .bold, design: .serif))
                         .foregroundStyle(Color.wineText)
@@ -87,22 +87,40 @@ struct RecommendationMetricRow: View {
     var style: Style = .standard
 
     var body: some View {
-        HStack(spacing: 0) {
-            ForEach(metrics, id: \.title) { metric in
-                MetricItem(title: metric.title, value: metric.value, style: style)
+        HStack(alignment: .center, spacing: 36) {
+            if let formattedMenuPrice {
+                Text(formattedMenuPrice)
+                    .font(menuPriceFont)
+                    .foregroundStyle(primaryTextColor)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                    .layoutPriority(1)
+            }
+
+            if metadataFields.isEmpty == false {
+                VStack(alignment: .leading, spacing: 5) {
+                    ForEach(metadataFields, id: \.self) { field in
+                        Text(field)
+                            .font(.caption)
+                            .foregroundStyle(Color.wineText)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.85)
+                    }
+                }
+                .multilineTextAlignment(.leading)
             }
         }
-        .padding(.vertical, 4)
-        .frame(maxWidth: .infinity)
-        .background(backgroundColor)
-        .clipShape(.rect(cornerRadius: 12))
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .background(secondaryGroupBackground)
+        .clipShape(.rect(cornerRadius: 10))
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    private var metrics: [Metric] {
+    private var metadataFields: [String] {
         [
-            formattedMenuPrice.map { Metric(title: String(localized: .resultsMetricMenu), value: $0) },
-            formattedRetailBottle.map { Metric(title: String(localized: .resultsMetricRetailBottle), value: $0) },
-            formattedMarkup.map { Metric(title: String(localized: .resultsMetricMarkup), value: $0) },
+            formattedRetailBottle.map { "\(String(localized: .resultsMetricRetailBottle)) \($0)" },
+            formattedMarkup.map { "\(String(localized: .resultsMetricMarkup)) \($0)" },
         ].compactMap { $0 }
     }
 
@@ -142,46 +160,16 @@ struct RecommendationMetricRow: View {
         return value.formatted(.currency(code: currencyCode).precision(.fractionLength(precision)))
     }
 
-    private var backgroundColor: Color {
+    private var menuPriceFont: Font {
         switch style {
         case .standard:
-            return Color(red: 0.972, green: 0.934, blue: 0.914)
+            return .title2.weight(.medium)
         case .hero:
-            return Color.resultHeroIvory.opacity(0.12)
+            return .title.weight(.medium)
         }
     }
-}
 
-private struct Metric: Hashable {
-    let title: String
-    let value: String
-}
-
-private struct MetricItem: View {
-    let title: String
-    let value: String
-    let style: RecommendationMetricRow.Style
-
-    var body: some View {
-        VStack(alignment: .center, spacing: 3) {
-            Text(value)
-                .font(.system(size: valueFontSize, weight: .medium))
-                .foregroundStyle(valueColor)
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
-                .multilineTextAlignment(.center)
-            Text(title.uppercased())
-                .font(.system(size: 9, weight: .medium))
-                .foregroundStyle(titleColor)
-                .multilineTextAlignment(.center)
-                .tracking(0.7)
-        }
-        .padding(.horizontal, 10)
-        .frame(maxWidth: .infinity, minHeight: 44, alignment: .center)
-        .layoutPriority(1)
-    }
-
-    private var valueColor: Color {
+    private var primaryTextColor: Color {
         switch style {
         case .standard:
             return .wineText
@@ -190,21 +178,21 @@ private struct MetricItem: View {
         }
     }
 
-    private var valueFontSize: CGFloat {
-        switch style {
-        case .standard:
-            return 18
-        case .hero:
-            return 20
-        }
-    }
-
-    private var titleColor: Color {
+    private var secondaryTextColor: Color {
         switch style {
         case .standard:
             return Color(red: 0.43, green: 0.37, blue: 0.35)
         case .hero:
-            return Color.resultHeroIvory.opacity(0.82)
+            return Color.resultHeroIvory.opacity(0.86)
+        }
+    }
+
+    private var secondaryGroupBackground: Color {
+        switch style {
+        case .standard:
+            return Color.wineSoftPeach.opacity(0.10)
+        case .hero:
+            return Color.resultHeroIvory.opacity(0.08)
         }
     }
 }
