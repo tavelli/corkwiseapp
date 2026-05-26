@@ -46,6 +46,7 @@
 		379399E02FA3D9AE00246506 /* Color+Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399DF2FA3D9AE00246506 /* Color+Theme.swift */; };
 		379399E22FA4EFFE00246506 /* AllScansView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399E12FA4EFFE00246506 /* AllScansView.swift */; };
 		379399E42FA4F01300246506 /* PreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399E32FA4F01300246506 /* PreferencesView.swift */; };
+		379399E62FC58A1B00246506 /* PhosphorIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399E52FC58A1B00246506 /* PhosphorIcon.swift */; };
 		37939A002FA3F10000246506 /* CorkWiseApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399F92FA3F10000246506 /* CorkWiseApp.swift */; };
 		37939A012FA3F10000246506 /* EntitlementManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399FA2FA3F10000246506 /* EntitlementManager.swift */; };
 		37939A022FA3F10000246506 /* ImagePreparationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399FB2FA3F10000246506 /* ImagePreparationService.swift */; };
@@ -101,6 +102,7 @@
 		379399DF2FA3D9AE00246506 /* Color+Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Theme.swift"; sourceTree = "<group>"; };
 		379399E12FA4EFFE00246506 /* AllScansView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllScansView.swift; sourceTree = "<group>"; };
 		379399E32FA4F01300246506 /* PreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesView.swift; sourceTree = "<group>"; };
+		379399E52FC58A1B00246506 /* PhosphorIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhosphorIcon.swift; sourceTree = "<group>"; };
 		379399F92FA3F10000246506 /* CorkWiseApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorkWiseApp.swift; sourceTree = "<group>"; };
 		379399FA2FA3F10000246506 /* EntitlementManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitlementManager.swift; sourceTree = "<group>"; };
 		379399FB2FA3F10000246506 /* ImagePreparationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreparationService.swift; sourceTree = "<group>"; };
@@ -133,6 +135,7 @@
 				379399C62FA3CC9800246506 /* WineScan.swift */,
 				379399C72FA3CC9800246506 /* WineScanResult.swift */,
 				379399DF2FA3D9AE00246506 /* Color+Theme.swift */,
+				379399E52FC58A1B00246506 /* PhosphorIcon.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -376,6 +379,7 @@
 				375DE5F52FAE4094008D4574 /* AppIdentityService.swift in Sources */,
 				375DE5F92FAE4E16008D4574 /* BuildChannel.swift in Sources */,
 				379399E02FA3D9AE00246506 /* Color+Theme.swift in Sources */,
+				379399E62FC58A1B00246506 /* PhosphorIcon.swift in Sources */,
 				37915F0C2FB21FB2003B43A8 /* WineListCameraView.swift in Sources */,
 				379399E22FA4EFFE00246506 /* AllScansView.swift in Sources */,
 				379399D22FA3CD3F00246506 /* AppState.swift in Sources */,

@@ -102,7 +102,7 @@ struct RecommendationMetricRow: View {
                     ForEach(metadataFields, id: \.self) { field in
                         Text(field)
                             .font(.caption)
-                            .foregroundStyle(Color.wineText)
+                            .foregroundStyle(primaryTextColor)
                             .lineLimit(1)
                             .minimumScaleFactor(0.85)
                     }
