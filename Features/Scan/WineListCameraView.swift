@@ -450,7 +450,7 @@ private struct CapturedPagesTray: View {
 
                 ScrollView(.horizontal) {
                     HStack(spacing: 14) {
-                        ForEach(pages.enumerated(), id: \.element.id) { index, page in
+                        ForEach(Array(pages.enumerated()), id: \.element.id) { index, page in
                             CapturedPageTrayThumbnail(
                                 page: page,
                                 number: index + 1,

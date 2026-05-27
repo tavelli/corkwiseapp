@@ -62,8 +62,9 @@ enum ChoiceStyle: String, Codable, CaseIterable, Identifiable {
 }
 
 enum UsualPurchasePreference: String, Codable, CaseIterable, Identifiable {
-    case glass
     case bottle
+    case glass
+    
 
     var id: String { rawValue }
 

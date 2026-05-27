@@ -43,7 +43,7 @@ struct ResultsView: View {
         )
         .navigationTitle(pageTitle)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationSubtitle(navigationSubtitle)
+        .navigationSubtitleIfAvailable(navigationSubtitle)
         .background(mainScreenBackground.ignoresSafeArea())
         .sheet(isPresented: $isShowingPaywall) {
             PaywallView(preferences: nil)
@@ -69,6 +69,17 @@ struct ResultsView: View {
 
     private func showScanEntry() {
         appState.resetMainNavigation()
+    }
+}
+
+extension View {
+    @ViewBuilder
+    func navigationSubtitleIfAvailable(_ subtitle: String) -> some View {
+        if #available(iOS 26.0, *) {
+            self.navigationSubtitle(subtitle)
+        } else {
+            self
+        }
     }
 }
 

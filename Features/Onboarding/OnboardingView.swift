@@ -394,9 +394,9 @@ private struct VarietalQuestionView: View {
     var body: some View {
         ScrollView {
             QuestionSection(title: .onboardingQuestionVarietalsTitle) {
-                Text(.onboardingQuestionVarietalsSubtitle)
-                    .font(.subheadline)
-                    .foregroundStyle(Color.wineMutedText)
+//                Text(.onboardingQuestionVarietalsSubtitle)
+//                    .font(.subheadline)
+//                    .foregroundStyle(Color.wineMutedText)
 
                 ForEach(WineVarietalCategory.allCases) { category in
                     VStack(alignment: .leading, spacing: 10) {

@@ -135,7 +135,7 @@ struct ScanProgressExperienceView: View {
         }
         .background(mainScreenBackground.ignoresSafeArea())
         .navigationTitle(showsPageHeader ? pageTitle : "")
-        .navigationSubtitle(showsPageHeader ? navigationSubtitle : "")
+        .navigationSubtitleIfAvailable(showsPageHeader ? navigationSubtitle : "")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(showsPageHeader ? .visible : .hidden, for: .navigationBar)
         .navigationBarBackButtonHidden(isOverlayVisible || showsPageHeader == false)
