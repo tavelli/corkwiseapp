@@ -1,3 +1,7 @@
 supabase/functions/.env
 supabase/functions/.env.local
 .build/
+*.xcuserstate
+xcuserdata/
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/

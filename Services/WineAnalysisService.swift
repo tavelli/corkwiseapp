@@ -29,7 +29,7 @@ struct WineAnalysisService {
         let appUserID = try appUserID()
         let requestBody = AnalyzeWineMenuRequest(
             appUserId: appUserID,
-            buildConfiguration: BuildChannel.current,
+            buildConfiguration: await BuildChannel.current(),
             attachments: attachments,
             menuUrl: nil,
             purchaseMode: purchaseMode,
@@ -60,7 +60,7 @@ struct WineAnalysisService {
 
         let requestBody = AnalyzeWineMenuRequest(
             appUserId: appUserID,
-            buildConfiguration: BuildChannel.current,
+            buildConfiguration: await BuildChannel.current(),
             attachments: nil,
             menuUrl: menuURL.absoluteString,
             purchaseMode: purchaseMode,

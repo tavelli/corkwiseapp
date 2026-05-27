@@ -1,20 +1,24 @@
 import Foundation
+import StoreKit
 
 enum BuildChannel {
-    static var current: String {
+    static func current() async -> String {
         #if DEBUG
         return "debug"
         #else
-        guard let receiptURL = Bundle.main.appStoreReceiptURL else {
+        do {
+            let appTransaction = try await AppTransaction.shared.payloadValue
+            switch appTransaction.environment {
+            case .sandbox:
+                return "testflight"
+            case .production:
+                return "appstore"
+            default:
+                return "release_unknown"
+            }
+        } catch {
             return "release_unknown"
         }
-
-        if receiptURL.lastPathComponent == "sandboxReceipt",
-           FileManager.default.fileExists(atPath: receiptURL.path) {
-            return "testflight"
-        }
-
-        return "appstore"
         #endif
     }
 }

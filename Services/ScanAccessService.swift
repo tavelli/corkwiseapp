@@ -66,7 +66,7 @@ struct ScanAccessService {
 
         let requestBody = ScanAccessRequest(
             appUserId: try appUserID(),
-            buildConfiguration: BuildChannel.current
+            buildConfiguration: await BuildChannel.current()
         )
 
         var request = URLRequest(url: endpoint)
