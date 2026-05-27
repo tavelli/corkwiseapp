@@ -241,12 +241,14 @@ private struct OnboardingIntroStepView: View {
                     Text(.onboardingIntroBeforeHeader)
                         .font(.caption)
                         .bold()
+                        .textCase(.uppercase)
                         .foregroundStyle(Color.wineAccent)
                         .frame(maxWidth: .infinity)
 
                     Text(.onboardingIntroAfterHeader)
                         .font(.caption)
                         .bold()
+                        .textCase(.uppercase)
                         .foregroundStyle(Color(red: 0.18, green: 0.34, blue: 0.16))
                         .frame(maxWidth: .infinity)
                 }

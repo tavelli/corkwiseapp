@@ -370,10 +370,10 @@ struct CustomPaywall {
 }
 
 struct CustomPaywallRemoteConfig {
-    private static let fallbackEyebrowText = String(localized: "CORKWISE PREMIUM")
-    private static let fallbackHeadlineText = String(localized: "Know what’s worth ordering")
-    private static let fallbackSubheadlineText = String(localized: "Expert guidance for every wine list.")
-    private static let fallbackCTAText = "Join Corkwise"
+    private static let fallbackEyebrowText = String(localized: .paywallFallbackEyebrow)
+    private static let fallbackHeadlineText = String(localized: .paywallFallbackHeadline)
+    private static let fallbackSubheadlineText = String(localized: .paywallFallbackSubheadline)
+    private static let fallbackCTAText = String(localized: .paywallFallbackCta)
 
     let eyebrowText: String
     let headlineText: String
