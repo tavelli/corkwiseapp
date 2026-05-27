@@ -42,8 +42,13 @@ When a wine is an obscure allocation, hyper-local, or lacks definitive retail pr
 1. Do not guess retail values wildly. Derive a reasonable retail estimate based on standard industry baselines for that specific category, grape, and region. Use this macro baseline to calculate your scores.
 2. If a wine is so esoteric that even a macro category baseline is impossible to confidently determine, set estimatedRetail to null.
 3. Whenever estimatedRetail is set to null, you must strictly default the markupFairness score to a neutral 5. Never output a high (8-10) or low (1-4) markup score if you cannot provide a baseline.
-4. Append a brief tracking note to the notes array (e.g., "Retail price data unavailable for [Wine Name]").
 </pricing_uncertainty_rules>
+
+<notes_rules>
+Use the notes array only for small extraction caveats that provide clarifying context when needed, such as missing vintages, unclear wine names, blurry or incomplete pages, uncertain source currency, or other list-reading challenges that could have affected the result.
+
+Notes should not undermine the overall legitimacy of the analysis or restate general limitations. It is perfectly fine to return an empty notes array when there is no useful caveat to add.
+</notes_rules>
 
 <scoring_methodology>
 Evaluate every candidate wine across five distinct dimensions on a strict 1-10 integer scale. Evaluate these dimensions independently before determining categories or writing recommendations:
