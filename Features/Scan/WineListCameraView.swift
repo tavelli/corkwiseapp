@@ -154,7 +154,7 @@ struct WineListCameraView: View {
                     startPoint: .top,
                     endPoint: .bottom
                 )
-                .frame(height: max(proxy.size.height * 0.42, 220))
+                .frame(height: 220)
             }
             .ignoresSafeArea()
         }
