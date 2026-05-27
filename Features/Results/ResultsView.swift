@@ -108,12 +108,12 @@ struct ResultsContentView: View {
                     if remainingRecommendations.isEmpty == false {
                         VStack(alignment: .leading, spacing: 16) {
                             ForEach(Array(remainingRecommendations.enumerated()), id: \.element.id) { index, recommendation in
-                                RecommendationCardView(
+                                RecommendationCardView.categoryCard(
                                     recommendation: recommendation,
                                     purchaseMode: purchaseMode,
                                     currencyCode: result.currencyCode,
                                     categoryLabel: String(localized: .resultsCategoryHighlyRecommend),
-                                    categorySystemImage: "star.fill"
+                                    icon: .star
                                 )
                                 .id(ResultsScrollTarget.highlyRecommendCard(index: index))
                             }
@@ -371,15 +371,17 @@ private struct MenuSnapshotView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
-                Image(systemName: "wineglass")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(Color.wineAccent)
-                    .frame(width: 18, height: 18)
+//                Image(phosphor: .wine)
+//                    .resizable()
+//                    .scaledToFit()
+//                    .frame(width: 18, height: 18)
+//                    .foregroundStyle(Color.wineText)
+//                    
 
                 Text(.resultsSnapshotTitle)
                     .font(.caption.weight(.bold))
                     .tracking(0.9)
-                    .foregroundStyle(Color.wineAccent)
+                    .foregroundStyle(Color.wineText)
             }
 
             Text(text)

@@ -158,8 +158,10 @@ private struct ScanHistoryRow: View {
                         .foregroundStyle(.secondary)
 
                     HStack(spacing: 6) {
-                        Image(systemName: "crown.fill")
-                            .font(.subheadline.weight(.regular))
+                        Image(phosphor: .crownFill)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 15, height: 15)
 
                         Text(topPickName)
                             .font(.subheadline.weight(.regular))

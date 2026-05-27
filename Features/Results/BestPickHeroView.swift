@@ -9,8 +9,9 @@ struct BestPickHeroView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
             HStack(spacing: 8) {
-                Image(systemName: "crown.fill")
-                    .font(.caption.weight(.bold))
+                Image(phosphor: .crownFill)
+                    .resizable()
+                    .scaledToFit()
                     .foregroundStyle(Color.resultHeroIvory)
                     .frame(width: 22, height: 22)
                     .background(Color.white.opacity(0.0))

@@ -9,12 +9,12 @@ struct CategoryHighlightsView: View {
         VStack(alignment: .leading, spacing: 16) {
             ForEach(displaySections, id: \.key) { section in
                 ForEach(section.recommendations) { recommendation in
-                    RecommendationCardView(
+                    RecommendationCardView.categoryCard(
                         recommendation: recommendation,
                         purchaseMode: purchaseMode,
                         currencyCode: currencyCode,
                         categoryLabel: section.displayTitle,
-                        categorySystemImage: section.systemImage
+                        icon: section.icon
                     )
                     .id(ResultsScrollTarget.category(key: section.key))
                 }
@@ -36,7 +36,7 @@ struct CategoryHighlightsView: View {
             DisplayCategorySection(
                 key: section.key,
                 displayTitle: Self.displayTitle(for: section),
-                systemImage: Self.systemImage(for: section.key),
+                icon: Self.icon(for: section.key),
                 recommendations: Array(section.recommendations.prefix(2))
             )
         }
@@ -67,22 +67,22 @@ struct CategoryHighlightsView: View {
         }
     }
 
-    private static func systemImage(for key: String) -> String {
+    private static func icon(for key: String) -> PhosphorIcon {
         switch key {
         case "best_value":
-            return "chart.bar.xaxis"
+            return .chartBar
         case "worth_the_splurge":
-            return "rosette"
+            return .medal
         case "crowd_pleaser":
-            return "checkmark.shield.fill"
+            return .sealCheck
         case "hidden_gem":
-            return "magnifyingglass"
+            return .listMagnifyingGlass
         case "overpriced_here":
-            return "exclamationmark.triangle.fill"
+            return .warningCircle
         case "try_something_new":
-            return "arrow.trianglehead.branch"
+            return .arrowsSplit
         default:
-            return "star.circle.fill"
+            return .star
         }
     }
 }
@@ -90,6 +90,6 @@ struct CategoryHighlightsView: View {
 private struct DisplayCategorySection: Hashable {
     let key: String
     let displayTitle: String
-    let systemImage: String
+    let icon: PhosphorIcon
     let recommendations: [WineRecommendation]
 }

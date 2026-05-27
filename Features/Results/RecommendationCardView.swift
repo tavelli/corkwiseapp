@@ -5,14 +5,45 @@ struct RecommendationCardView: View {
     let purchaseMode: PurchaseMode
     let currencyCode: String
     var categoryLabel: String?
-    var categorySystemImage: String?
+    var categoryIcon: PhosphorIcon?
+
+    init(
+        recommendation: WineRecommendation,
+        purchaseMode: PurchaseMode,
+        currencyCode: String,
+        categoryLabel: String? = nil,
+        categoryIcon: PhosphorIcon? = nil
+    ) {
+        self.recommendation = recommendation
+        self.purchaseMode = purchaseMode
+        self.currencyCode = currencyCode
+        self.categoryLabel = categoryLabel
+        self.categoryIcon = categoryIcon
+    }
+
+    static func categoryCard(
+        recommendation: WineRecommendation,
+        purchaseMode: PurchaseMode,
+        currencyCode: String,
+        categoryLabel: String,
+        icon: PhosphorIcon
+    ) -> Self {
+        Self(
+            recommendation: recommendation,
+            purchaseMode: purchaseMode,
+            currencyCode: currencyCode,
+            categoryLabel: categoryLabel,
+            categoryIcon: icon
+        )
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: categoryLabel == nil ? 14 : 16) {
-            if let categoryLabel, let categorySystemImage {
+            if let categoryLabel, let categoryIcon {
                 HStack(spacing: 6) {
-                    Image(systemName: categorySystemImage)
-                        .font(.caption.weight(.bold))
+                    Image(phosphor: categoryIcon)
+                        .resizable()
+                        .scaledToFit()
                         .foregroundStyle(Color.wineAccent)
                         .frame(width: 18, height: 18)
 
@@ -347,7 +378,7 @@ extension WineRecommendation {
         mainScreenBackground
             .ignoresSafeArea()
 
-        RecommendationCardView(
+        RecommendationCardView.categoryCard(
             recommendation: WineScanResult.sample(
                 for: .bottle,
                 preferences: UserWinePreferences(
@@ -360,7 +391,7 @@ extension WineRecommendation {
             purchaseMode: .bottle,
             currencyCode: "USD",
             categoryLabel: String(localized: .resultsCategoryHighlyRecommend),
-            categorySystemImage: "star.fill"
+            icon: .star
         )
         .padding()
     }

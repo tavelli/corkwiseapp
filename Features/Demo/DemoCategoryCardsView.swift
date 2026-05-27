@@ -4,7 +4,7 @@ import SwiftUI
 struct DemoCategoryCardsView: View {
     var body: some View {
         ScrollView {
-            LazyVStack(spacing: 12) {
+            LazyVStack(spacing: 10) {
                 ForEach(DemoCategoryCard.Category.allCases) { category in
                     DemoCategoryCard(category: category)
                 }
@@ -22,22 +22,23 @@ private struct DemoCategoryCard: View {
 
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
-            Image(systemName: category.systemImage)
-                .font(.largeTitle)
-                .symbolRenderingMode(.monochrome)
+            Image(phosphor: category.icon)
+                .resizable()
+                .scaledToFit()
                 .foregroundStyle(Color.wineAccent)
+                .frame(width: 46, height: 46)
                 .frame(width: 64, height: 64)
 
             Text(category.title)
                 .font(.title3)
                 .bold()
                 .multilineTextAlignment(.leading)
-                .foregroundStyle(Color.wineText)
+                .foregroundStyle(Color.wineAccent)
                 .minimumScaleFactor(0.82)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(.horizontal, 20)
-        .padding(.vertical, 12)
+        .padding(.vertical, 10)
         .frame(maxWidth: .infinity, alignment: .center)
         .frame(minHeight: 80)
         .background(Color.resultCardBackground)
@@ -54,7 +55,7 @@ private struct DemoCategoryCard: View {
         case worthTheSplurge
         case crowdPleaser
         case hiddenGem
-        // case trySomethingNew
+         case trySomethingNew
 
         var id: Self { self }
 
@@ -69,24 +70,24 @@ private struct DemoCategoryCard: View {
             case .hiddenGem:
                 return String(localized: .resultsCategoryHiddenGem)
                 
-//            case .trySomethingNew:
-//                return String(localized: .resultsCategoryTrySomethingNew)
-//                
+            case .trySomethingNew:
+                return String(localized: .resultsCategoryTrySomethingNew)
+                
             }
         }
 
-        var systemImage: String {
+        var icon: PhosphorIcon {
             switch self {
             case .bestValue:
-                return "chart.bar.xaxis"
+                return .chartBar
             case .worthTheSplurge:
-                return "rosette"
+                return .medal
             case .crowdPleaser:
-                return "checkmark.shield.fill"
+                return .sealCheck
             case .hiddenGem:
-                return "text.page.badge.magnifyingglass"
-//            case .trySomethingNew:
-//                return "arrow.trianglehead.branch"
+                return .listMagnifyingGlass
+            case .trySomethingNew:
+                return .arrowsSplit
             }
         }
     }

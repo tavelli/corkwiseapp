@@ -94,11 +94,11 @@ struct ResultsFeedbackCardView: View {
                 .foregroundStyle(Color.wineText)
 
             HStack(spacing: 10) {
-                ratingButton("Yes", systemImage: "hand.thumbsup") {
+                ratingButton("Yes", icon: .thumbsUp) {
                     submitPositiveFeedback()
                 }
 
-                ratingButton("Not really", systemImage: "hand.thumbsdown") {
+                ratingButton("Not really", icon: .thumbsDown) {
                     submitInitialNegativeFeedback()
                 }
             }
@@ -144,7 +144,7 @@ struct ResultsFeedbackCardView: View {
 
     private func ratingButton(
         _ title: String,
-        systemImage: String,
+        icon: PhosphorIcon,
         action: @escaping () -> Void
     ) -> some View {
         Button(action: action) {
@@ -154,8 +154,10 @@ struct ResultsFeedbackCardView: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.85)
             } icon: {
-                Image(systemName: systemImage)
-                    .font(.subheadline.weight(.semibold))
+                Image(phosphor: icon)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 16, height: 16)
             }
             .foregroundStyle(Color.wineText)
             .frame(maxWidth: .infinity)
