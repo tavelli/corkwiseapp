@@ -49,6 +49,7 @@ struct ResultsView: View {
             PaywallView(preferences: nil)
                 .presentationDetents([.height(500)])
                 .presentationDragIndicator(.visible)
+                .presentationBackground(Color(red: 0.09, green: 0.02, blue: 0.03))
         }
         .onChange(of: entitlementManager.hasActiveEntitlement) { _, hasActiveEntitlement in
             if hasActiveEntitlement {

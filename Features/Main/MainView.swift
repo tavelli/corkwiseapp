@@ -90,6 +90,7 @@ struct MainView: View {
             PaywallView(preferences: preferences)
                 .presentationDetents([.height(500)])
                 .presentationDragIndicator(.visible)
+                .presentationBackground(Color(red: 0.09, green: 0.02, blue: 0.03))
         }
         .fullScreenCover(isPresented: $isShowingCamera) {
             WineListCameraView { images in
