@@ -1,7 +1,9 @@
+import StoreKit
 import SwiftUI
 
 struct ResultsFeedbackCardView: View {
     @Environment(EntitlementManager.self) private var entitlementManager
+    @Environment(\.requestReview) private var requestReview
 
     let analysisId: String
     let retryAction: () -> Void
@@ -13,6 +15,7 @@ struct ResultsFeedbackCardView: View {
     @State private var isSubmitting = false
     @State private var errorMessage: String?
     @State private var negativeFeedbackId: String?
+    @State private var hasRequestedReview = false
     @FocusState private var isCommentFocused: Bool
 
     private let feedbackService = FeedbackService()
@@ -76,6 +79,11 @@ struct ResultsFeedbackCardView: View {
         .onChange(of: isCommentFocused) { _, isFocused in
             guard isFocused else { return }
             revealAfterKeyboardBeginsPresenting()
+        }
+        .onChange(of: state) { _, newState in
+            guard newState == .positiveThanks, hasRequestedReview == false else { return }
+            hasRequestedReview = true
+            requestReview()
         }
     }
 
@@ -207,38 +215,19 @@ struct ResultsFeedbackCardView: View {
     }
 
     private func submitPositiveFeedback() {
-        isSubmitting = true
         errorMessage = nil
+        onFeedbackSubmitted()
+
+        withAnimation(.easeInOut(duration: 0.18)) {
+            state = .positiveThanks
+        }
 
         Task {
-            do {
-                let response = try await feedbackService.submitFeedback(
-                    analysisId: analysisId,
-                    rating: .useful,
-                    comment: nil
-                )
-
-                await MainActor.run {
-                    onFeedbackSubmitted()
-                    isSubmitting = false
-                    withAnimation(.easeInOut(duration: 0.18)) {
-                        if response.retryGranted {
-                            state = .retryOffer
-                        } else {
-                            state = .positiveThanks
-                        }
-                    }
-                }
-
-                if response.retryGranted {
-                    await entitlementManager.refreshScanAccess()
-                }
-            } catch {
-                await MainActor.run {
-                    isSubmitting = false
-                    errorMessage = "Couldn't send feedback. Please try again."
-                }
-            }
+            _ = try? await feedbackService.submitFeedback(
+                analysisId: analysisId,
+                rating: .useful,
+                comment: nil
+            )
         }
     }
 
@@ -325,7 +314,7 @@ struct ResultsFeedbackCardView: View {
         }
     }
 
-    enum FeedbackState {
+    enum FeedbackState: Equatable {
         case initial
         case comment
         case positiveThanks
