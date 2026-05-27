@@ -36,6 +36,7 @@ Deno.test("buildSystemPrompt renders xml prompt values", () => {
   assertIncludes(prompt, "- Category Preference: reds");
   assertIncludes(prompt, "<notes_rules>");
   assertIncludes(prompt, "Use the notes array only for small extraction caveats");
+  assertIncludes(prompt, "Do not contradict, discount, or undermine any root-level recommendation's selection logic");
 
   if (/\{\{\w+\}\}/.test(prompt)) {
     throw new Error("Expected all prompt placeholders to be rendered.");

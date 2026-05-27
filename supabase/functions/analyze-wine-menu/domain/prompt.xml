@@ -111,5 +111,6 @@ Set summary.headline to exactly one concise, plain-language sentence instructing
 CRITICAL NEGATIVE CONSTRAINTS: 
 1. Do not directly name, reference, or hint at the #1 Top Pick you selected above.
 2. Do not imply that unmentioned wines are inherently poor choices.
+3. Do not contradict, discount, or undermine any root-level recommendation's selection logic; the summary may describe the broader list strategy, but it must remain compatible with every recommended wine.
 </summary_generation>
 </writing_playbook>
