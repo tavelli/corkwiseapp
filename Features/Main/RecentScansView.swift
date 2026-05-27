@@ -8,7 +8,7 @@ struct RecentScansView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
             HStack {
-                Text(scans.isEmpty ? "For best results" : String(localized: .historyRecentTitle))
+                Text(scans.isEmpty ? String(localized: .historyEmptyTipsTitle) : String(localized: .historyRecentTitle))
                     .font(.system(size: 22, weight: .semibold, design: .serif))
                     .foregroundStyle(Color.wineText)
 
@@ -33,25 +33,25 @@ struct RecentScansView: View {
 private struct RecentScansEmptyStateCard: View {
     private let tips = [
         Tip(
-            title: "Capture the full page",
-            message: "Keep producer names, vintages, and prices in frame.",
+            title: .historyTipFullPageTitle,
+            message: .historyTipFullPageMessage,
             systemImage: "viewfinder"
         ),
         Tip(
-            title: "Multiple pages",
-            message: "Capture as many pagese as you're interested in.",
+            title: .historyTipMultiplePagesTitle,
+            message: .historyTipMultiplePagesMessage,
             systemImage: "doc.on.doc"
         ),
         Tip(
-            title: "Avoid glare",
-            message: "Especially important on laminated menus and wine books.",
+            title: .historyTipAvoidGlareTitle,
+            message: .historyTipAvoidGlareMessage,
             systemImage: "sun.max"
         ),
     ]
 
-    var body: some View {
-        VStack(spacing: 0) {
-            ForEach(tips.enumerated(), id: \.element.title) { index, tip in
+        var body: some View {
+            VStack(spacing: 0) {
+            ForEach(Array(tips.enumerated()), id: \.offset) { index, tip in
                 TipRow(tip: tip)
 
                 if index < tips.count - 1 {
@@ -72,8 +72,8 @@ private struct RecentScansEmptyStateCard: View {
     }
 
     private struct Tip {
-        let title: String
-        let message: String
+        let title: LocalizedStringResource
+        let message: LocalizedStringResource
         let systemImage: String
     }
 

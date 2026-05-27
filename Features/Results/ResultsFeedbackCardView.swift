@@ -45,17 +45,17 @@ struct ResultsFeedbackCardView: View {
                 commentContent
             case .positiveThanks:
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("Love to hear that")
+                    Text(.resultsFeedbackPositiveThanksTitle)
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(Color.wineText)
 
-                    Text("Thanks for your feedback.")
+                    Text(.resultsFeedbackPositiveThanksMessage)
                         .font(.subheadline)
                         .foregroundStyle(Color.wineMutedText)
                     
                 }
             case .feedbackThanks:
-                Text("Thanks - feedback helps improve CorkWise.")
+                Text(.resultsFeedbackThanksMessage)
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(Color.wineMutedText)
             case .retryOffer:
@@ -89,16 +89,16 @@ struct ResultsFeedbackCardView: View {
 
     private var initialContent: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Was this guidance useful?")
+            Text(.resultsFeedbackQuestion)
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(Color.wineText)
 
             HStack(spacing: 10) {
-                ratingButton("Yes", icon: .thumbsUp) {
+                ratingButton(.resultsFeedbackYesButton, icon: .thumbsUp) {
                     submitPositiveFeedback()
                 }
 
-                ratingButton("Not really", icon: .thumbsDown) {
+                ratingButton(.resultsFeedbackNoButton, icon: .thumbsDown) {
                     submitInitialNegativeFeedback()
                 }
             }
@@ -107,11 +107,11 @@ struct ResultsFeedbackCardView: View {
 
     private var commentContent: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("What could have been better?")
+            Text(.resultsFeedbackCommentTitle)
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(Color.wineText)
 
-            TextField("Was anything inaccurate, missing, or unclear?", text: $comment, axis: .vertical)
+            TextField(String(localized: .resultsFeedbackCommentPlaceholder), text: $comment, axis: .vertical)
                 .font(.subheadline)
                 .foregroundStyle(Color.wineText)
                 .lineLimit(3...5)
@@ -121,7 +121,7 @@ struct ResultsFeedbackCardView: View {
                 .background(Color.resultCardBackground.opacity(0.8))
                 .clipShape(.rect(cornerRadius: 12))
 
-            prominentFeedbackButton("Send feedback") {
+            prominentFeedbackButton(.resultsFeedbackSendButton) {
                 submitNegativeFeedbackComment()
             }
         }
@@ -130,11 +130,11 @@ struct ResultsFeedbackCardView: View {
     private var retryOfferContent: some View {
         VStack(alignment: .leading, spacing: 18) {
             VStack(alignment: .leading, spacing: 12) {
-                Text("Give Corkwise another try")
+                Text(.resultsFeedbackRetryOfferTitle)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(Color.wineText)
 
-                Text("Sorry this one missed the mark. We’ve added one more complimentary analysis for you to try us again on another list.")
+                Text(.resultsFeedbackRetryOfferMessage)
                     .font(.subheadline)
                     .foregroundStyle(Color.wineMutedText)
                 
@@ -143,7 +143,7 @@ struct ResultsFeedbackCardView: View {
     }
 
     private func ratingButton(
-        _ title: String,
+        _ title: LocalizedStringResource,
         icon: PhosphorIcon,
         action: @escaping () -> Void
     ) -> some View {
@@ -173,7 +173,7 @@ struct ResultsFeedbackCardView: View {
         .disabled(isSubmitting)
     }
 
-    private func quietButton(_ title: String, action: @escaping () -> Void) -> some View {
+    private func quietButton(_ title: LocalizedStringResource, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(title)
                 .font(.subheadline.weight(.semibold))
@@ -191,7 +191,7 @@ struct ResultsFeedbackCardView: View {
         .disabled(isSubmitting)
     }
 
-    private func prominentFeedbackButton(_ title: String, action: @escaping () -> Void) -> some View {
+    private func prominentFeedbackButton(_ title: LocalizedStringResource, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(title)
                 .font(.subheadline.weight(.semibold))
@@ -257,7 +257,7 @@ struct ResultsFeedbackCardView: View {
             } catch {
                 await MainActor.run {
                     isSubmitting = false
-                    errorMessage = "Couldn't send feedback. Please try again."
+                    errorMessage = String(localized: .resultsFeedbackSubmitError)
                 }
             }
         }
@@ -265,7 +265,7 @@ struct ResultsFeedbackCardView: View {
 
     private func submitNegativeFeedbackComment() {
         guard let negativeFeedbackId else {
-            errorMessage = "Couldn't send feedback. Please try again."
+            errorMessage = String(localized: .resultsFeedbackSubmitError)
             return
         }
 
@@ -296,7 +296,7 @@ struct ResultsFeedbackCardView: View {
             } catch {
                 await MainActor.run {
                     isSubmitting = false
-                    errorMessage = "Couldn't send feedback. Please try again."
+                    errorMessage = String(localized: .resultsFeedbackSubmitError)
                 }
             }
         }

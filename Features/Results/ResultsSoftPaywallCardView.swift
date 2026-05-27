@@ -113,14 +113,14 @@ struct ResultsSoftPaywallCardView: View {
             crownDivider
 
             VStack(spacing: 8) {
-                Text("results.softPaywall.title")
+                Text(.resultsSoftPaywallTitle)
                     .font(.system(.title3, design: .serif))
                     .bold()
                     .multilineTextAlignment(.center)
                     .foregroundStyle(theme.titleColor)
                     .fixedSize(horizontal: false, vertical: true)
 
-                Text("results.softPaywall.subtitle")
+                Text(.resultsSoftPaywallSubtitle)
                     .font(.subheadline)
                     .multilineTextAlignment(.center)
                     .foregroundStyle(theme.subtitleColor)
@@ -128,7 +128,7 @@ struct ResultsSoftPaywallCardView: View {
             }
 
             Button(action: premiumAction) {
-                Text("results.softPaywall.premiumButton")
+                Text(.resultsSoftPaywallPremiumButton)
                     .font(.headline)
                     .bold()
                     .foregroundStyle(theme.buttonTextColor)

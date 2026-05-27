@@ -236,19 +236,19 @@ private struct PaywallFooterLinks: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Button("Restore Purchases", action: restoreAction)
+            Button(String(localized: .paywallRestorePurchases), action: restoreAction)
                 .disabled(isPurchaseInProgress)
 
             if let privacyPolicyURL = Self.privacyPolicyURL {
                 footerSeparator
 
-                Link("Privacy", destination: privacyPolicyURL)
+                Link(String(localized: .paywallPrivacy), destination: privacyPolicyURL)
             }
 
             if let termsOfServiceURL = Self.termsOfServiceURL {
                 footerSeparator
 
-                Link("Terms", destination: termsOfServiceURL)
+                Link(String(localized: .paywallTerms), destination: termsOfServiceURL)
             }
         }
         .font(.footnote)

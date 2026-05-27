@@ -16,7 +16,13 @@ struct OnboardingCompletionView: View {
             Spacer(minLength: 20)
 
             VStack(spacing: 14) {
-                Text("Your first\nanalysis is\n\(Text("complimentary.").italic())")
+                (
+                    Text(.onboardingCompletionHeadlinePrefix)
+                    + Text("\n")
+                    + Text(.onboardingCompletionHeadlineMiddle)
+                    + Text("\n")
+                    + Text(.onboardingCompletionHeadlineEmphasis).italic()
+                )
                     .font(.system(size: headlineFontSize, weight: .regular, design: .serif))
                     .lineSpacing(2)
                     .foregroundStyle(Color.wineText)
@@ -24,7 +30,7 @@ struct OnboardingCompletionView: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: .infinity)
 
-                Text("Try Corkwise on a real wine list and see for yourself.")
+                Text(.onboardingCompletionSubtitle)
                     .font(.system(size: subheadlineFontSize, weight: .medium))
                     .foregroundStyle(Color.wineMutedText.opacity(0.94))
                     .multilineTextAlignment(.center)
@@ -37,7 +43,7 @@ struct OnboardingCompletionView: View {
             Spacer(minLength: 20)
 
             Button(action: onContinue) {
-                Text("Analyze a Wine List")
+                Text(.onboardingCompletionCta)
             }
             .buttonStyle(OnboardingPrimaryButtonStyle())
             .padding(.bottom, 16)
