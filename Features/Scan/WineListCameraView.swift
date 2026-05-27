@@ -147,9 +147,9 @@ struct WineListCameraView: View {
                 LinearGradient(
                     stops: [
                         .init(color: .clear, location: 0),
-                        .init(color: Color(red: 0.18, green: 0.10, blue: 0.06).opacity(0.71), location: 0.34),
-                        .init(color: Color(red: 0.10, green: 0.06, blue: 0.04).opacity(0.73), location: 0.72),
-                        .init(color: .black.opacity(0.78), location: 1),
+                        .init(color: .clear, location: 0.28),
+                        .init(color: Color.black.opacity(0.34), location: 0.58),
+                        .init(color: Color.black.opacity(0.78), location: 1),
                     ],
                     startPoint: .top,
                     endPoint: .bottom
@@ -182,8 +182,7 @@ struct WineListCameraView: View {
                     ),
                     style: .continuous
                 )
-                    .fill(Color(red: 0.10, green: 0.06, blue: 0.04).opacity(0.64))
-            }
+                .fill(Color.black.opacity(0.24))            }
             .overlay {
                 UnevenRoundedRectangle(
                     cornerRadii: .init(
@@ -247,10 +246,10 @@ struct WineListCameraView: View {
             .padding(.horizontal, 20)
             .frame(height: 100)
             .frame(maxWidth: cameraModel.capturedPages.isEmpty ? 150 : .infinity)
-            .background {
-                controlTrayBackground
-            }
             .animation(.easeOut(duration: 0.18), value: cameraModel.canAnalyze)
+            .background {
+                            controlTrayBackground
+                        }
         }
         .frame(maxWidth: .infinity)
         .padding(5)
@@ -791,6 +790,14 @@ private final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegat
     )
 }
 
+#Preview("Blank white background", traits: .fixedLayout(width: 393, height: 852)) {
+    WineListCameraView(
+        previewBackgroundImage: WineListCameraPreviewImages.blankWhiteBackground,
+        onAnalyze: { _ in },
+        onUnavailable: {}
+    )
+}
+
 #Preview("One photo captured", traits: .fixedLayout(width: 393, height: 852)) {
     WineListCameraView(
         previewCapturedImages: WineListCameraPreviewImages.twoPages,
@@ -803,6 +810,16 @@ private final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegat
 private enum WineListCameraPreviewImages {
     static var cameraBackground: UIImage? {
         UIImage(contentsOfFile: "/Users/dan/Documents/corkwise-camera-preview.png")
+    }
+
+    static var blankWhiteBackground: UIImage {
+        let size = CGSize(width: 393, height: 852)
+        let renderer = UIGraphicsImageRenderer(size: size)
+
+        return renderer.image { context in
+            UIColor.white.setFill()
+            context.fill(CGRect(origin: .zero, size: size))
+        }
     }
 
     static var twoPages: [UIImage] {
