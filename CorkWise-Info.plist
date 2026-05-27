@@ -14,8 +14,6 @@
 	<string>sb_publishable_TaXSh2b4AFHEc4WD7eIgZw_hYewKx2T</string>
 	<key>CorkWiseSupabaseBaseURL</key>
 	<string>https://kvpsihkqhznapwcwnsgt.supabase.co</string>
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
 	<key>UILaunchScreen</key>
 	<false/>
 </dict>

@@ -53,8 +53,8 @@ struct WineListCameraView: View {
                     .ignoresSafeArea()
             }
 
-            Color.black.opacity(0.18)
-                .ignoresSafeArea()
+//            Color.black.opacity(0.18)
+//                .ignoresSafeArea()
 
             bottomControlFoundation
 
@@ -154,7 +154,7 @@ struct WineListCameraView: View {
                     startPoint: .top,
                     endPoint: .bottom
                 )
-                .frame(height: max(proxy.size.height * 0.42, 320))
+                .frame(height: max(proxy.size.height * 0.42, 220))
             }
             .ignoresSafeArea()
         }

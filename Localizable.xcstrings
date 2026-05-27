@@ -1379,19 +1379,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Take Photo of Wine List"
+            "value" : "Capture Wine List"
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Take Photo of Wine List"
+            "value" : "Capture Wine List"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Take Photo of Wine List"
+            "value" : "Capture Wine List"
           }
         }
       }
