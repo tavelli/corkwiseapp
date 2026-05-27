@@ -415,9 +415,11 @@ struct MainView: View {
             Spacer()
 
             Button(action: appState.showPreferences) {
-                Image(systemName: "person.crop.circle")
-                    .font(.system(size: 26, weight: .regular))
+                Image(phosphor: .userCircleFill)
+                    .resizable()
+                    .scaledToFit()
                     .foregroundStyle(Color.wineText.opacity(0.78))
+                    .frame(width: 28, height: 28)
                     .frame(width: 42, height: 42)
             }
             .buttonStyle(.plain)
@@ -456,8 +458,9 @@ struct MainView: View {
                 title: \.title
             ) { purchaseMode in
                 if purchaseMode == .glass {
-                    Image(systemName: "wineglass")
-                        .font(.system(size: 15, weight: .semibold))
+                    Image(phosphor: .wineFill)
+                        .resizable()
+                        .scaledToFit()
                         .frame(width: 17, height: 20)
                 } else {
                     Image("WineBottle")
@@ -569,7 +572,7 @@ struct MainView: View {
                 optionButton(
                     title: .mainImportGalleryTitle,
                     subtitle: .mainImportPdfOrPhotoSubtitle,
-                    systemImage: "photo.on.rectangle"
+                    icon: .images
                 ) {
                     openPhotoPicker()
                 }
@@ -577,7 +580,7 @@ struct MainView: View {
                 optionButton(
                     title: .mainImportPdfTitle,
                     subtitle: .mainImportPdfOrPhotoSubtitle,
-                    systemImage: "text.document"
+                    icon: .fileText
                 ) {
                     openFileImporter()
                 }
@@ -585,14 +588,14 @@ struct MainView: View {
 //                optionButton(
 //                    title: "QR",
 //                    subtitle: .mainImportMenuLinkSubtitle,
-//                    systemImage: "qrcode"
+//                    icon: .qrCode
 //                ) {
 //                    isShowingURLImporter = true
 //                }
 //                optionButton(
 //                    title: .mainImportLinkTitle,
 //                    subtitle: .mainImportMenuLinkSubtitle,
-//                    systemImage: "link"
+//                    icon: .link
 //                ) {
 //                    openURLImporter()
 //                }
@@ -603,18 +606,19 @@ struct MainView: View {
     private func optionButton(
         title: LocalizedStringResource,
         subtitle: LocalizedStringResource,
-        systemImage: String,
+        icon: PhosphorIcon,
         action: @escaping () -> Void
     ) -> some View {
         Button(action: action) {
             VStack(spacing: 8) {
-                Image(systemName: systemImage)
-                    .font(.title3.weight(.regular))
+                Image(phosphor: icon)
+                    .resizable()
+                    .scaledToFit()
                     .foregroundStyle(Color.wineAccent)
                     .frame(width: 22, height: 22)
 
                 Text(title)
-                    .font(.subheadline.weight(.semibold))
+                    .font(.subheadline.weight(.medium))
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
                     .foregroundStyle(Color.wineAccent)
@@ -1001,4 +1005,3 @@ var mainScreenBackground: some View {
 }
 
 #endif
-
