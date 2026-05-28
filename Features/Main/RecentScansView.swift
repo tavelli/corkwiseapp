@@ -9,7 +9,7 @@ struct RecentScansView: View {
         VStack(alignment: .leading, spacing: 18) {
             HStack {
                 Text(scans.isEmpty ? String(localized: .historyEmptyTipsTitle) : String(localized: .historyRecentTitle))
-                    .font(.system(size: 22, weight: .semibold, design: .serif))
+                    .font(.system(size: 22, weight: .medium))
                     .foregroundStyle(Color.wineText)
 
                 Spacer()
