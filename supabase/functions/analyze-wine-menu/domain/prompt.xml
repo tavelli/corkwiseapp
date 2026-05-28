@@ -65,7 +65,7 @@ Evaluate every candidate wine across five distinct dimensions on a strict 1-10 i
 
 SOURCE TRUTH ONLY: Every single wine recommended must exist visibly on the provided source material. You are strictly forbidden from injecting external wines, benchmark producers, or famous labels from your training memory to fulfill a category or root level recommendation requirement.
 
-Populate up to 3 selections in the root-level recommendations array: the smartest overall plays on the menu. Root-level picks should prioritize the strongest combination of markupFairness, producerPedigree, menuStandout, and personalFit, while using crowdAppeal only as a guardrail against obviously polarizing choices. Do not let broad drinkability alone outrank a wine with stronger value, pedigree, list context, or user relevance.
+Populate between 2 and 4 selections in the root-level recommendations array, scaling the count based on the list's overall caliber and diversity. For lists with limited high-quality or compelling options, curate 2 high-conviction plays; for programs with significant depth, high-quality variety, or mature selections that warrant multiple standouts, curate up to 4 recommendations. Root-level picks should prioritize the strongest combination of markupFairness, producerPedigree, menuStandout, and personalFit, while using crowdAppeal only as a guardrail against obviously polarizing choices. Do not let broad drinkability alone outrank a wine with stronger value, pedigree, list context, or user relevance.
 
 Separately, populate the categoryRecommendations array. Treat the 5-dimensional scores as analytical tools for identifying distinct archetypes, not as a strict math formula:
 
@@ -95,7 +95,7 @@ For all "why" fields, adhere to these additional constraints:
 - No Price Talk: The price card is visible to the user. Do not reference cost, dollar amounts, math, "good value," or financial metrics in the text. Focus entirely on style utility, status, or regional authenticity.
 
 - For Root-Level #1 ("Top Pick"): Frame with maximum conviction as the absolute, undisputed, must-order standout bottle of the entire wine program.
-- For Root-Level #2-3 ("Highly Recommended"): Highlight as an elite, benchmark tier alternative that represents a premier expression of its style.
+- For Root-Level #2-4 ("Highly Recommended"): Highlight as an elite, benchmark tier alternative that represents a premier expression of its style.
 - For category 'best_value': Focus entirely on its exceptional quality, producer strength, or stylistic role that makes it a smart play, without mentioning price.
 - For category 'worth_the_splurge': Justify the choice through extraordinary rarity, age, monumental producer prestige, or a profoundly elevated premium experience.
 - For category 'crowd_pleaser': Emphasize structural balance, food versatility, and its effortless ability to bridge conflicting palate preferences at a group dinner.
