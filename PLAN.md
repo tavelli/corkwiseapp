@@ -1,6 +1,3 @@
-## Backlog: Knolwedge cutoff bugs
-
-model has knowledge cutoff of jan 2025, got a note mentoinnig a date "in the future" of dec 2025 should fix it
 
 
 - how to handle multiple size pours

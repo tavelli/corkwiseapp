@@ -72,6 +72,7 @@ private struct CustomPaywallContent: View {
             VStack(spacing: 12) {
                 Text(paywall.remoteConfig.eyebrowText)
                     .font(.caption.bold())
+                    .textCase(.uppercase)
                     .tracking(2.4)
                     .foregroundStyle(Color(red: 0.86, green: 0.68, blue: 0.38))
 
