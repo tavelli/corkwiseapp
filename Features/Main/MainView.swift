@@ -509,7 +509,7 @@ struct MainView: View {
                         .overlay {
                             Capsule()
                                 .stroke(
-                                    isSelected ? Color.wineSelectionFill : Color.wineBorder.opacity(0.9),
+                                    isSelected ? Color.wineSelectionBorder : Color.wineBorder.opacity(0.9),
                                     lineWidth: 1
                                 )
                         }
@@ -670,7 +670,7 @@ struct MainView: View {
                     .overlay {
                         Capsule()
                             .stroke(
-                                isSelected ? Color.wineSelectionFill : Color.wineBorder.opacity(0.9),
+                                isSelected ? Color.wineSelectionBorder : Color.wineBorder.opacity(0.9),
                                 lineWidth: 1
                             )
                     }
@@ -934,11 +934,13 @@ private struct MainPreviewData {
         return MainPreviewData(container: container, preferences: preferences)
     }
 
+    #if DEBUG
     static func loadedPaywallEntitlementManager() -> EntitlementManager {
         let entitlementManager = EntitlementManager()
         entitlementManager.paywall = .previewLoaded
         return entitlementManager
     }
+    #endif
 }
 
 #Preview {
