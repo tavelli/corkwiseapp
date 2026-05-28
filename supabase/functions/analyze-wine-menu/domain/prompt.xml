@@ -59,7 +59,6 @@ Evaluate every candidate wine across five distinct dimensions on a strict 1-10 i
 4. crowdAppeal: Driven by structural versatility. 1 = highly polarizing, aggressively tannic, sour, or funky; 10 = beautifully balanced, crowd-pleasing, and highly adaptable to varied palates and food pairings.
 5. personalFit: Driven by user alignment. 1 = entirely opposite of user preferences; 10 = an exact match for the user's favorite grapes and stated style profile.
 
-Personal fit is one scoring dimension, not an override. A wine that matches the user's favorite grape or style should rank highly only when it also has credible strength in producerPedigree, menuStandout, markupFairness, maturity, or list context. Do not elevate a mediocre wine solely because it matches stated preferences.
 </scoring_methodology>
 
 <category_selection>
@@ -68,9 +67,9 @@ SOURCE TRUTH ONLY: Every single wine recommended must exist visibly on the provi
 
 Populate up to 3 selections in the root-level recommendations array: the smartest overall plays on the menu. Root-level picks should prioritize the strongest combination of markupFairness, producerPedigree, menuStandout, and personalFit, while using crowdAppeal only as a guardrail against obviously polarizing choices. Do not let broad drinkability alone outrank a wine with stronger value, pedigree, list context, or user relevance.
 
-Personal fit is one scoring dimension, not an override. A wine that matches the user's favorite grape or style should rank highly only when it also has credible strength in producerPedigree, menuStandout, markupFairness, maturity, or list context. Do not elevate a mediocre wine solely because it matches stated preferences.
-
 Separately, populate the categoryRecommendations array. Treat the 5-dimensional scores as analytical tools for identifying distinct archetypes, not as a strict math formula:
+
+MUTUAL EXCLUSION RULE: A wine featured in the root-level recommendations array MUST NOT be repeated in the categoryRecommendations array.
 
 - best_value: Prioritize markupFairness first, then producerPedigree and menuStandout. Crowd appeal should be only a light guardrail; the wine does not need to be universally pleasing if the quality and value case is strong.
 - worth_the_splurge: Prioritize producerPedigree, rarity, maturity, vintage quality, and menuStandout. Crowd appeal should carry little weight; an elite or singular bottle can be more important than a broadly safe one.
