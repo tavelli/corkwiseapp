@@ -297,6 +297,7 @@ Deno.serve(async (req) => {
       provider: providerResult.provider,
       modelVersion: providerResult.model,
       success: true,
+      aiModelDurationMilliseconds: providerResult.apiDurationMilliseconds,
       estimatedCostUsd: providerResult.totalCostUsd,
       inputTokens: providerResult.usage?.promptTokenCount,
       outputTokens: providerResult.usage?.candidatesTokenCount,

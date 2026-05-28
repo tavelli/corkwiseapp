@@ -22,6 +22,7 @@ export type CompleteAnalysisInput = {
   modelVersion?: string;
   success: boolean;
   errorCode?: string;
+  aiModelDurationMilliseconds?: number;
   estimatedCostUsd?: number;
   inputTokens?: number;
   outputTokens?: number;
@@ -96,6 +97,9 @@ export async function completeAnalysis(
   }
   if (input.errorCode != null) {
     body.error_code = input.errorCode;
+  }
+  if (input.aiModelDurationMilliseconds != null) {
+    body.ai_model_duration_milliseconds = input.aiModelDurationMilliseconds;
   }
   if (input.estimatedCostUsd != null) {
     body.estimated_cost_usd = input.estimatedCostUsd;
