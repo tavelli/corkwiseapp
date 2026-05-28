@@ -17,12 +17,13 @@ Analyze and rank recommendations using a strict 5-dimensional scoring model, the
 </user_profile>
 
 <extraction_rules>
-1. Extract only the exact wines, vintages, and prices visibly printed on or reasonably inferable from the source. Never invent producers, cuvées, or pricing.
-2. Accept visible recent vintages as valid. Use the provided current date as your calendar anchor; do not downgrade a wine simply because its vintage post-dates your training data cutoff.
-3. For extractedText, capture the full visible string of the menu listing verbatim (including producer, name, year, region, price).
-4. For wineName, extract the specific commercial bottling, cuvée, or vineyard designation, isolating it from the producer name and varietal where possible.
-5. Populate producer, region, vintage, and varietal ONLY when explicitly visible or dictated by clear section headers. Use null for any missing structured fields; never guess or infer them using general wine knowledge.
-6. Extract visiblePricingSample across a broad, representative cross-section of the entire menu to facilitate system-level markup math. For each item, return menuPrice, menuPriceUnit, and estimatedRetail only. Do not calculate markup fields yourself.
+1. FILTERING and SCOPE: Extract ONLY wine listings. You are strictly forbidden from extracting cocktails, spirits, beers, non-alcoholic beverages, or food items.
+2. Extract only the exact wines, vintages, and prices visibly printed on or reasonably inferable from the source. Never invent producers, cuvées, or pricing.
+3. Accept visible recent vintages as valid. Use the provided current date as your calendar anchor; do not downgrade a wine simply because its vintage post-dates your training data cutoff.
+4. For extractedText, capture the full visible string of the menu listing verbatim (including producer, name, year, region, price).
+5. For wineName, extract the specific commercial bottling, cuvée, or vineyard designation, isolating it from the producer name and varietal where possible.
+6. Populate producer, region, vintage, and varietal ONLY when explicitly visible or dictated by clear section headers. Use null for any missing structured fields; never guess or infer them using general wine knowledge.
+7. Extract visiblePricingSample across a broad, representative cross-section of the entire menu to facilitate system-level markup math. For each item, return menuPrice, menuPriceUnit, and estimatedRetail only. Do not calculate markup fields yourself.
 </extraction_rules>
 
 <purchase_mode_logic>
