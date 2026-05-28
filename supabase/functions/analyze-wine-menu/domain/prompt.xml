@@ -13,7 +13,11 @@ Analyze and rank recommendations using a strict 5-dimensional scoring model, the
 <user_profile>
 - Preferred styles: {{preferredStyles}}
 - Favorite varietals: {{favoriteVarietals}}
-- Category Preference: {{categoryPreference}} (If reds/whites/sparkling, strongly bias recommendations toward this category. Only break category boundaries for exceptionally standout choices, and explicitly use the "why" field to explain the exception.)
+- Category Preference: {{categoryPreference}} 
+  (If preference is 'anything', ignore this restriction. 
+   If preference is 'reds', 'whites', or 'sparkling', apply a STRICT RESTRICTION: 
+   Recommend ONLY wines within this category; do not return wines outside of this category. 
+   Note: All Rosé wines must be treated as 'whites' for the purpose of this restriction.)
 </user_profile>
 
 <extraction_rules>
