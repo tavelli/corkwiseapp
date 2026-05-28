@@ -7,6 +7,31 @@ struct ScanFailureState: Identifiable, Hashable {
     let id = UUID()
     let title: String
     let message: String
+    let recoveryAction: ScanFailureRecoveryAction
+
+    init(
+        title: String,
+        message: String,
+        recoveryAction: ScanFailureRecoveryAction = .dismiss
+    ) {
+        self.title = title
+        self.message = message
+        self.recoveryAction = recoveryAction
+    }
+
+    var buttonTitle: String {
+        switch recoveryAction {
+        case .retrySameScan:
+            String(localized: "scanFailure.action.retry")
+        case .dismiss:
+            String(localized: "scanFailure.action.tryNewList")
+        }
+    }
+}
+
+enum ScanFailureRecoveryAction: Hashable {
+    case retrySameScan
+    case dismiss
 }
 
 @MainActor
@@ -22,7 +47,7 @@ final class MainViewModel {
     var loadingMessage = String(localized: .mainViewModelLoadingReadingWineList)
     var failure: ScanFailureState?
     var selectedPreviewImage: UIImage?
-    var canRetryLastScan: Bool {
+    private var canRetryLastScan: Bool {
         pendingAttachments?.isEmpty == false
     }
 
@@ -292,27 +317,32 @@ final class MainViewModel {
             case .backendNotConfigured:
                 return ScanFailureState(
                     title: String(localized: .mainViewModelFailureBackendNotConfiguredTitle),
-                    message: String(localized: .mainViewModelFailureBackendNotConfiguredMessage)
+                    message: String(localized: .mainViewModelFailureBackendNotConfiguredMessage),
+                    recoveryAction: .dismiss
                 )
             case .authorizationFailed:
                 return ScanFailureState(
                     title: String(localized: .mainViewModelFailureAuthorizationTitle),
-                    message: String(localized: .mainViewModelFailureAuthorizationMessage)
+                    message: String(localized: .mainViewModelFailureAuthorizationMessage),
+                    recoveryAction: .dismiss
                 )
             case .entitlementRequired(let response):
                 return ScanFailureState(
                     title: String(localized: .mainViewModelFailureSubscriptionRequiredTitle),
-                    message: response.message
+                    message: response.message,
+                    recoveryAction: .dismiss
                 )
             case .invalidInput:
                 return ScanFailureState(
                     title: String(localized: .mainViewModelFailureInvalidInputTitle),
-                    message: String(localized: .mainViewModelFailureInvalidInputMessage)
+                    message: String(localized: .mainViewModelFailureInvalidInputMessage),
+                    recoveryAction: .dismiss
                 )
             case .serverError(let response):
                 return ScanFailureState(
                     title: title(for: response.error),
-                    message: response.message
+                    message: response.message,
+                    recoveryAction: response.retrySuggested && canRetryLastScan ? .retrySameScan : .dismiss
                 )
             case .invalidResponse(let responseBody):
                 let details = responseBody?.isEmpty == false
@@ -320,19 +350,22 @@ final class MainViewModel {
                     : String(localized: .mainViewModelFailureInvalidResponseFallbackMessage)
                 return ScanFailureState(
                     title: String(localized: .mainViewModelFailureInvalidResponseTitle),
-                    message: details
+                    message: details,
+                    recoveryAction: canRetryLastScan ? .retrySameScan : .dismiss
                 )
             case .requestFailed:
                 return ScanFailureState(
                     title: String(localized: .mainViewModelFailureRequestFailedTitle),
-                    message: String(localized: .mainViewModelFailureRequestFailedMessage)
+                    message: String(localized: .mainViewModelFailureRequestFailedMessage),
+                    recoveryAction: canRetryLastScan ? .retrySameScan : .dismiss
                 )
             }
         }
 
         return ScanFailureState(
             title: String(localized: .mainViewModelFailureUnreadableTitle),
-            message: String(localized: .mainViewModelFailureUnreadableMessage)
+            message: String(localized: .mainViewModelFailureUnreadableMessage),
+            recoveryAction: .dismiss
         )
     }
 

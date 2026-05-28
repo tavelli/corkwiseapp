@@ -1793,19 +1793,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Check your connection and try the analysis again."
+            "value" : "Check your connection and try again."
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Check your connection and try the analysis again."
+            "value" : "Check your connection and try again."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Check your connection and try the analysis again."
+            "value" : "Check your connection and try again."
           }
         }
       }
@@ -1816,19 +1816,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Network request failed."
+            "value" : "Analysis didn’t finish"
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Network request failed."
+            "value" : "Analysis didn’t finish"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Network request failed."
+            "value" : "Analysis didn’t finish"
           }
         }
       }
@@ -4111,6 +4111,52 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Keep Corkwise at the table"
+          }
+        }
+      }
+    },
+    "scanFailure.action.retry" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retry"
+          }
+        },
+        "en-AU" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retry"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retry"
+          }
+        }
+      }
+    },
+    "scanFailure.action.tryNewList" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try a new list"
+          }
+        },
+        "en-AU" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try a new list"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try a new list"
           }
         }
       }

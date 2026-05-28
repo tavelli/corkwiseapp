@@ -75,16 +75,18 @@ struct MainView: View {
             ScanFailureView(
                 title: failure.title,
                 message: failure.message,
-                canRetry: viewModel.canRetryLastScan,
-                retryAction: {
-                    retryLastScan()
-                },
-                uploadAction: {
-                    viewModel.clearFailure()
-                    openPhotoPicker()
+                buttonTitle: failure.buttonTitle,
+                buttonAction: {
+                    switch failure.recoveryAction {
+                    case .retrySameScan:
+                        retryLastScan()
+                    case .dismiss:
+                        viewModel.clearFailure()
+                    }
                 }
             )
-            .presentationDetents([.medium])
+            .presentationDetents([.height(230)])
+            .presentationBackground(.ultraThinMaterial)
         }
         .sheet(isPresented: $isShowingPaywall) {
             PaywallView(preferences: preferences)
@@ -882,127 +884,157 @@ var mainScreenBackground: some View {
     )
 }
 
+private struct MainPreviewData {
+    let container: ModelContainer
+    let preferences: UserWinePreferences
+
+    static func make(includesRecentScans: Bool = false) -> MainPreviewData {
+        let configuration = ModelConfiguration(isStoredInMemoryOnly: true)
+        let container = try! ModelContainer(for: UserWinePreferences.self, WineScan.self, configurations: configuration)
+        let context = ModelContext(container)
+        let preferences = UserWinePreferences(
+            preferredStyles: [WineStylePreference.crispRefreshing.rawValue],
+            favoriteVarietals: [
+                WineVarietal.prosecco.rawValue,
+                WineVarietal.chardonnay.rawValue,
+            ],
+            choiceStyle: ChoiceStyle.bestValue.rawValue,
+            usualPurchasePreference: UsualPurchasePreference.glass.rawValue,
+            hasCompletedOnboarding: true
+        )
+        context.insert(preferences)
+
+        if includesRecentScans {
+            let sampleResult = WineScanResult.sample(for: .glass, preferences: preferences)
+            let sampleData = try! JSONEncoder().encode(sampleResult)
+            let sampleJSON = String(data: sampleData, encoding: .utf8)!
+
+            context.insert(
+                WineScan(
+                    createdAt: .now.addingTimeInterval(-4_800),
+                    restaurantName: "Max's",
+                    purchaseMode: PurchaseMode.glass.rawValue,
+                    summaryHeadline: sampleResult.summary.headline,
+                    resultJSON: sampleJSON
+                )
+            )
+
+            context.insert(
+                WineScan(
+                    createdAt: .now.addingTimeInterval(-9_600),
+                    restaurantName: "Wine List",
+                    purchaseMode: PurchaseMode.glass.rawValue,
+                    summaryHeadline: sampleResult.summary.headline,
+                    resultJSON: sampleJSON
+                )
+            )
+        }
+
+        try! context.save()
+        return MainPreviewData(container: container, preferences: preferences)
+    }
+
+    static func loadedPaywallEntitlementManager() -> EntitlementManager {
+        let entitlementManager = EntitlementManager()
+        entitlementManager.paywall = .previewLoaded
+        return entitlementManager
+    }
+}
 
 #Preview {
-    let configuration = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: UserWinePreferences.self, WineScan.self, configurations: configuration)
-    let context = ModelContext(container)
-    let preferences = UserWinePreferences(
-        preferredStyles: [WineStylePreference.crispRefreshing.rawValue],
-        favoriteVarietals: [
-            WineVarietal.prosecco.rawValue,
-            WineVarietal.chardonnay.rawValue,
-        ],
-        choiceStyle: ChoiceStyle.bestValue.rawValue,
-        usualPurchasePreference: UsualPurchasePreference.glass.rawValue,
-        hasCompletedOnboarding: true
-    )
-    context.insert(
-        preferences
-    )
-    let sampleResult = WineScanResult.sample(for: .glass, preferences: preferences)
-    let sampleData = try! JSONEncoder().encode(sampleResult)
-    let sampleJSON = String(data: sampleData, encoding: .utf8)!
+    let preview = MainPreviewData.make(includesRecentScans: true)
 
-    context.insert(
-        WineScan(
-            createdAt: .now.addingTimeInterval(-4_800),
-            restaurantName: "Max's",
-            purchaseMode: PurchaseMode.glass.rawValue,
-            summaryHeadline: sampleResult.summary.headline,
-            resultJSON: sampleJSON
-        )
-    )
-
-    context.insert(
-        WineScan(
-            createdAt: .now.addingTimeInterval(-9_600),
-            restaurantName: "Wine List",
-            purchaseMode: PurchaseMode.glass.rawValue,
-            summaryHeadline: sampleResult.summary.headline,
-            resultJSON: sampleJSON
-        )
-    )
-    try! context.save()
-
-    return MainView(preferences: preferences)
+    MainView(preferences: preview.preferences)
         .environment(AppState())
         .environment(EntitlementManager())
-        .modelContainer(container)
+        .modelContainer(preview.container)
 }
 
 #Preview("Empty Recent Scans") {
-    let configuration = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: UserWinePreferences.self, WineScan.self, configurations: configuration)
-    let context = ModelContext(container)
-    let preferences = UserWinePreferences(
-        preferredStyles: [WineStylePreference.crispRefreshing.rawValue],
-        favoriteVarietals: [
-            WineVarietal.prosecco.rawValue,
-            WineVarietal.chardonnay.rawValue,
-        ],
-        choiceStyle: ChoiceStyle.bestValue.rawValue,
-        usualPurchasePreference: UsualPurchasePreference.glass.rawValue,
-        hasCompletedOnboarding: true
-    )
-    context.insert(preferences)
-    try! context.save()
+    let preview = MainPreviewData.make()
 
-    return MainView(preferences: preferences)
+    MainView(preferences: preview.preferences)
         .environment(AppState())
         .environment(EntitlementManager())
-        .modelContainer(container)
+        .modelContainer(preview.container)
 }
 
 #Preview("Paywall Sheet") {
-    let configuration = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: UserWinePreferences.self, WineScan.self, configurations: configuration)
-    let context = ModelContext(container)
-    let preferences = UserWinePreferences(
-        preferredStyles: [WineStylePreference.crispRefreshing.rawValue],
-        favoriteVarietals: [
-            WineVarietal.prosecco.rawValue,
-            WineVarietal.chardonnay.rawValue,
-        ],
-        choiceStyle: ChoiceStyle.bestValue.rawValue,
-        usualPurchasePreference: UsualPurchasePreference.glass.rawValue,
-        hasCompletedOnboarding: true
-    )
-    context.insert(preferences)
-    try! context.save()
+    let preview = MainPreviewData.make()
 
-    return MainView(preferences: preferences, showsPaywallOnAppear: true)
+    MainView(preferences: preview.preferences, showsPaywallOnAppear: true)
         .environment(AppState())
         .environment(EntitlementManager())
-        .modelContainer(container)
+        .modelContainer(preview.container)
+}
+
+#Preview("Scan Failed") {
+    let preview = MainPreviewData.make()
+
+    MainView(preferences: preview.preferences)
+        .sheet(isPresented: .constant(true)) {
+            ScanFailureView(
+                title: String(localized: .mainViewModelFailureRequestFailedTitle),
+                message: String(localized: .mainViewModelFailureRequestFailedMessage),
+                buttonTitle: String(localized: "scanFailure.action.retry"),
+                buttonAction: {}
+            )
+            .presentationDetents([.height(230)])
+            .presentationBackground(.ultraThinMaterial)
+        }
+        .environment(AppState())
+        .environment(EntitlementManager())
+        .modelContainer(preview.container)
+}
+
+#Preview("Menu undreadable") {
+    let preview = MainPreviewData.make()
+
+    MainView(preferences: preview.preferences)
+        .sheet(isPresented: .constant(true)) {
+            ScanFailureView(
+                title: String(localized: .mainViewModelFailureUnreadableTitle),
+                message: String(localized: .mainViewModelFailureUnreadableMessage),
+                buttonTitle: String(localized: "scanFailure.action.tryNewList"),
+                buttonAction: {}
+            )
+            .presentationDetents([.height(230)])
+            .presentationBackground(.ultraThinMaterial)
+        }
+        .environment(AppState())
+        .environment(EntitlementManager())
+        .modelContainer(preview.container)
+}
+
+#Preview("No Wines Detected") {
+    let preview = MainPreviewData.make()
+
+    MainView(preferences: preview.preferences)
+        .sheet(isPresented: .constant(true)) {
+            ScanFailureView(
+                title: String(localized: .mainViewModelFailureNoWinesDetectedTitle),
+                message: "We couldn’t identify enough wine listings to generate recommendations.",
+                buttonTitle: String(localized: "scanFailure.action.tryNewList"),
+                buttonAction: {}
+            )
+            .presentationDetents([.height(230)])
+            .presentationBackground(.ultraThinMaterial)
+        }
+        .environment(AppState())
+        .environment(EntitlementManager())
+        .modelContainer(preview.container)
 }
 
 #if DEBUG
 
 #Preview("Paywall Sheet - Loaded") {
-    let configuration = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: UserWinePreferences.self, WineScan.self, configurations: configuration)
-    let context = ModelContext(container)
-    let preferences = UserWinePreferences(
-        preferredStyles: [WineStylePreference.crispRefreshing.rawValue],
-        favoriteVarietals: [
-            WineVarietal.prosecco.rawValue,
-            WineVarietal.chardonnay.rawValue,
-        ],
-        choiceStyle: ChoiceStyle.bestValue.rawValue,
-        usualPurchasePreference: UsualPurchasePreference.glass.rawValue,
-        hasCompletedOnboarding: true
-    )
-    context.insert(preferences)
-    try! context.save()
+    let preview = MainPreviewData.make()
+    let entitlementManager = MainPreviewData.loadedPaywallEntitlementManager()
 
-    let entitlementManager = EntitlementManager()
-    entitlementManager.paywall = .previewLoaded
-
-    return MainView(preferences: preferences, showsPaywallOnAppear: true)
+    MainView(preferences: preview.preferences, showsPaywallOnAppear: true)
         .environment(AppState())
         .environment(entitlementManager)
-        .modelContainer(container)
+        .modelContainer(preview.container)
 }
 
 #endif

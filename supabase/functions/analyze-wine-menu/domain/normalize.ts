@@ -17,8 +17,8 @@ export function normalizeScanResult(
     throw new RequestError(
       422,
       "no_wines_detected",
-      "We couldn’t identify enough wine listings to generate recommendations.",
-      true,
+      "We couldn't identify enough wine listings to generate recommendations.",
+      false,
     );
   }
 
@@ -60,8 +60,8 @@ export function normalizeScanResult(
     throw new RequestError(
       422,
       "no_wines_detected",
-      "We couldn’t identify enough wine listings to generate recommendations.",
-      true,
+      "We couldn't identify enough wine listings to generate recommendations.",
+      false,
     );
   }
 
@@ -471,6 +471,6 @@ function arrayOrEmpty(value: unknown): unknown[] {
 
 function objectOrEmpty(value: unknown): Record<string, unknown> {
   return value != null && typeof value === "object"
-    ? value as Record<string, unknown>
+    ? (value as Record<string, unknown>)
     : {};
 }
