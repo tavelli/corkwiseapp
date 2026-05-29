@@ -16,7 +16,7 @@ struct RecentScansView: View {
 
                 if scans.isEmpty == false {
                     Button(String(localized: .historySeeAll), action: showAllScans)
-                        .font(.subheadline.weight(.semibold))
+                        .font(.subheadline.weight(.medium))
                         .foregroundStyle(Color.wineAccent)
                 }
             }
