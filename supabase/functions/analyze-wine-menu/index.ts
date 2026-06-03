@@ -8,7 +8,7 @@ import {
   createAnalysisAttempt,
 } from "./domain/analysis-log.ts";
 import { authenticatedUser } from "./domain/auth.ts";
-import { checkEntitlement, type EntitlementState } from "./domain/adapty.ts";
+import { checkEntitlement } from "./domain/adapty.ts";
 import { PROMPT_VERSION } from "./domain/prompt.ts";
 import { MAX_REQUEST_BYTES, validateAnalyzeRequest } from "./domain/request.ts";
 import {
@@ -29,8 +29,6 @@ import {
 } from "./domain/types.ts";
 
 const FREE_SCAN_LIMIT = Number(Deno.env.get("FREE_SCAN_LIMIT") ?? "0");
-const ALLOW_DEBUG_ENTITLEMENT_BYPASS =
-  Deno.env.get("ALLOW_DEBUG_ENTITLEMENT_BYPASS") === "true";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -108,7 +106,7 @@ Deno.serve(async (req) => {
     }
 
     const requestBody = validateAnalyzeRequest(parsedBody);
-    const entitlement = await entitlementForRequest(requestBody);
+    const entitlement = await checkEntitlement(requestBody.appUserId);
     await upsertAppInstallation(
       requestBody.appUserId,
       authUser.id,
@@ -362,26 +360,6 @@ Deno.serve(async (req) => {
     );
   }
 });
-
-async function entitlementForRequest(
-  requestBody: AnalyzeWineMenuRequest,
-): Promise<EntitlementState> {
-  if (
-    ALLOW_DEBUG_ENTITLEMENT_BYPASS &&
-    requestBody.buildConfiguration === "debug"
-  ) {
-    console.log("debug entitlement bypass enabled", {
-      appUserId: requestBody.appUserId,
-    });
-
-    return {
-      isPaid: true,
-      appleOriginalTransactionId: null,
-    };
-  }
-
-  return await checkEntitlement(requestBody.appUserId);
-}
 
 function attachmentCountForRequest(
   requestBody: AnalyzeWineMenuRequest,
