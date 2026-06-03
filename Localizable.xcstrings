@@ -1931,19 +1931,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comparing producer quality…"
+            "value" : "Comparing value, quality & fit"
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comparing producer quality…"
+            "value" : "Comparing value, quality & fit"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comparing producer quality…"
+            "value" : "Comparing value, quality & fit"
           }
         }
       }
@@ -1954,19 +1954,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estimating value…"
+            "value" : "Identifying wines"
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estimating value…"
+            "value" : "Identifying wines"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estimating value…"
+            "value" : "Identifying wines"
           }
         }
       }
@@ -1977,19 +1977,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ranking the best picks…"
+            "value" : "Curating recommendations"
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ranking the best picks…"
+            "value" : "Curating recommendations"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ranking the best picks…"
+            "value" : "Curating recommendations"
           }
         }
       }
@@ -2000,19 +2000,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reading the wine list…"
+            "value" : "Preparing your list"
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reading the wine list…"
+            "value" : "Preparing your list"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reading the wine list…"
+            "value" : "Preparing your list"
           }
         }
       }
@@ -4328,19 +4328,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Evaluating quality & value"
+            "value" : "Comparing value, quality & fit"
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Evaluating quality & value"
+            "value" : "Comparing value, quality & fit"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Evaluating quality & value"
+            "value" : "Comparing value, quality & fit"
           }
         }
       }
@@ -4351,19 +4351,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reading wine list"
+            "value" : "Identifying wines"
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reading wine list"
+            "value" : "Identifying wines"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reading wine list"
+            "value" : "Identifying wines"
           }
         }
       }
@@ -4374,19 +4374,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scanning menu"
+            "value" : "Preparing your list"
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scanning menu"
+            "value" : "Preparing your list"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scanning menu"
+            "value" : "Preparing your list"
           }
         }
       }
