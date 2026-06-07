@@ -14,6 +14,9 @@ final class AnalyticsService {
     private enum Event: String {
         case appOpened = "app_opened"
         case onboardingCompleted = "onboarding_completed"
+        case pastListOpened = "past_list_opened"
+        case profileOpened = "profile_opened"
+        case profilePreferenceUpdated = "profile_preference_updated"
         case scanStarted = "scan_started"
         case scanCompleted = "scan_completed"
         case scanFailed = "scan_failed"
@@ -39,6 +42,9 @@ final class AnalyticsService {
         "has_active_entitlement",
         "has_free_scan_allowance",
         "has_retry_credit",
+        "preference_action",
+        "preference_group",
+        "preference_value",
         "product_period",
         "purchase_mode",
         "rating",
@@ -107,6 +113,25 @@ final class AnalyticsService {
 
     func trackOnboardingCompleted() {
         capture(.onboardingCompleted)
+    }
+
+    func trackPastListOpened(source: String) {
+        capture(.pastListOpened, properties: ["source": source])
+    }
+
+    func trackProfileOpened(source: String) {
+        capture(.profileOpened, properties: ["source": source])
+    }
+
+    func trackProfilePreferenceUpdated(group: String, value: String, action: String) {
+        capture(
+            .profilePreferenceUpdated,
+            properties: [
+                "preference_group": group,
+                "preference_value": value,
+                "preference_action": action,
+            ]
+        )
     }
 
     func trackScanStarted(

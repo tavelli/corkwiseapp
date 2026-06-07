@@ -327,6 +327,7 @@ struct MainView: View {
         let decoder = JSONDecoder()
 
         guard let result = try? decoder.decode(WineScanResult.self, from: data) else { return }
+        AnalyticsService.shared.trackPastListOpened(source: "recent_lists")
         appState.showResults(
             result,
             purchaseMode: scan.purchaseModeValue,
@@ -417,7 +418,7 @@ struct MainView: View {
 
             Spacer()
 
-            Button(action: appState.showPreferences) {
+            Button(action: openProfile) {
                 Image(phosphor: .userCircleFill)
                     .resizable()
                     .scaledToFit()
@@ -427,6 +428,11 @@ struct MainView: View {
             }
             .buttonStyle(.plain)
         }
+    }
+
+    private func openProfile() {
+        AnalyticsService.shared.trackProfileOpened(source: "home_header")
+        appState.showPreferences()
     }
 
     private var actionPanel: some View {

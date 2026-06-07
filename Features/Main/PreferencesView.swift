@@ -173,29 +173,45 @@ struct PreferencesView: View {
 
     private func toggleStyle(_ style: WineStylePreference, preferences: UserWinePreferences) {
         var selectedStyles = Set(preferences.preferredStyleValues)
+        let action: String
         if selectedStyles.contains(style) {
             selectedStyles.remove(style)
+            action = "removed"
         } else {
             selectedStyles.insert(style)
+            action = "added"
         }
 
         guard selectedStyles.isEmpty == false else { return }
         preferences.preferredStyles = selectedStyles.map(\.rawValue).sorted()
         preferences.updatedAt = .now
         try? modelContext.save()
+        AnalyticsService.shared.trackProfilePreferenceUpdated(
+            group: "preferred_styles",
+            value: style.rawValue,
+            action: action
+        )
     }
 
     private func toggleVarietal(_ varietal: WineVarietal, preferences: UserWinePreferences) {
         var selectedVarietals = Set(preferences.favoriteVarietalValues)
+        let action: String
         if selectedVarietals.contains(varietal) {
             selectedVarietals.remove(varietal)
+            action = "removed"
         } else {
             selectedVarietals.insert(varietal)
+            action = "added"
         }
 
         preferences.favoriteVarietals = selectedVarietals.map(\.rawValue).sorted()
         preferences.updatedAt = .now
         try? modelContext.save()
+        AnalyticsService.shared.trackProfilePreferenceUpdated(
+            group: "favorite_varietals",
+            value: varietal.rawValue,
+            action: action
+        )
     }
 
     private func resetPreferences() {

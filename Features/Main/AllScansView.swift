@@ -32,6 +32,7 @@ struct AllScansView: View {
         let decoder = JSONDecoder()
 
         guard let result = try? decoder.decode(WineScanResult.self, from: data) else { return }
+        AnalyticsService.shared.trackPastListOpened(source: "all_lists")
         appState.showResults(
             result,
             purchaseMode: scan.purchaseModeValue,
