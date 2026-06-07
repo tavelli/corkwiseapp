@@ -169,6 +169,7 @@ struct OnboardingView: View {
 
     private func completeOnboarding() {
         upsertPreferences(hasCompletedOnboarding: true)
+        AnalyticsService.shared.trackOnboardingCompleted()
     }
 
     private func upsertPreferences(hasCompletedOnboarding: Bool) {

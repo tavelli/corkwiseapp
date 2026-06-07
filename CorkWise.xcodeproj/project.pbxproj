@@ -17,6 +17,7 @@
 		375DE5F72FAE4094008D4574 /* SupabaseAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375DE5F62FAE4094008D4574 /* SupabaseAuthService.swift */; };
 		375DE5F92FAE4E16008D4574 /* BuildChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375DE5F82FAE4E16008D4574 /* BuildChannel.swift */; };
 		375DE5FD2FBAC2E9008D4574 /* ScanAccessService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375DE5FC2FBAC2E9008D4574 /* ScanAccessService.swift */; };
+		375DE5FF2FD5B1A0008D4574 /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375DE5FE2FD5B1A0008D4574 /* AnalyticsService.swift */; };
 		376100002FB54F0000000000 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 376100012FB54F0000000000 /* Localizable.xcstrings */; };
 		376100022FB54F0000000000 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 376100032FB54F0000000000 /* InfoPlist.xcstrings */; };
 		37915F0C2FB21FB2003B43A8 /* WineListCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37915F0B2FB21FB2003B43A8 /* WineListCameraView.swift */; };
@@ -53,6 +54,7 @@
 		37939A032FA3F10000246506 /* CameraPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399FC2FA3F10000246506 /* CameraPicker.swift */; };
 		37939A042FA3F10000246506 /* BestPickHeroView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399FD2FA3F10000246506 /* BestPickHeroView.swift */; };
 		37939A052FA3F10000246506 /* CategoryHighlightsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379399FE2FA3F10000246506 /* CategoryHighlightsView.swift */; };
+		37984DC12FD4F48200C21B9C /* PostHog in Frameworks */ = {isa = PBXBuildFile; productRef = 37984DC02FD4F48200C21B9C /* PostHog */; };
 		37A000022FB7800000000000 /* DemoRecordingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A000002FB7800000000000 /* DemoRecordingView.swift */; };
 		37A000032FB7800000000000 /* DemoWineScanResult.json in Resources */ = {isa = PBXBuildFile; fileRef = 37A000012FB7800000000000 /* DemoWineScanResult.json */; };
 		37FDAFAD2FB60F21002F91C0 /* CorkwiseStorekitConfig.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 37FDAFAC2FB60F21002F91C0 /* CorkwiseStorekitConfig.storekit */; };
@@ -69,6 +71,7 @@
 		375DE5F62FAE4094008D4574 /* SupabaseAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseAuthService.swift; sourceTree = "<group>"; };
 		375DE5F82FAE4E16008D4574 /* BuildChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildChannel.swift; sourceTree = "<group>"; };
 		375DE5FC2FBAC2E9008D4574 /* ScanAccessService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanAccessService.swift; sourceTree = "<group>"; };
+		375DE5FE2FD5B1A0008D4574 /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsService.swift; sourceTree = "<group>"; };
 		376100012FB54F0000000000 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		376100032FB54F0000000000 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 		37915F0B2FB21FB2003B43A8 /* WineListCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WineListCameraView.swift; sourceTree = "<group>"; };
@@ -119,6 +122,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				37984DC12FD4F48200C21B9C /* PostHog in Frameworks */,
 				375DE5F32FAE2729008D4574 /* Auth in Frameworks */,
 				375DE5ED2FA97D83008D4574 /* Adapty in Frameworks */,
 			);
@@ -143,6 +147,7 @@
 		379399B52FA3CC7400246506 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				375DE5FE2FD5B1A0008D4574 /* AnalyticsService.swift */,
 				379399CC2FA3CD3F00246506 /* AppConfiguration.swift */,
 				375DE5F42FAE4094008D4574 /* AppIdentityService.swift */,
 				375DE5F82FAE4E16008D4574 /* BuildChannel.swift */,
@@ -293,6 +298,7 @@
 			packageProductDependencies = (
 				375DE5EC2FA97D83008D4574 /* Adapty */,
 				375DE5F22FAE2729008D4574 /* Auth */,
+				37984DC02FD4F48200C21B9C /* PostHog */,
 			);
 			productName = CorkWise;
 			productReference = 379399D42FA3CE5600246506 /* Corkwise.app */;
@@ -328,6 +334,7 @@
 			packageReferences = (
 				375DE5EB2FA97D83008D4574 /* XCRemoteSwiftPackageReference "AdaptySDK-iOS" */,
 				375DE5F12FAE2729008D4574 /* XCRemoteSwiftPackageReference "supabase-swift" */,
+				37984DBF2FD4F48200C21B9C /* XCRemoteSwiftPackageReference "posthog-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 379634542FA3AEBC00E30EAA /* Products */;
@@ -385,6 +392,7 @@
 				379399D22FA3CD3F00246506 /* AppState.swift in Sources */,
 				379399D32FA3CD3F00246506 /* AppRouter.swift in Sources */,
 				37939A002FA3F10000246506 /* CorkWiseApp.swift in Sources */,
+				375DE5FF2FD5B1A0008D4574 /* AnalyticsService.swift in Sources */,
 				37939A012FA3F10000246506 /* EntitlementManager.swift in Sources */,
 				37939A022FA3F10000246506 /* ImagePreparationService.swift in Sources */,
 				375DE5F72FAE4094008D4574 /* SupabaseAuthService.swift in Sources */,
@@ -414,7 +422,9 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 13;
+				CORKWISE_POSTHOG_HOST = "https://us.i.posthog.com";
+				CORKWISE_POSTHOG_PROJECT_TOKEN = "";
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = 6SZ57G9BS7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -459,7 +469,9 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 13;
+				CORKWISE_POSTHOG_HOST = "https://us.i.posthog.com";
+				CORKWISE_POSTHOG_PROJECT_TOKEN = "";
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = 6SZ57G9BS7;
 				ENABLE_PREVIEWS = YES;
 				EXCLUDED_SOURCE_FILE_NAMES = (
@@ -663,6 +675,14 @@
 				minimumVersion = 2.5.1;
 			};
 		};
+		37984DBF2FD4F48200C21B9C /* XCRemoteSwiftPackageReference "posthog-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/PostHog/posthog-ios.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.59.3;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -675,6 +695,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 375DE5F12FAE2729008D4574 /* XCRemoteSwiftPackageReference "supabase-swift" */;
 			productName = Auth;
+		};
+		37984DC02FD4F48200C21B9C /* PostHog */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 37984DBF2FD4F48200C21B9C /* XCRemoteSwiftPackageReference "posthog-ios" */;
+			productName = PostHog;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

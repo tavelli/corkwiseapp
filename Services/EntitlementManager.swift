@@ -191,6 +191,11 @@ final class EntitlementManager {
         do {
             try await Adapty.logShowPaywall(adaptyPaywall)
             loggedPaywallInstanceIdentities.insert(paywall.id)
+            AnalyticsService.shared.trackPaywallShown(
+                hasActiveEntitlement: hasActiveEntitlement,
+                hasFreeScanAllowance: hasFreeScanAllowance,
+                hasRetryCredit: hasRetryCredit
+            )
         } catch {
             Self.logPaywallError(error, context: "log shown paywall \(paywall.id)")
         }
@@ -206,6 +211,7 @@ final class EntitlementManager {
             finishPurchase(result)
         } catch {
             Self.logPaywallError(error, context: "purchase \(paywall.product.vendorProductId)")
+            AnalyticsService.shared.trackPurchaseFailed(error: error)
             failPurchase()
         }
     }
@@ -228,6 +234,7 @@ final class EntitlementManager {
         } else {
             purchaseErrorMessage = String(localized: .paywallErrorNoActiveSubscription)
         }
+        AnalyticsService.shared.trackRestoreCompleted(hasActiveEntitlement: hasActiveEntitlement)
     }
 
     func startPurchase() {
@@ -246,6 +253,11 @@ final class EntitlementManager {
                 hasFreeScanAllowance = false
                 hasRetryCredit = false
             }
+            if hasActiveEntitlement {
+                AnalyticsService.shared.trackPurchaseCompleted(hasActiveEntitlement: true)
+            } else {
+                AnalyticsService.shared.trackPurchaseFailed()
+            }
             if hasActiveEntitlement == false {
                 Task {
                     await refreshEntitlement()
@@ -254,6 +266,7 @@ final class EntitlementManager {
         case .pending:
             purchaseStatusMessage = String(localized: .paywallStatusPurchasePending)
         case .userCancelled:
+            AnalyticsService.shared.trackPurchaseCancelled()
             break
         }
     }

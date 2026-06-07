@@ -10,6 +10,10 @@
 	<string>public_live_1IksjAV3.KRPAQyZStUDX5DcevMg3</string>
 	<key>CorkWiseLocalSupabaseBaseURL</key>
 	<string>http://127.0.0.1:54321</string>
+	<key>CorkWisePostHogHost</key>
+	<string>$(CORKWISE_POSTHOG_HOST)</string>
+	<key>CorkWisePostHogProjectToken</key>
+	<string>$(CORKWISE_POSTHOG_PROJECT_TOKEN)</string>
 	<key>CorkWiseSupabaseAnonKey</key>
 	<string>sb_publishable_TaXSh2b4AFHEc4WD7eIgZw_hYewKx2T</string>
 	<key>CorkWiseSupabaseBaseURL</key>

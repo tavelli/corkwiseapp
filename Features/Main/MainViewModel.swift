@@ -139,6 +139,13 @@ final class MainViewModel {
                 onResult: onResult
             )
         } catch {
+            AnalyticsService.shared.trackScanFailed(
+                inputType: images.count > 1 ? .images : .image,
+                attachmentCount: images.count,
+                purchaseMode: purchaseMode,
+                categoryPreference: categoryPreference,
+                error: error
+            )
             failure = failureState(for: error)
         }
     }
@@ -156,6 +163,13 @@ final class MainViewModel {
                 pendingAttachments = attachments
                 isScanning = true
                 startLoadingMessages()
+                let inputType = Self.scanInputType(for: attachments)
+                AnalyticsService.shared.trackScanStarted(
+                    inputType: inputType,
+                    attachmentCount: attachments.count,
+                    purchaseMode: purchaseMode,
+                    categoryPreference: categoryPreference
+                )
 
                 let result = try await analysisService.analyzeMenu(
                     attachments: attachments,
@@ -168,6 +182,12 @@ final class MainViewModel {
                 guard Task.isCancelled == false else { return }
                 try save(result: result, modelContext: modelContext)
                 guard Task.isCancelled == false else { return }
+                AnalyticsService.shared.trackScanCompleted(
+                    inputType: inputType,
+                    attachmentCount: attachments.count,
+                    purchaseMode: purchaseMode,
+                    categoryPreference: categoryPreference
+                )
                 finishScan()
                 onResult(result)
             } catch {
@@ -177,9 +197,23 @@ final class MainViewModel {
                 }
                 finishScan()
                 if error.isEntitlementRequired {
+                    AnalyticsService.shared.trackScanFailed(
+                        inputType: Self.scanInputType(for: attachments),
+                        attachmentCount: attachments.count,
+                        purchaseMode: purchaseMode,
+                        categoryPreference: categoryPreference,
+                        error: error
+                    )
                     onEntitlementRequired()
                     return
                 }
+                AnalyticsService.shared.trackScanFailed(
+                    inputType: Self.scanInputType(for: attachments),
+                    attachmentCount: attachments.count,
+                    purchaseMode: purchaseMode,
+                    categoryPreference: categoryPreference,
+                    error: error
+                )
                 failure = failureState(for: error)
             }
         }
@@ -198,6 +232,11 @@ final class MainViewModel {
                 pendingAttachments = nil
                 isScanning = true
                 startLoadingMessages()
+                AnalyticsService.shared.trackScanStarted(
+                    inputType: .menuURL,
+                    purchaseMode: purchaseMode,
+                    categoryPreference: categoryPreference
+                )
 
                 let result = try await analysisService.analyzeMenu(
                     menuURL: menuURL,
@@ -210,6 +249,11 @@ final class MainViewModel {
                 guard Task.isCancelled == false else { return }
                 try save(result: result, modelContext: modelContext)
                 guard Task.isCancelled == false else { return }
+                AnalyticsService.shared.trackScanCompleted(
+                    inputType: .menuURL,
+                    purchaseMode: purchaseMode,
+                    categoryPreference: categoryPreference
+                )
                 finishScan()
                 onResult(result)
             } catch {
@@ -219,9 +263,21 @@ final class MainViewModel {
                 }
                 finishScan()
                 if error.isEntitlementRequired {
+                    AnalyticsService.shared.trackScanFailed(
+                        inputType: .menuURL,
+                        purchaseMode: purchaseMode,
+                        categoryPreference: categoryPreference,
+                        error: error
+                    )
                     onEntitlementRequired()
                     return
                 }
+                AnalyticsService.shared.trackScanFailed(
+                    inputType: .menuURL,
+                    purchaseMode: purchaseMode,
+                    categoryPreference: categoryPreference,
+                    error: error
+                )
                 failure = failureState(for: error)
             }
         }
@@ -376,6 +432,9 @@ final class MainViewModel {
         case "no_wines_detected":
             return String(localized: .mainViewModelFailureNoWinesDetectedTitle)
         case "image_too_large":
+            if pendingAttachments?.contains(where: { $0.mimeType == "application/pdf" }) == true {
+                return String(localized: .mainViewModelFailureFileTooLargeTitle)
+            }
             return String(localized: .mainViewModelFailureImageTooLargeTitle)
         case "invalid_request":
             return String(localized: .mainViewModelFailureInvalidRequestTitle)
@@ -390,6 +449,14 @@ final class MainViewModel {
 
     private var effectiveBottleContext: BottleContext? {
         purchaseMode == .bottle ? bottleContext : nil
+    }
+
+    private static func scanInputType(for attachments: [AnalyzeWineMenuAttachment]) -> AnalyticsService.ScanInputType {
+        if attachments.contains(where: { $0.mimeType == "application/pdf" }) {
+            return .pdf
+        }
+
+        return attachments.count > 1 ? .images : .image
     }
 }
 

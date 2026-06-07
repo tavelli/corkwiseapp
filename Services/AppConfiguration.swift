@@ -9,6 +9,8 @@ struct AppConfiguration {
     private let adaptyPublicSDKKey: String?
     private let adaptyAccessLevelID: String
     private let adaptyPlacementID: String
+    private let postHogToken: String?
+    private let postHogBaseURL: URL?
     private let environment: ProcessInfo
 
     init(bundle: Bundle = .main, environment: ProcessInfo = .processInfo) {
@@ -20,6 +22,8 @@ struct AppConfiguration {
         adaptyPublicSDKKey = Self.stringValue(for: "CorkWiseAdaptyPublicSDKKey", in: bundle)
         adaptyAccessLevelID = Self.stringValue(for: "CorkWiseAdaptyAccessLevelID", in: bundle) ?? "premium"
         adaptyPlacementID = Self.stringValue(for: "CorkWiseAdaptyPlacementID", in: bundle) ?? "onboarding"
+        postHogToken = Self.stringValue(for: "CorkWisePostHogProjectToken", in: bundle)
+        postHogBaseURL = Self.urlValue(for: "CorkWisePostHogHost", in: bundle)
     }
 
     var supabaseBaseURL: URL? {
@@ -87,6 +91,24 @@ struct AppConfiguration {
 
     var adaptyPaywallPlacementID: String {
         adaptyPlacementID
+    }
+
+    var postHogProjectToken: String? {
+        let environmentValues = Self.normalizedEnvironment(environment.environment)
+        if let overrideToken = Self.stringValue(for: environmentValues["CORKWISE_POSTHOG_PROJECT_TOKEN_OVERRIDE"]) {
+            return overrideToken
+        }
+
+        return postHogToken
+    }
+
+    var postHogHost: URL? {
+        let environmentValues = Self.normalizedEnvironment(environment.environment)
+        if let overrideHost = Self.urlValue(for: environmentValues["CORKWISE_POSTHOG_HOST_OVERRIDE"]) {
+            return overrideHost
+        }
+
+        return postHogBaseURL
     }
 }
 

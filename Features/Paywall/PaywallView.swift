@@ -26,6 +26,7 @@ struct PaywallView: View {
                             do {
                                 try await entitlementManager.restorePurchases()
                             } catch {
+                                AnalyticsService.shared.trackRestoreFailed(error: error)
                                 entitlementManager.failRestore()
                             }
                         }

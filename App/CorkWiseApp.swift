@@ -25,6 +25,9 @@ struct CorkWiseApp: App {
             rootView
                 .environment(appState)
                 .environment(entitlementManager)
+                .task {
+                    await AnalyticsService.shared.configure()
+                }
         }
         .modelContainer(sharedModelContainer)
     }

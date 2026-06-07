@@ -2,6 +2,12 @@
 
 This repository contains an Xcode project written with Swift and SwiftUI. Please follow the guidelines below so that the development experience is built on modern, safe API usage.
 
+## Localization
+
+always use this format when possible for text localization
+
+String(localized: .mainViewModelFailureUnreadableTitle)
+
 ## Greenfield
 
 This is a brand new app. Before adding any backwards compatability when making a change please confirm first wehther it is needed.

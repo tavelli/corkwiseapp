@@ -225,11 +225,18 @@ struct ResultsFeedbackCardView: View {
         }
 
         Task {
-            _ = try? await feedbackService.submitFeedback(
+            if (try? await feedbackService.submitFeedback(
                 analysisId: analysisId,
                 rating: .useful,
                 comment: nil
-            )
+            )) != nil {
+                await MainActor.run {
+                    AnalyticsService.shared.trackFeedbackSubmitted(
+                        rating: .useful,
+                        source: "result_end_card"
+                    )
+                }
+            }
         }
     }
 
@@ -246,6 +253,11 @@ struct ResultsFeedbackCardView: View {
                 )
 
                 await MainActor.run {
+                    AnalyticsService.shared.trackFeedbackSubmitted(
+                        rating: .notUseful,
+                        source: "result_end_card_initial",
+                        retryGranted: response.retryGranted
+                    )
                     onFeedbackSubmitted()
                     negativeFeedbackId = response.feedbackId
                     isSubmitting = false
@@ -284,6 +296,11 @@ struct ResultsFeedbackCardView: View {
                 )
 
                 await MainActor.run {
+                    AnalyticsService.shared.trackFeedbackSubmitted(
+                        rating: .notUseful,
+                        source: "result_end_card_comment",
+                        retryGranted: response.retryGranted
+                    )
                     isSubmitting = false
                     withAnimation(.easeInOut(duration: 0.18)) {
                         state = response.retryGranted ? .retryOffer : .feedbackThanks
