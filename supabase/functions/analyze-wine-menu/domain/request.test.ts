@@ -2,6 +2,7 @@ import { validateAnalyzeRequest } from "./request.ts";
 import { RequestError } from "./types.ts";
 
 const appUserId = "7e95be64-3a08-4b6f-9943-61b9c1d15525";
+const attachmentBase64Limit = 19_000_000;
 
 function validPreferences() {
   return {
@@ -116,6 +117,41 @@ Deno.test("validateAnalyzeRequest accepts single PDF attachments", () => {
   if (request.source.attachments[0].mimeType !== "application/pdf") {
     throw new Error("Expected PDF attachment.");
   }
+});
+
+Deno.test("validateAnalyzeRequest accepts attachments at the base64 size limit", () => {
+  const request = validateAnalyzeRequest({
+    appUserId,
+    attachments: [{
+      base64Data: "a".repeat(attachmentBase64Limit),
+      mimeType: "application/pdf",
+      filename: "wine-list.pdf",
+    }],
+    purchaseMode: "bottle",
+    userPreferences: validPreferences(),
+  });
+
+  if (request.source.kind !== "attachment") {
+    throw new Error("Expected attachment source.");
+  }
+});
+
+Deno.test("validateAnalyzeRequest rejects attachments over the base64 size limit", () => {
+  assertRequestError(
+    () =>
+      validateAnalyzeRequest({
+        appUserId,
+        attachments: [{
+          base64Data: "a".repeat(attachmentBase64Limit + 1),
+          mimeType: "application/pdf",
+          filename: "wine-list.pdf",
+        }],
+        purchaseMode: "bottle",
+        userPreferences: validPreferences(),
+      }),
+    413,
+    "image_too_large",
+  );
 });
 
 Deno.test("validateAnalyzeRequest accepts build configuration metadata", () => {

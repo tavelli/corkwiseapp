@@ -4,8 +4,8 @@ import {
   RequestError,
 } from "./types.ts";
 
-export const MAX_REQUEST_BYTES = 8_000_000;
-const MAX_ATTACHMENT_BASE64_LENGTH = 7_000_000;
+export const MAX_REQUEST_BYTES = 20_000_000;
+const MAX_ATTACHMENT_BASE64_LENGTH = 19_000_000;
 const MAX_ATTACHMENT_COUNT = 4;
 const MAX_MENU_URL_LENGTH = 2_000;
 

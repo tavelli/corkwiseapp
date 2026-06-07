@@ -1649,6 +1649,29 @@
         }
       }
     },
+    "mainViewModel.failure.fileTooLarge.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "File too large."
+          }
+        },
+        "en-AU" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "File too large."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "File too large."
+          }
+        }
+      }
+    },
     "mainViewModel.failure.invalidInput.message" : {
       "extractionState" : "manual",
       "localizations" : {
