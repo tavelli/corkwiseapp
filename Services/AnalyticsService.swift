@@ -18,6 +18,8 @@ final class AnalyticsService {
         case scanCompleted = "scan_completed"
         case scanFailed = "scan_failed"
         case paywallShown = "paywall_shown"
+        case softPaywallShown = "soft_paywall_shown"
+        case softPaywallCTATapped = "soft_paywall_cta_tapped"
         case purchaseCompleted = "purchase_completed"
         case purchaseFailed = "purchase_failed"
         case purchaseCancelled = "purchase_cancelled"
@@ -44,7 +46,7 @@ final class AnalyticsService {
         "attachment_count",
     ]
 
-    private static let blockedPropertyKeyFragments = [
+    nonisolated private static let blockedPropertyKeyFragments = [
         "comment",
         "image",
         "email",
@@ -159,18 +161,26 @@ final class AnalyticsService {
     }
 
     func trackPaywallShown(
+        source: String,
         hasActiveEntitlement: Bool,
         hasFreeScanAllowance: Bool,
         hasRetryCredit: Bool
     ) {
-        capture(
-            .paywallShown,
-            properties: entitlementProperties(
-                hasActiveEntitlement: hasActiveEntitlement,
-                hasFreeScanAllowance: hasFreeScanAllowance,
-                hasRetryCredit: hasRetryCredit
-            )
+        var properties = entitlementProperties(
+            hasActiveEntitlement: hasActiveEntitlement,
+            hasFreeScanAllowance: hasFreeScanAllowance,
+            hasRetryCredit: hasRetryCredit
         )
+        properties["source"] = source
+        capture(.paywallShown, properties: properties)
+    }
+
+    func trackSoftPaywallShown(source: String) {
+        capture(.softPaywallShown, properties: ["source": source])
+    }
+
+    func trackSoftPaywallCTATapped(source: String) {
+        capture(.softPaywallCTATapped, properties: ["source": source])
     }
 
     func trackPurchaseCompleted(hasActiveEntitlement: Bool) {
@@ -253,13 +263,13 @@ final class AnalyticsService {
         ]
     }
 
-    private static func containsBlockedProperty(in properties: [String: Any]) -> Bool {
+    nonisolated private static func containsBlockedProperty(in properties: [String: Any]) -> Bool {
         properties.contains { key, value in
             isBlockedPropertyKey(key) || containsBlockedNestedProperty(in: value)
         }
     }
 
-    private static func containsBlockedNestedProperty(in value: Any) -> Bool {
+    nonisolated private static func containsBlockedNestedProperty(in value: Any) -> Bool {
         if let dictionary = value as? [String: Any] {
             return containsBlockedProperty(in: dictionary)
         }
@@ -271,7 +281,7 @@ final class AnalyticsService {
         return false
     }
 
-    private static func isBlockedPropertyKey(_ key: String) -> Bool {
+    nonisolated private static func isBlockedPropertyKey(_ key: String) -> Bool {
         let normalizedKey = key
             .replacingOccurrences(of: "-", with: "_")
             .lowercased()
@@ -287,7 +297,7 @@ final class AnalyticsService {
         return Self.blockedPropertyKeyFragments.contains { normalizedKey.contains($0) }
     }
 
-    private static func errorType(for error: Error) -> String {
+    nonisolated private static func errorType(for error: Error) -> String {
         if let serviceError = error as? WineAnalysisServiceError {
             switch serviceError {
             case .backendNotConfigured:
@@ -315,7 +325,7 @@ final class AnalyticsService {
     }
 
     #if DEBUG
-    private static var isDebugAnalyticsEnabled: Bool {
+    nonisolated private static var isDebugAnalyticsEnabled: Bool {
         let rawValue = ProcessInfo.processInfo.environment["CORKWISE_ANALYTICS_ENABLED"]?
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .lowercased()

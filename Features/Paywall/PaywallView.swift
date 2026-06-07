@@ -7,6 +7,12 @@ struct PaywallView: View {
     @Environment(\.dismiss) private var dismiss
 
     let preferences: UserWinePreferences?
+    let source: String
+
+    init(preferences: UserWinePreferences?, source: String = "unknown") {
+        self.preferences = preferences
+        self.source = source
+    }
 
     var body: some View {
         Group {
@@ -33,7 +39,7 @@ struct PaywallView: View {
                     }
                 )
                 .task(id: paywall.id) {
-                    await entitlementManager.logPaywallShownIfNeeded()
+                    await entitlementManager.logPaywallShownIfNeeded(source: source)
                 }
             } else {
                 PaywallFallbackView(

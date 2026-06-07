@@ -89,7 +89,7 @@ struct MainView: View {
             .presentationBackground(.ultraThinMaterial)
         }
         .sheet(isPresented: $isShowingPaywall) {
-            PaywallView(preferences: preferences)
+            PaywallView(preferences: preferences, source: "main_scan_gate")
                 .presentationDetents([.height(500)])
                 .presentationDragIndicator(.visible)
                 .presentationBackground(Color(red: 0.09, green: 0.02, blue: 0.03))

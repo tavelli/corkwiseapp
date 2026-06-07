@@ -46,7 +46,7 @@ struct ResultsView: View {
         .navigationSubtitleIfAvailable(navigationSubtitle)
         .background(mainScreenBackground.ignoresSafeArea())
         .sheet(isPresented: $isShowingPaywall) {
-            PaywallView(preferences: nil)
+            PaywallView(preferences: nil, source: "results_soft_paywall")
                 .presentationDetents([.height(500)])
                 .presentationDragIndicator(.visible)
                 .presentationBackground(Color(red: 0.09, green: 0.02, blue: 0.03))
@@ -95,6 +95,7 @@ struct ResultsContentView: View {
     var showPremiumAction: () -> Void = {}
 
     @State private var hasRunScriptedScrollSequence = false
+    @State private var hasTrackedSoftPaywallShown = false
 
     var body: some View {
         ScrollViewReader { proxy in
@@ -182,7 +183,16 @@ struct ResultsContentView: View {
                     }
 
                     if showsSoftPaywall {
-                        ResultsSoftPaywallCardView(theme: .paywallSheet, premiumAction: showPremiumAction)
+                        ResultsSoftPaywallCardView(
+                            theme: .paywallSheet,
+                            source: "results",
+                            premiumAction: showPremiumAction
+                        )
+                        .onScrollVisibilityChange(threshold: 0.5) { isVisible in
+                            guard isVisible, hasTrackedSoftPaywallShown == false else { return }
+                            hasTrackedSoftPaywallShown = true
+                            AnalyticsService.shared.trackSoftPaywallShown(source: "results")
+                        }
                     }
 
                     #if DEBUG

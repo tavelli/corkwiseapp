@@ -183,7 +183,7 @@ final class EntitlementManager {
         await loadPaywall(preferences: preferences)
     }
 
-    func logPaywallShownIfNeeded() async {
+    func logPaywallShownIfNeeded(source: String) async {
         guard let paywall else { return }
         guard let adaptyPaywall = paywall.adaptyPaywall else { return }
         guard loggedPaywallInstanceIdentities.contains(paywall.id) == false else { return }
@@ -192,6 +192,7 @@ final class EntitlementManager {
             try await Adapty.logShowPaywall(adaptyPaywall)
             loggedPaywallInstanceIdentities.insert(paywall.id)
             AnalyticsService.shared.trackPaywallShown(
+                source: source,
                 hasActiveEntitlement: hasActiveEntitlement,
                 hasFreeScanAllowance: hasFreeScanAllowance,
                 hasRetryCredit: hasRetryCredit

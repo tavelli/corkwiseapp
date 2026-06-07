@@ -101,10 +101,12 @@ struct ResultsSoftPaywallCardView: View {
     }
 
     let theme: Theme
+    let source: String
     let premiumAction: () -> Void
 
-    init(theme: Theme = .standard, premiumAction: @escaping () -> Void) {
+    init(theme: Theme = .standard, source: String = "results", premiumAction: @escaping () -> Void) {
         self.theme = theme
+        self.source = source
         self.premiumAction = premiumAction
     }
 
@@ -127,7 +129,10 @@ struct ResultsSoftPaywallCardView: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
 
-            Button(action: premiumAction) {
+            Button {
+                AnalyticsService.shared.trackSoftPaywallCTATapped(source: source)
+                premiumAction()
+            } label: {
                 Text(.resultsSoftPaywallPremiumButton)
                     .font(.headline)
                     .bold()
