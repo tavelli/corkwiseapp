@@ -202,9 +202,13 @@ final class EntitlementManager {
         }
     }
 
-    func purchaseSelectedPaywallProduct() async {
+    func purchaseSelectedPaywallProduct(source: String) async {
         guard let paywall else { return }
 
+        AnalyticsService.shared.trackPaywallCTATapped(
+            source: source,
+            productPeriod: Self.productPeriod(for: paywall.product)
+        )
         startPurchase()
 
         do {
@@ -311,6 +315,23 @@ final class EntitlementManager {
                 product.adaptyProductType.localizedCaseInsensitiveContains("year") ||
                 product.subscriptionPeriod?.unit == .year
         } ?? products.first
+    }
+
+    private static func productPeriod(for product: any AdaptyPaywallProduct) -> String {
+        guard let subscriptionPeriod = product.subscriptionPeriod else {
+            return "non_subscription"
+        }
+
+        switch (subscriptionPeriod.unit, subscriptionPeriod.numberOfUnits) {
+        case (.week, 1):
+            return "weekly"
+        case (.month, 1):
+            return "monthly"
+        case (.year, 1):
+            return "yearly"
+        case (.day, _), (.week, _), (.month, _), (.year, _), (.unknown, _):
+            return "unknown"
+        }
     }
 
     private static func paywallCustomAttributes(for preferences: UserWinePreferences?) -> [String: String]? {

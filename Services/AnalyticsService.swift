@@ -18,6 +18,7 @@ final class AnalyticsService {
         case scanCompleted = "scan_completed"
         case scanFailed = "scan_failed"
         case paywallShown = "paywall_shown"
+        case paywallCTATapped = "paywall_cta_tapped"
         case softPaywallShown = "soft_paywall_shown"
         case softPaywallCTATapped = "soft_paywall_cta_tapped"
         case purchaseCompleted = "purchase_completed"
@@ -38,6 +39,7 @@ final class AnalyticsService {
         "has_active_entitlement",
         "has_free_scan_allowance",
         "has_retry_credit",
+        "product_period",
         "purchase_mode",
         "rating",
         "retry_granted",
@@ -173,6 +175,16 @@ final class AnalyticsService {
         )
         properties["source"] = source
         capture(.paywallShown, properties: properties)
+    }
+
+    func trackPaywallCTATapped(source: String, productPeriod: String) {
+        capture(
+            .paywallCTATapped,
+            properties: [
+                "source": source,
+                "product_period": productPeriod,
+            ]
+        )
     }
 
     func trackSoftPaywallShown(source: String) {

@@ -24,7 +24,7 @@ struct PaywallView: View {
                     errorMessage: entitlementManager.purchaseErrorMessage,
                     purchaseAction: {
                         Task {
-                            await entitlementManager.purchaseSelectedPaywallProduct()
+                            await entitlementManager.purchaseSelectedPaywallProduct(source: source)
                         }
                     },
                     restoreAction: {
