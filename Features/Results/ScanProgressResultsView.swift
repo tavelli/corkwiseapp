@@ -475,27 +475,30 @@ private struct ScanResultsSkeletonView: View {
     @State private var isPulsing = false
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                heroSkeleton
-                menuSnapshotSkeleton
+        GeometryReader { geometry in
+            let layout = ResultsLayoutMetrics(availableWidth: geometry.size.width)
 
-                VStack(alignment: .leading, spacing: 16) {
-                    HStack(spacing: 10) {
-                        Circle()
-                            .fill(skeletonFill)
-                            .frame(width: 38, height: 38)
-                        Capsule()
-                            .fill(skeletonFill)
-                            .frame(width: 170, height: 22)
-                    }
+            ScrollView {
+                VStack(alignment: .leading, spacing: layout.sectionSpacing) {
+                    heroSkeleton
+                        .frame(maxWidth: layout.featureContentMaxWidth)
+                        .frame(maxWidth: .infinity, alignment: .center)
 
-                    ForEach(0..<3, id: \.self) { _ in
-                        pickCardSkeleton
+                    menuSnapshotSkeleton
+                        .frame(maxWidth: layout.featureContentMaxWidth)
+                        .frame(maxWidth: .infinity, alignment: .center)
+
+                    LazyVGrid(columns: layout.recommendationColumns, alignment: .leading, spacing: layout.cardSpacing) {
+                        ForEach(0..<6, id: \.self) { _ in
+                            pickCardSkeleton
+                        }
                     }
                 }
+                .frame(maxWidth: layout.contentMaxWidth, alignment: .leading)
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(.horizontal, layout.horizontalPadding)
+                .padding(.vertical, 20)
             }
-            .padding(20)
         }
         .opacity(isPulsing ? 0.84 : 0.68)
         .animation(.easeInOut(duration: 1.15).repeatForever(autoreverses: true), value: isPulsing)

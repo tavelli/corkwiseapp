@@ -4,6 +4,7 @@ import UIKit
 
 private let wineListCameraPageLimit = 4
 private let wineListCameraSideControlWidth: CGFloat = 98
+private let wineListCameraWideControlTrayMaxWidth: CGFloat = 540
 
 struct WineListCameraView: View {
     @Environment(\.dismiss) private var dismiss
@@ -251,8 +252,13 @@ struct WineListCameraView: View {
                             controlTrayBackground
                         }
         }
+        .frame(maxWidth: bottomControlsMaxWidth)
         .frame(maxWidth: .infinity)
         .padding(5)
+    }
+
+    private var bottomControlsMaxWidth: CGFloat {
+        UIDevice.current.userInterfaceIdiom == .pad ? wineListCameraWideControlTrayMaxWidth : .infinity
     }
 
     private var pageStackButton: some View {

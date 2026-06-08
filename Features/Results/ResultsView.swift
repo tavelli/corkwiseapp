@@ -98,123 +98,136 @@ struct ResultsContentView: View {
     @State private var hasTrackedSoftPaywallShown = false
 
     var body: some View {
-        ScrollViewReader { proxy in
-            ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
-                    if let topRecommendation = result.recommendations.first {
-                        BestPickHeroView(
-                            recommendation: topRecommendation,
-                            purchaseMode: purchaseMode,
-                            currencyCode: result.currencyCode,
-                            restaurantName: result.restaurantName
-                        )
-                    }
+        GeometryReader { geometry in
+            let layout = ResultsLayoutMetrics(availableWidth: geometry.size.width)
 
-                    if snapshotText.isEmpty == false {
-                        MenuSnapshotView(
-                            text: snapshotText,
-                            pricingContextSummary: result.pricingContextSummary
-                        )
-                            .id(ResultsScrollTarget.summary)
-                    }
-
-                    if remainingRecommendations.isEmpty == false {
-                        VStack(alignment: .leading, spacing: 16) {
-                            ForEach(Array(remainingRecommendations.enumerated()), id: \.element.id) { index, recommendation in
-                                RecommendationCardView.categoryCard(
-                                    recommendation: recommendation,
-                                    purchaseMode: purchaseMode,
-                                    currencyCode: result.currencyCode,
-                                    categoryLabel: String(localized: .resultsCategoryHighlyRecommend),
-                                    icon: .star
-                                )
-                                .id(ResultsScrollTarget.highlyRecommendCard(index: index))
-                            }
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack(alignment: .leading, spacing: layout.sectionSpacing) {
+                        if let topRecommendation = result.recommendations.first {
+                            BestPickHeroView(
+                                recommendation: topRecommendation,
+                                purchaseMode: purchaseMode,
+                                currencyCode: result.currencyCode,
+                                restaurantName: result.restaurantName,
+                                textMaxWidth: layout.readableTextMaxWidth
+                            )
+                            .frame(maxWidth: layout.featureContentMaxWidth)
+                            .frame(maxWidth: .infinity, alignment: .center)
                         }
-                    }
 
-                    if result.categoryRecommendations.isEmpty == false {
-                        CategoryHighlightsView(
-                            sections: result.categoryRecommendations,
-                            purchaseMode: purchaseMode,
-                            currencyCode: result.currencyCode
-                        )
-                    }
+                        if snapshotText.isEmpty == false {
+                            MenuSnapshotView(
+                                text: snapshotText,
+                                pricingContextSummary: result.pricingContextSummary,
+                                textMaxWidth: layout.readableTextMaxWidth
+                            )
+                                .id(ResultsScrollTarget.summary)
+                                .frame(maxWidth: layout.featureContentMaxWidth)
+                                .frame(maxWidth: .infinity, alignment: .center)
+                        }
 
-                    
-
-                    if result.notes.isEmpty == false {
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text(.resultsNotesTitle)
-                                .font(.system(size: 16, weight: .medium))
-                                .foregroundStyle(Color.wineText)
-
-                            ForEach(result.notes, id: \.self) { note in
-                                Label {
-                                    Text(note)
-                                        .foregroundStyle(Color.wineMutedText)
-                                } icon: {
-                                    Image(systemName: "info.circle.fill")
-                                        .foregroundStyle(Color.wineMutedText)
+                        if remainingRecommendations.isEmpty == false {
+                            LazyVGrid(columns: layout.recommendationColumns, alignment: .leading, spacing: layout.cardSpacing) {
+                                ForEach(Array(remainingRecommendations.enumerated()), id: \.element.id) { index, recommendation in
+                                    RecommendationCardView.categoryCard(
+                                        recommendation: recommendation,
+                                        purchaseMode: purchaseMode,
+                                        currencyCode: result.currencyCode,
+                                        categoryLabel: String(localized: .resultsCategoryHighlyRecommend),
+                                        icon: .star
+                                    )
+                                    .id(ResultsScrollTarget.highlyRecommendCard(index: index))
                                 }
                             }
                         }
-                        .padding(20)
-                        .background(Color.resultCardBackground)
-                        .clipShape(.rect(cornerRadius: 22))
-                        .overlay {
-                            RoundedRectangle(cornerRadius: 22)
-                                .stroke(Color.wineBorder.opacity(0.8), lineWidth: 1)
-                        }
-                    }
 
-                    if hidesFeedbackOnOpen == false, let analysisId = result.analysisId {
-                        ResultsFeedbackCardView(
-                            analysisId: analysisId,
-                            retryAction: showRetryAction,
-                            requestVisibility: {
-                                withAnimation(.easeInOut(duration: 0.24)) {
-                                    proxy.scrollTo(ResultsScrollTarget.feedback, anchor: .bottom)
+                        if result.categoryRecommendations.isEmpty == false {
+                            CategoryHighlightsView(
+                                sections: result.categoryRecommendations,
+                                purchaseMode: purchaseMode,
+                                currencyCode: result.currencyCode,
+                                columns: layout.recommendationColumns,
+                                spacing: layout.cardSpacing
+                            )
+                        }
+
+                        if result.notes.isEmpty == false {
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text(.resultsNotesTitle)
+                                    .font(.system(size: 16, weight: .medium))
+                                    .foregroundStyle(Color.wineText)
+
+                                ForEach(result.notes, id: \.self) { note in
+                                    Label {
+                                        Text(note)
+                                            .foregroundStyle(Color.wineMutedText)
+                                    } icon: {
+                                        Image(systemName: "info.circle.fill")
+                                            .foregroundStyle(Color.wineMutedText)
+                                    }
                                 }
-                            },
-                            onFeedbackSubmitted: markFeedbackSubmitted
-                        )
-                        .id(ResultsScrollTarget.feedback)
-                    }
-
-                    if showsSoftPaywall {
-                        ResultsSoftPaywallCardView(
-                            theme: .paywallSheet,
-                            source: "results",
-                            premiumAction: showPremiumAction
-                        )
-                        .onScrollVisibilityChange(threshold: 0.5) { isVisible in
-                            guard isVisible, hasTrackedSoftPaywallShown == false else { return }
-                            hasTrackedSoftPaywallShown = true
-                            AnalyticsService.shared.trackSoftPaywallShown(source: "results")
+                            }
+                            .padding(20)
+                            .background(Color.resultCardBackground)
+                            .clipShape(.rect(cornerRadius: 22))
+                            .overlay {
+                                RoundedRectangle(cornerRadius: 22)
+                                    .stroke(Color.wineBorder.opacity(0.8), lineWidth: 1)
+                            }
                         }
+
+                        if hidesFeedbackOnOpen == false, let analysisId = result.analysisId {
+                            ResultsFeedbackCardView(
+                                analysisId: analysisId,
+                                retryAction: showRetryAction,
+                                requestVisibility: {
+                                    withAnimation(.easeInOut(duration: 0.24)) {
+                                        proxy.scrollTo(ResultsScrollTarget.feedback, anchor: .bottom)
+                                    }
+                                },
+                                onFeedbackSubmitted: markFeedbackSubmitted
+                            )
+                            .id(ResultsScrollTarget.feedback)
+                        }
+
+                        if showsSoftPaywall {
+                            ResultsSoftPaywallCardView(
+                                theme: .paywallSheet,
+                                source: "results",
+                                premiumAction: showPremiumAction
+                            )
+                            .onScrollVisibilityChange(threshold: 0.5) { isVisible in
+                                guard isVisible, hasTrackedSoftPaywallShown == false else { return }
+                                hasTrackedSoftPaywallShown = true
+                                AnalyticsService.shared.trackSoftPaywallShown(source: "results")
+                            }
+                        }
+
+                        #if DEBUG
+                        if let debugInfo = result.debugInfo {
+                            DebugScanInfoView(debugInfo: debugInfo)
+                        }
+                        #endif
+                    }
+                    .frame(maxWidth: layout.contentMaxWidth, alignment: .leading)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding(.horizontal, layout.horizontalPadding)
+                    .padding(.vertical, 20)
+                }
+                .scrollDismissesKeyboard(.interactively)
+                .task(id: scriptedScrollSequence?.isEnabled ?? false) {
+                    guard
+                        let scriptedScrollSequence,
+                        scriptedScrollSequence.isEnabled,
+                        hasRunScriptedScrollSequence == false
+                    else {
+                        return
                     }
 
-                    #if DEBUG
-                    if let debugInfo = result.debugInfo {
-                        DebugScanInfoView(debugInfo: debugInfo)
-                    }
-                    #endif
+                    hasRunScriptedScrollSequence = true
+                    await scriptedScrollSequence.run(using: proxy)
                 }
-                .padding(20)
-            }
-            .scrollDismissesKeyboard(.interactively)
-            .task(id: scriptedScrollSequence?.isEnabled ?? false) {
-                guard
-                    let scriptedScrollSequence,
-                    scriptedScrollSequence.isEnabled,
-                    hasRunScriptedScrollSequence == false
-                else {
-                    return
-                }
-
-                hasRunScriptedScrollSequence = true
-                await scriptedScrollSequence.run(using: proxy)
             }
         }
     }
@@ -243,6 +256,45 @@ struct ResultsContentView: View {
 
         scan.hasSubmittedFeedback = true
         try? modelContext.save()
+    }
+}
+
+struct ResultsLayoutMetrics {
+    let availableWidth: CGFloat
+
+    var contentMaxWidth: CGFloat {
+        usesWideLayout ? 1060 : .infinity
+    }
+
+    var featureContentMaxWidth: CGFloat {
+        usesWideLayout ? 620 : .infinity
+    }
+
+    var horizontalPadding: CGFloat {
+        usesWideLayout ? 28 : 20
+    }
+
+    var sectionSpacing: CGFloat {
+        usesWideLayout ? 26 : 24
+    }
+
+    var cardSpacing: CGFloat {
+        usesWideLayout ? 18 : 16
+    }
+
+    var readableTextMaxWidth: CGFloat? {
+        usesWideLayout ? 760 : nil
+    }
+
+    var recommendationColumns: [GridItem] {
+        Array(
+            repeating: GridItem(.flexible(), spacing: cardSpacing, alignment: .top),
+            count: usesWideLayout ? 2 : 1
+        )
+    }
+
+    private var usesWideLayout: Bool {
+        availableWidth >= 760
     }
 }
 
@@ -389,6 +441,7 @@ private struct DebugScanInfoView: View {
 private struct MenuSnapshotView: View {
     let text: String
     let pricingContextSummary: PricingContextSummary?
+    var textMaxWidth: CGFloat? = nil
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -411,6 +464,7 @@ private struct MenuSnapshotView: View {
                 .lineSpacing(2)
                 .foregroundStyle(Color.wineText)
                 .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: textMaxWidth ?? .infinity, alignment: .leading)
 
            //  WineDataTagRow(tags: medianMarkupTags)
         }

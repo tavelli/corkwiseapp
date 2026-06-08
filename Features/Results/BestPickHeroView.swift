@@ -5,6 +5,7 @@ struct BestPickHeroView: View {
     let purchaseMode: PurchaseMode
     let currencyCode: String
     let restaurantName: String?
+    var textMaxWidth: CGFloat? = nil
 
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
@@ -35,6 +36,7 @@ struct BestPickHeroView: View {
                             .foregroundStyle(Color.white.opacity(0.78))
                     }
                 }
+                .frame(maxWidth: textMaxWidth ?? .infinity, alignment: .leading)
             }
 
             RecommendationMetricRow(
@@ -50,8 +52,10 @@ struct BestPickHeroView: View {
                 .font(.body)
                 .lineSpacing(2)
                 .foregroundStyle(Color.white.opacity(0.95))
+                .frame(maxWidth: textMaxWidth ?? .infinity, alignment: .leading)
 
             WineDataTagRow(tags: wineDataTags, style: .hero)
+                .frame(maxWidth: textMaxWidth ?? .infinity, alignment: .leading)
 
         }
         .padding(24)

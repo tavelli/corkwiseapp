@@ -4,9 +4,11 @@ struct CategoryHighlightsView: View {
     let sections: [RecommendationCategorySection]
     let purchaseMode: PurchaseMode
     let currencyCode: String
+    var columns: [GridItem] = [GridItem(.flexible(), spacing: 16, alignment: .top)]
+    var spacing: CGFloat = 16
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        LazyVGrid(columns: columns, alignment: .leading, spacing: spacing) {
             ForEach(displaySections, id: \.key) { section in
                 ForEach(section.recommendations) { recommendation in
                     RecommendationCardView.categoryCard(
