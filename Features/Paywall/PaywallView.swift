@@ -98,7 +98,7 @@ private struct CustomPaywallContent: View {
                     .padding(.horizontal, 12)
             }
 
-            ProductSelectionCard(product: paywall.product)
+            ProductSelectionCard(product: paywall.product, remoteConfig: paywall.remoteConfig)
                 .padding(.top, 28)
 
             VStack(spacing: 24) {
@@ -151,6 +151,7 @@ private struct CustomPaywallContent: View {
 
 private struct ProductSelectionCard: View {
     let product: any AdaptyPaywallProduct
+    let remoteConfig: CustomPaywallRemoteConfig
 
     var body: some View {
         HStack(spacing: 18) {
@@ -177,7 +178,7 @@ private struct ProductSelectionCard: View {
                     .font(.title3)
                     .foregroundStyle(Color(red: 0.91, green: 0.76, blue: 0.54))
 
-                Text(product.localizedDescription.isEmpty ? "Premium guidance for every list" : product.localizedDescription)
+                Text(productDescription)
                     .font(.footnote)
                     .foregroundStyle(Color(red: 0.75, green: 0.66, blue: 0.62))
                     .lineLimit(2)
@@ -197,13 +198,27 @@ private struct ProductSelectionCard: View {
     }
 
     private var productTitle: String {
+        if let productTitleText = remoteConfig.productTitleText {
+            return productTitleText
+        }
+
         if product.adaptyProductType.localizedCaseInsensitiveContains("annual") ||
             product.adaptyProductType.localizedCaseInsensitiveContains("year") ||
             product.subscriptionPeriod?.unit == .year {
-            return "Annual"
+            return String(localized: .paywallProductFallbackAnnualTitle)
         }
 
-        return product.localizedTitle.isEmpty ? "Premium" : product.localizedTitle
+        return product.localizedTitle.isEmpty ? String(localized: .paywallProductFallbackTitle) : product.localizedTitle
+    }
+
+    private var productDescription: String {
+        if let productDescriptionText = remoteConfig.productDescriptionText {
+            return productDescriptionText
+        }
+
+        return product.localizedDescription.isEmpty ?
+            String(localized: .paywallProductFallbackDescription) :
+            product.localizedDescription
     }
 
     private var productPrice: String {

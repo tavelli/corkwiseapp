@@ -1,9 +1,14 @@
 import SwiftUI
 
 struct OnboardingCompletionView: View {
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @ScaledMetric(relativeTo: .largeTitle) private var headlineFontSize = 42
-    @ScaledMetric(relativeTo: .subheadline) private var subheadlineFontSize = 14
+    @ScaledMetric(relativeTo: .subheadline) private var subheadlineFontSize = 20
     let onContinue: () -> Void
+
+    private var usesRegularWidthLayout: Bool {
+        horizontalSizeClass == .regular
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -36,7 +41,7 @@ struct OnboardingCompletionView: View {
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(4)
-                    .frame(maxWidth: .infinity)
+                    .frame(maxWidth: 500)
             }
             .offset(y: -24)
 
@@ -46,6 +51,8 @@ struct OnboardingCompletionView: View {
                 Text(.onboardingCompletionCta)
             }
             .buttonStyle(OnboardingPrimaryButtonStyle())
+            .frame(maxWidth: usesRegularWidthLayout ? 520 : .infinity)
+            .frame(maxWidth: .infinity)
             .padding(.bottom, 16)
         }
         .padding(.horizontal, 24)

@@ -21,6 +21,18 @@ struct MainView: View {
 
     let preferences: UserWinePreferences?
 
+    private var usesPadLayout: Bool {
+        UIDevice.current.userInterfaceIdiom == .pad
+    }
+
+    private var mainContentMaxWidth: CGFloat? {
+        usesPadLayout ? 660 : nil
+    }
+
+    private var headerContentMaxWidth: CGFloat? {
+        usesPadLayout ? 960 : nil
+    }
+
     init(preferences: UserWinePreferences?, showsPaywallOnAppear: Bool = false) {
         self.preferences = preferences
         _isShowingPaywall = State(initialValue: showsPaywallOnAppear)
@@ -39,6 +51,8 @@ struct MainView: View {
                     showAllScans: appState.showAllScans
                 )
                 .padding(.horizontal, 20)
+                .frame(maxWidth: mainContentMaxWidth)
+                .frame(maxWidth: .infinity)
             }
             .padding(.bottom, 24)
         }
@@ -46,7 +60,9 @@ struct MainView: View {
         .background(mainScreenBackground.ignoresSafeArea())
         .safeAreaInset(edge: .top, spacing: 0) {
             header
-                .padding(.horizontal, 20)
+                .frame(maxWidth: headerContentMaxWidth)
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, usesPadLayout ? 32 : 20)
                 .padding(.top, 10)
                 .padding(.bottom, 12)
                 .background {
@@ -436,13 +452,18 @@ struct MainView: View {
     }
 
     private var actionPanel: some View {
-        VStack(spacing: 18) {
-            controlPanel
-            heroScanCard
-            sourceOptions
+        VStack {
+            VStack(spacing: usesPadLayout ? 30 : 18) {
+                controlPanel
+                heroScanCard
+                sourceOptions
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, usesPadLayout ? 36 : 16)
+            .padding(.bottom, usesPadLayout ? 36 : 16)
+            .frame(maxWidth: mainContentMaxWidth)
+            .frame(maxWidth: .infinity)
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 16)
         .background(Color.wineCardBackground)
         .overlay(alignment: .top) {
             Rectangle()
@@ -457,7 +478,7 @@ struct MainView: View {
     }
 
     private var controlPanel: some View {
-        VStack(spacing: 14) {
+        VStack(spacing: usesPadLayout ? 20 : 14) {
             slidingSegmentedControl(
                 items: PurchaseMode.allCases,
                 selection: Binding(
@@ -549,7 +570,7 @@ struct MainView: View {
                     .foregroundStyle(Color.wineSoftPeach)
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 160)
+            .frame(height: usesPadLayout ? 224 : 160)
         }
         .buttonStyle(ScanHeroButtonStyle())
     }
@@ -633,7 +654,7 @@ struct MainView: View {
                     .foregroundStyle(Color.wineAccent)
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 68)
+            .frame(height: usesPadLayout ? 78 : 68)
             .background(Color.wineOptionBackground)
             .clipShape(.rect(cornerRadius: 18))
             .overlay {

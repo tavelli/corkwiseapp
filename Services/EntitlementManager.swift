@@ -414,6 +414,8 @@ struct CustomPaywallRemoteConfig {
     let headlineText: String
     let subheadlineText: String
     let ctaText: String
+    let productTitleText: String?
+    let productDescriptionText: String?
 
     init(dictionary: [String: Any]?) {
         eyebrowText = Self.stringValue(
@@ -436,13 +438,20 @@ struct CustomPaywallRemoteConfig {
             in: dictionary,
             fallback: Self.fallbackCTAText
         )
+        productTitleText = Self.stringValue(forKey: "product_title_text", in: dictionary)
+        productDescriptionText = Self.stringValue(forKey: "product_description_text", in: dictionary)
     }
 
     private static func stringValue(forKey key: String, in dictionary: [String: Any]?, fallback: String) -> String {
-        guard let value = dictionary?[key] as? String else { return fallback }
+        guard let trimmedValue = stringValue(forKey: key, in: dictionary) else { return fallback }
+        return trimmedValue
+    }
+
+    private static func stringValue(forKey key: String, in dictionary: [String: Any]?) -> String? {
+        guard let value = dictionary?[key] as? String else { return nil }
 
         let trimmedValue = value.trimmingCharacters(in: .whitespacesAndNewlines)
-        return trimmedValue.isEmpty ? fallback : trimmedValue
+        return trimmedValue.isEmpty ? nil : trimmedValue
     }
 }
 

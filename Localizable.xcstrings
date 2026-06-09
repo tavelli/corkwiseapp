@@ -1626,29 +1626,6 @@
         }
       }
     },
-    "mainViewModel.failure.imageTooLarge.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Image too large."
-          }
-        },
-        "en-AU" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Image too large."
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Image too large."
-          }
-        }
-      }
-    },
     "mainViewModel.failure.fileTooLarge.title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1668,6 +1645,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "File too large."
+          }
+        }
+      }
+    },
+    "mainViewModel.failure.imageTooLarge.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Image too large."
+          }
+        },
+        "en-AU" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Image too large."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Image too large."
           }
         }
       }
@@ -2138,19 +2138,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Try Corkwise on a real wine list and see for yourself."
+            "value" : "Try Corkwise on a real list and experience the confidence of having a sommelier at your fingertips."
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Try Corkwise on a real wine list and see for yourself."
+            "value" : "Try Corkwise on a real list and experience the confidence of having a sommelier at your fingertips."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Try Corkwise on a real wine list and see for yourself."
+            "value" : "Try Corkwise on a real list and experience the confidence of having a sommelier at your fingertips."
           }
         }
       }
@@ -2874,18 +2874,18 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Corkwise Premium"
+            "value" : "Your digital sommelier"
           }
         },
         "en-AU" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Corkwise Premium"
           }
         },
         "en-GB" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Corkwise Premium"
           }
         }
@@ -2979,6 +2979,75 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Privacy"
+          }
+        }
+      }
+    },
+    "paywall.product.fallback.annualTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annual"
+          }
+        },
+        "en-AU" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annual"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annual"
+          }
+        }
+      }
+    },
+    "paywall.product.fallback.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Premium guidance for every list"
+          }
+        },
+        "en-AU" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Premium guidance for every list"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Premium guidance for every list"
+          }
+        }
+      }
+    },
+    "paywall.product.fallback.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Premium"
+          }
+        },
+        "en-AU" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Premium"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Premium"
           }
         }
       }

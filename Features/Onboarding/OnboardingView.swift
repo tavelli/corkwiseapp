@@ -3,8 +3,13 @@ import SwiftUI
 
 struct OnboardingView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @State private var viewModel: OnboardingViewModel
     @State private var showsCompletionView = false
+
+    private var usesRegularWidthLayout: Bool {
+        horizontalSizeClass == .regular
+    }
 
     init(existingPreferences: UserWinePreferences?) {
         _viewModel = State(initialValue: OnboardingViewModel(existingPreferences: existingPreferences))
@@ -105,6 +110,7 @@ struct OnboardingView: View {
         }
         .buttonStyle(OnboardingPrimaryButtonStyle())
         .disabled(viewModel.canContinue == false)
+        .frame(maxWidth: usesRegularWidthLayout ? 520 : .infinity)
         .frame(maxWidth: .infinity)
         .padding(.top, 24)
     }
@@ -206,7 +212,12 @@ struct OnboardingView: View {
 }
 
 private struct OnboardingIntroStepView: View {
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @ScaledMetric(relativeTo: .largeTitle) private var headlineFontSize = 34
+
+    private var usesRegularWidthLayout: Bool {
+        horizontalSizeClass == .regular
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -235,7 +246,12 @@ private struct OnboardingIntroStepView: View {
             }
             .frame(maxWidth: .infinity)
 
-            Spacer(minLength: 34)
+            if usesRegularWidthLayout {
+                Color.clear
+                    .frame(height: 28)
+            } else {
+                Spacer(minLength: 34)
+            }
 
             VStack(spacing: 12) {
                 HStack(spacing: 20) {
@@ -281,6 +297,8 @@ private struct OnboardingIntroStepView: View {
                 }
                 .fixedSize(horizontal: false, vertical: true)
             }
+            .frame(maxWidth: usesRegularWidthLayout ? 600 : .infinity)
+            .frame(maxWidth: .infinity)
 
             Spacer(minLength: 0)
         }
