@@ -101,6 +101,9 @@ private struct CustomPaywallContent: View {
             ProductSelectionCard(product: paywall.product, remoteConfig: paywall.remoteConfig)
                 .padding(.top, 28)
 
+            PaywallBenefitRow()
+                .padding(.top, 28)
+
             VStack(spacing: 24) {
                 Button(action: purchaseAction) {
                     HStack(spacing: 8) {
@@ -132,6 +135,12 @@ private struct CustomPaywallContent: View {
                 .disabled(isPurchaseInProgress)
                 .opacity(isPurchaseInProgress ? 0.78 : 1)
 
+//                Text(.paywallAutoRenewDisclaimer)
+//                    .font(.footnote)
+//                    .multilineTextAlignment(.center)
+//                    .foregroundStyle(Color(red: 0.78, green: 0.71, blue: 0.67))
+//                    .padding(.horizontal, 8)
+
                 PaywallFooterLinks(
                     isPurchaseInProgress: isPurchaseInProgress,
                     restoreAction: restoreAction
@@ -146,6 +155,42 @@ private struct CustomPaywallContent: View {
         }
         .padding(.horizontal, 24)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
+private struct PaywallBenefitRow: View {
+    private let lineColor = Color(red: 0.58, green: 0.30, blue: 0.23).opacity(0.56)
+    private let accentColor = Color(red: 0.91, green: 0.70, blue: 0.42)
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Divider()
+                .overlay(lineColor)
+
+            HStack(spacing: 18) {
+                Image(systemName: "checkmark")
+                    .font(.caption2.bold())
+                    .foregroundStyle(accentColor)
+                    .frame(width: 22, height: 22)
+                    .overlay(
+                        Circle()
+                            .stroke(accentColor, lineWidth: 1.6)
+                    )
+                    .accessibilityHidden(true)
+
+                Text(.paywallFullWineListAnalysis)
+                    .font(.footnote)
+                    .foregroundStyle(Color(red: 0.91, green: 0.84, blue: 0.78))
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.88)
+
+                Spacer(minLength: 0)
+            }
+            .padding(.vertical, 18)
+
+            Divider()
+                .overlay(lineColor)
+        }
     }
 }
 
@@ -181,8 +226,11 @@ private struct ProductSelectionCard: View {
                 Text(productDescription)
                     .font(.footnote)
                     .foregroundStyle(Color(red: 0.75, green: 0.66, blue: 0.62))
-                    .lineLimit(2)
+                    .lineLimit(2, reservesSpace: true)
+                    .multilineTextAlignment(.leading)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .layoutPriority(1)
 
             Spacer(minLength: 0)
         }
@@ -392,7 +440,16 @@ extension CustomPaywall {
             price: 99,
             adaptyProductType: "annual"
         ),
-        remoteConfig: .init(dictionary: ["cta_text": "Get Premium"])
+        remoteConfig: .init(
+            dictionary: [
+                "eyebrow_text": "Corkwise Membership",
+                "headline_text": "Choose without guessing",
+                "subheadline_text": "Expert guidance for serious wine lists.",
+                "cta_text": "Join Corkwise",
+                "product_title_text": "Annual",
+                "product_description_text": "Less than one disappointing bottle",
+            ]
+        )
     )
 }
 
