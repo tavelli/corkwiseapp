@@ -73,8 +73,8 @@ private struct CustomPaywallContent: View {
     let restoreAction: () -> Void
 
     var body: some View {
-        VStack(spacing: 0) {
-            Spacer(minLength: 28)
+        VStack(spacing: 14) {
+            Spacer(minLength: 30)
 
             VStack(spacing: 12) {
                 Text(paywall.remoteConfig.eyebrowText)
@@ -88,8 +88,9 @@ private struct CustomPaywallContent: View {
                     .bold()
                     .multilineTextAlignment(.center)
                     .foregroundStyle(Color(red: 0.98, green: 0.93, blue: 0.86))
-                    .lineLimit(3)
+                    .lineLimit(2, reservesSpace: true)
                     .minimumScaleFactor(0.82)
+                    .frame(maxWidth: 300)
 
                 Text(paywall.remoteConfig.subheadlineText)
                     .font(.callout)
@@ -100,11 +101,11 @@ private struct CustomPaywallContent: View {
 
             ProductSelectionCard(product: paywall.product, remoteConfig: paywall.remoteConfig)
                 .padding(.top, 28)
+//
+//            PaywallBenefitRow()
+//                .padding(.top, 28)
 
-            PaywallBenefitRow()
-                .padding(.top, 28)
-
-            VStack(spacing: 24) {
+            VStack(spacing: 30) {
                 Button(action: purchaseAction) {
                     HStack(spacing: 8) {
                         if isPurchaseInProgress {
@@ -135,16 +136,18 @@ private struct CustomPaywallContent: View {
                 .disabled(isPurchaseInProgress)
                 .opacity(isPurchaseInProgress ? 0.78 : 1)
 
-//                Text(.paywallAutoRenewDisclaimer)
-//                    .font(.footnote)
-//                    .multilineTextAlignment(.center)
-//                    .foregroundStyle(Color(red: 0.78, green: 0.71, blue: 0.67))
-//                    .padding(.horizontal, 8)
-
-                PaywallFooterLinks(
-                    isPurchaseInProgress: isPurchaseInProgress,
-                    restoreAction: restoreAction
-                )
+                VStack(spacing:16){
+                    Text(.paywallAutoRenewDisclaimer)
+                        .font(.footnote)
+                        .multilineTextAlignment(.center)
+                        .foregroundStyle(Color(red: 0.78, green: 0.71, blue: 0.67))
+                        .padding(.horizontal, 8)
+                    
+                    PaywallFooterLinks(
+                        isPurchaseInProgress: isPurchaseInProgress,
+                        restoreAction: restoreAction
+                    )
+                }
             }
             .padding(.top, 30)
 
@@ -203,7 +206,7 @@ private struct ProductSelectionCard: View {
             Image(systemName: "crown")
                 .font(.title2)
                 .foregroundStyle(Color(red: 0.91, green: 0.70, blue: 0.42))
-                .frame(width: 66, height: 66)
+                .frame(width: 50, height: 50)
                 .background(Color(red: 0.20, green: 0.08, blue: 0.10).opacity(0.64))
                 .clipShape(.circle)
                 .overlay(
@@ -221,12 +224,13 @@ private struct ProductSelectionCard: View {
 
                 Text(productPrice)
                     .font(.title3)
+                    .bold()
                     .foregroundStyle(Color(red: 0.91, green: 0.76, blue: 0.54))
 
                 Text(productDescription)
                     .font(.footnote)
-                    .foregroundStyle(Color(red: 0.75, green: 0.66, blue: 0.62))
-                    .lineLimit(2, reservesSpace: true)
+                    .foregroundStyle(Color(red: 0.90, green: 0.82, blue: 0.74))
+                    .lineLimit(1)
                     .multilineTextAlignment(.leading)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -278,7 +282,7 @@ private struct ProductSelectionCard: View {
             return localizedPrice
         }
 
-        return "\(localizedPrice)/\(subscriptionUnitLabel(for: subscriptionPeriod))"
+        return "\(localizedPrice) / \(subscriptionUnitLabel(for: subscriptionPeriod))"
     }
 
     private func subscriptionUnitLabel(for subscriptionPeriod: AdaptySubscriptionPeriod) -> String {
@@ -307,19 +311,28 @@ private struct PaywallFooterLinks: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Button(String(localized: .paywallRestorePurchases), action: restoreAction)
-                .disabled(isPurchaseInProgress)
+            Button(action: restoreAction) {
+                Text(String(localized: .paywallRestorePurchases))
+                    .underline()
+            }
+            .disabled(isPurchaseInProgress)
 
             if let privacyPolicyURL = Self.privacyPolicyURL {
                 footerSeparator
 
-                Link(String(localized: .paywallPrivacy), destination: privacyPolicyURL)
+                Link(destination: privacyPolicyURL) {
+                    Text(String(localized: .paywallPrivacy))
+                        .underline()
+                }
             }
 
             if let termsOfServiceURL = Self.termsOfServiceURL {
                 footerSeparator
 
-                Link(String(localized: .paywallTerms), destination: termsOfServiceURL)
+                Link(destination: termsOfServiceURL) {
+                    Text(String(localized: .paywallTerms))
+                        .underline()
+                }
             }
         }
         .font(.footnote)
@@ -436,7 +449,7 @@ extension CustomPaywall {
             vendorProductId: "corkwise.premium.annual.preview",
             localizedTitle: "Annual",
             localizedDescription: "A smarter way to choose the bottle",
-            localizedPrice: "$99/year",
+            localizedPrice: "$99 / year",
             price: 99,
             adaptyProductType: "annual"
         ),
@@ -446,7 +459,7 @@ extension CustomPaywall {
                 "headline_text": "Choose without guessing",
                 "subheadline_text": "Expert guidance for serious wine lists.",
                 "cta_text": "Join Corkwise",
-                "product_title_text": "Annual",
+                "product_title_text": "Annual Membership",
                 "product_description_text": "Less than one disappointing bottle",
             ]
         )
