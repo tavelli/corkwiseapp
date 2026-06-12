@@ -18,6 +18,7 @@
 		375DE5F92FAE4E16008D4574 /* BuildChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375DE5F82FAE4E16008D4574 /* BuildChannel.swift */; };
 		375DE5FD2FBAC2E9008D4574 /* ScanAccessService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375DE5FC2FBAC2E9008D4574 /* ScanAccessService.swift */; };
 		375DE5FF2FD5B1A0008D4574 /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375DE5FE2FD5B1A0008D4574 /* AnalyticsService.swift */; };
+		375DE6012FD74000008D4574 /* AnalyticsPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375DE6002FD74000008D4574 /* AnalyticsPreferences.swift */; };
 		376100002FB54F0000000000 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 376100012FB54F0000000000 /* Localizable.xcstrings */; };
 		376100022FB54F0000000000 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 376100032FB54F0000000000 /* InfoPlist.xcstrings */; };
 		37915F0C2FB21FB2003B43A8 /* WineListCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37915F0B2FB21FB2003B43A8 /* WineListCameraView.swift */; };
@@ -72,6 +73,7 @@
 		375DE5F82FAE4E16008D4574 /* BuildChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildChannel.swift; sourceTree = "<group>"; };
 		375DE5FC2FBAC2E9008D4574 /* ScanAccessService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanAccessService.swift; sourceTree = "<group>"; };
 		375DE5FE2FD5B1A0008D4574 /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsService.swift; sourceTree = "<group>"; };
+		375DE6002FD74000008D4574 /* AnalyticsPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsPreferences.swift; sourceTree = "<group>"; };
 		376100012FB54F0000000000 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		376100032FB54F0000000000 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 		37915F0B2FB21FB2003B43A8 /* WineListCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WineListCameraView.swift; sourceTree = "<group>"; };
@@ -147,6 +149,7 @@
 		379399B52FA3CC7400246506 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				375DE6002FD74000008D4574 /* AnalyticsPreferences.swift */,
 				375DE5FE2FD5B1A0008D4574 /* AnalyticsService.swift */,
 				379399CC2FA3CD3F00246506 /* AppConfiguration.swift */,
 				375DE5F42FAE4094008D4574 /* AppIdentityService.swift */,
@@ -392,6 +395,7 @@
 				379399D22FA3CD3F00246506 /* AppState.swift in Sources */,
 				379399D32FA3CD3F00246506 /* AppRouter.swift in Sources */,
 				37939A002FA3F10000246506 /* CorkWiseApp.swift in Sources */,
+				375DE6012FD74000008D4574 /* AnalyticsPreferences.swift in Sources */,
 				375DE5FF2FD5B1A0008D4574 /* AnalyticsService.swift in Sources */,
 				37939A012FA3F10000246506 /* EntitlementManager.swift in Sources */,
 				37939A022FA3F10000246506 /* ImagePreparationService.swift in Sources */,
@@ -424,7 +428,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CORKWISE_POSTHOG_HOST = "https://us.i.posthog.com";
 				CORKWISE_POSTHOG_PROJECT_TOKEN = phc_saYmRjm5kV2EfRHEkB6VCkCkDjyzSivZAYWiV3tbazQB;
-				CURRENT_PROJECT_VERSION = 22;
+				CURRENT_PROJECT_VERSION = 23;
 				DEVELOPMENT_TEAM = 6SZ57G9BS7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -471,7 +475,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CORKWISE_POSTHOG_HOST = "https://us.i.posthog.com";
 				CORKWISE_POSTHOG_PROJECT_TOKEN = phc_saYmRjm5kV2EfRHEkB6VCkCkDjyzSivZAYWiV3tbazQB;
-				CURRENT_PROJECT_VERSION = 22;
+				CURRENT_PROJECT_VERSION = 23;
 				DEVELOPMENT_TEAM = 6SZ57G9BS7;
 				ENABLE_PREVIEWS = YES;
 				EXCLUDED_SOURCE_FILE_NAMES = (

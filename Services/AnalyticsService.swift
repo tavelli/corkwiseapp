@@ -84,6 +84,7 @@ final class AnalyticsService {
         config.captureElementInteractions = false
         config.sessionReplay = false
         config.surveys = false
+        config.optOut = AnalyticsPreferences.isPostHogAnalyticsEnabled == false
         #if DEBUG
         config.debug = true
         #endif
@@ -94,6 +95,26 @@ final class AnalyticsService {
         PostHogSDK.shared.setup(config)
         isConfigured = true
 
+        guard AnalyticsPreferences.isPostHogAnalyticsEnabled else { return }
+        await registerSharedPropertiesAndIdentify()
+        trackAppOpened()
+    }
+
+    func setPostHogAnalyticsEnabled(_ isEnabled: Bool) {
+        guard isConfigured else { return }
+
+        if isEnabled {
+            PostHogSDK.shared.optIn()
+            Task {
+                await registerSharedPropertiesAndIdentify()
+                trackAppOpened()
+            }
+        } else {
+            PostHogSDK.shared.optOut()
+        }
+    }
+
+    private func registerSharedPropertiesAndIdentify() async {
         do {
             let sharedProperties = sharedProperties(buildChannel: await BuildChannel.current())
             let appUserID = try AppIdentityService.shared.appUserID()
@@ -107,8 +128,6 @@ final class AnalyticsService {
             print("AnalyticsService failed to identify PostHog user: \(error)")
             #endif
         }
-
-        trackAppOpened()
     }
 
     func trackOnboardingCompleted() {
@@ -263,6 +282,7 @@ final class AnalyticsService {
 
     private func capture(_ event: Event, properties: [String: Any?] = [:]) {
         guard isConfigured else { return }
+        guard AnalyticsPreferences.isPostHogAnalyticsEnabled else { return }
 
         let sanitizedProperties = properties.reduce(into: [String: Any]()) { result, entry in
             guard allowedPropertyKeys.contains(entry.key), let value = entry.value else { return }

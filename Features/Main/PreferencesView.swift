@@ -4,9 +4,12 @@ import SwiftUI
 struct PreferencesView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(AppState.self) private var appState
+    @Environment(AnalyticsPreferences.self) private var analyticsPreferences
     @Query(sort: \UserWinePreferences.createdAt) private var preferenceRecords: [UserWinePreferences]
 
     var body: some View {
+        @Bindable var analyticsPreferences = analyticsPreferences
+
         ScrollView {
             VStack(alignment: .leading, spacing: 40) {
                 if let preferences = preferenceRecords.first {
@@ -145,6 +148,12 @@ struct PreferencesView: View {
                         .background(Color.white.opacity(0.9))
                         .clipShape(.rect(cornerRadius: 20))
                 }
+
+                PreferenceSection(title: .preferencesSectionPrivacy) {
+                    AnalyticsOptOutToggleRow(
+                        isPostHogAnalyticsEnabled: $analyticsPreferences.isPostHogAnalyticsEnabled
+                    )
+                }
             }
             .padding(20)
         }
@@ -233,6 +242,27 @@ struct PreferencesView: View {
 
         try? modelContext.save()
         appState.resetMainNavigation()
+    }
+}
+
+private struct AnalyticsOptOutToggleRow: View {
+    @Binding var isPostHogAnalyticsEnabled: Bool
+
+    var body: some View {
+        Toggle(isOn: $isPostHogAnalyticsEnabled) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(.preferencesPrivacyAnalyticsTitle)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(Color.wineText)
+
+                Text(.preferencesPrivacyAnalyticsDescription)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .toggleStyle(.switch)
+        .tint(Color.wineAccent)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
@@ -325,5 +355,6 @@ private struct PreferenceSection<Content: View>: View {
 
     return PreferencesView()
         .environment(AppState())
+        .environment(AnalyticsPreferences())
         .modelContainer(container)
 }

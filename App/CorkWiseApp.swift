@@ -4,6 +4,7 @@ import SwiftUI
 @main
 struct CorkWiseApp: App {
     @State private var appState = AppState()
+    @State private var analyticsPreferences = AnalyticsPreferences()
     @State private var entitlementManager = EntitlementManager()
 
     private var sharedModelContainer: ModelContainer = {
@@ -24,6 +25,7 @@ struct CorkWiseApp: App {
         WindowGroup {
             rootView
                 .environment(appState)
+                .environment(analyticsPreferences)
                 .environment(entitlementManager)
                 .task {
                     await AnalyticsService.shared.configure()

@@ -101,7 +101,7 @@ struct MainView: View {
                     }
                 }
             )
-            .presentationDetents([.height(230)])
+            .presentationDetents([.height(300)])
             .presentationBackground(.ultraThinMaterial)
         }
         .sheet(isPresented: $isShowingPaywall) {
