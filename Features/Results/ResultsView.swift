@@ -47,7 +47,7 @@ struct ResultsView: View {
         .background(mainScreenBackground.ignoresSafeArea())
         .sheet(isPresented: $isShowingPaywall) {
             PaywallView(preferences: nil, source: "results_soft_paywall")
-                .presentationDetents([.height(550)])
+                .presentationDetents([.height(PaywallPresentationMetrics.detentHeight)])
                 .presentationDragIndicator(.visible)
                 .presentationBackground(Color(red: 0.09, green: 0.02, blue: 0.03))
         }

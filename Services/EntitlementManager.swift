@@ -412,11 +412,13 @@ struct CustomPaywallRemoteConfig {
     private static let fallbackHeadlineText = String(localized: .paywallFallbackHeadline)
     private static let fallbackSubheadlineText = String(localized: .paywallFallbackSubheadline)
     private static let fallbackCTAText = String(localized: .paywallFallbackCta)
+    private static let fallbackBenefitText = String(localized: .paywallFullWineListAnalysis)
 
     let eyebrowText: String
     let headlineText: String
     let subheadlineText: String
     let ctaText: String
+    let benefitText: String
     let productTitleText: String?
     let productDescriptionText: String?
 
@@ -440,6 +442,11 @@ struct CustomPaywallRemoteConfig {
             forKey: "cta_text",
             in: dictionary,
             fallback: Self.fallbackCTAText
+        )
+        benefitText = Self.stringValue(
+            forKey: "benefit_text",
+            in: dictionary,
+            fallback: Self.fallbackBenefitText
         )
         productTitleText = Self.stringValue(forKey: "product_title_text", in: dictionary)
         productDescriptionText = Self.stringValue(forKey: "product_description_text", in: dictionary)

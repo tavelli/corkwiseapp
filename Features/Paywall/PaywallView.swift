@@ -64,6 +64,10 @@ struct PaywallView: View {
     }
 }
 
+enum PaywallPresentationMetrics {
+    static let detentHeight: CGFloat = 580
+}
+
 private struct CustomPaywallContent: View {
     let paywall: CustomPaywall
     let isPurchaseInProgress: Bool
@@ -74,23 +78,25 @@ private struct CustomPaywallContent: View {
 
     var body: some View {
         VStack(spacing: 14) {
-            Spacer(minLength: 30)
+            Spacer(minLength: 46)
 
             VStack(spacing: 12) {
-                Text(paywall.remoteConfig.eyebrowText)
-                    .font(.caption.bold())
-                    .textCase(.uppercase)
-                    .tracking(2.4)
-                    .foregroundStyle(Color(red: 0.86, green: 0.68, blue: 0.38))
-
-                Text(paywall.remoteConfig.headlineText)
-                    .font(.largeTitle)
-                    .bold()
-                    .multilineTextAlignment(.center)
-                    .foregroundStyle(Color(red: 0.98, green: 0.93, blue: 0.86))
-                    .lineLimit(2, reservesSpace: true)
-                    .minimumScaleFactor(0.82)
-                    .frame(maxWidth: 300)
+                VStack(spacing: 5) {
+                    Text(paywall.remoteConfig.eyebrowText)
+                        .font(.caption.bold())
+                        .textCase(.uppercase)
+                        .tracking(2.4)
+                        .foregroundStyle(Color(red: 0.86, green: 0.68, blue: 0.38))
+                    
+                    Text(paywall.remoteConfig.headlineText)
+                        .font(.largeTitle)
+                        .bold()
+                        .multilineTextAlignment(.center)
+                        .foregroundStyle(Color(red: 0.98, green: 0.93, blue: 0.86))
+                        .lineLimit(2, reservesSpace: true)
+                        .minimumScaleFactor(0.82)
+                        .frame(maxWidth: 300)
+                }
 
                 Text(paywall.remoteConfig.subheadlineText)
                     .font(.callout)
@@ -101,9 +107,9 @@ private struct CustomPaywallContent: View {
 
             ProductSelectionCard(product: paywall.product, remoteConfig: paywall.remoteConfig)
                 .padding(.top, 28)
-//
-//            PaywallBenefitRow()
-//                .padding(.top, 28)
+
+            PaywallBenefitRow(text: paywall.remoteConfig.benefitText)
+                .padding(.top, 15)
 
             VStack(spacing: 30) {
                 Button(action: purchaseAction) {
@@ -149,12 +155,12 @@ private struct CustomPaywallContent: View {
                     )
                 }
             }
-            .padding(.top, 30)
+            .padding(.top, 15)
 
             PaywallMessageView(statusMessage: statusMessage, errorMessage: errorMessage)
                 .padding(.top, 16)
 
-            Spacer(minLength: 22)
+            Spacer(minLength: 0)
         }
         .padding(.horizontal, 24)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -162,6 +168,8 @@ private struct CustomPaywallContent: View {
 }
 
 private struct PaywallBenefitRow: View {
+    let text: String
+
     private let lineColor = Color(red: 0.58, green: 0.30, blue: 0.23).opacity(0.56)
     private let accentColor = Color(red: 0.91, green: 0.70, blue: 0.42)
 
@@ -181,14 +189,14 @@ private struct PaywallBenefitRow: View {
                     )
                     .accessibilityHidden(true)
 
-                Text(.paywallFullWineListAnalysis)
+                Text(text)
                     .font(.footnote)
+                    .multilineTextAlignment(.center)
                     .foregroundStyle(Color(red: 0.91, green: 0.84, blue: 0.78))
                     .lineLimit(2)
                     .minimumScaleFactor(0.88)
-
-                Spacer(minLength: 0)
             }
+            .frame(maxWidth: .infinity)
             .padding(.vertical, 18)
 
             Divider()
@@ -308,12 +316,13 @@ private struct PaywallFooterLinks: View {
     private static let privacyPolicyURL = URL(string: "https://getcorkwise.com/privacy")
     private static let termsOfServiceURL = URL(string: "https://getcorkwise.com/terms")
     private let linkColor = Color(red: 0.86, green: 0.76, blue: 0.66)
+    private let underlineColor = Color(red: 0.86, green: 0.76, blue: 0.66).opacity(0.35)
 
     var body: some View {
         HStack(spacing: 12) {
             Button(action: restoreAction) {
                 Text(String(localized: .paywallRestorePurchases))
-                    .underline()
+                   //  .underline(true, color: underlineColor)
             }
             .disabled(isPurchaseInProgress)
 
@@ -322,7 +331,7 @@ private struct PaywallFooterLinks: View {
 
                 Link(destination: privacyPolicyURL) {
                     Text(String(localized: .paywallPrivacy))
-                        .underline()
+                        // .underline(true, color: underlineColor)
                 }
             }
 
@@ -331,7 +340,7 @@ private struct PaywallFooterLinks: View {
 
                 Link(destination: termsOfServiceURL) {
                     Text(String(localized: .paywallTerms))
-                        .underline()
+                     //   .underline(true, color: underlineColor)
                 }
             }
         }
@@ -428,17 +437,39 @@ private struct PaywallRetryButtonStyle: ButtonStyle {
 
 #if DEBUG
 
-#Preview {
-    PaywallView(preferences: nil)
-        .environment(EntitlementManager())
-}
 
 #Preview("Loaded") {
-    let entitlementManager = EntitlementManager()
-    entitlementManager.paywall = .previewLoaded
+    PaywallDetentPreviewHost()
+}
 
-    return PaywallView(preferences: nil)
-        .environment(entitlementManager)
+private struct PaywallDetentPreviewHost: View {
+    @State private var isShowingPaywall = true
+    @State private var entitlementManager: EntitlementManager
+
+    init() {
+        let entitlementManager = EntitlementManager()
+        entitlementManager.paywall = .previewLoaded
+        _entitlementManager = State(initialValue: entitlementManager)
+    }
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                Color(red: 0.12, green: 0.07, blue: 0.08)
+                    .ignoresSafeArea()
+
+                Text("Preview Host")
+                    .font(.headline)
+                    .foregroundStyle(Color(red: 0.90, green: 0.82, blue: 0.74))
+            }
+        }
+        .sheet(isPresented: $isShowingPaywall) {
+            PaywallView(preferences: nil, source: "preview")
+                .environment(entitlementManager)
+                .presentationDetents([.height(PaywallPresentationMetrics.detentHeight)])
+                .presentationDragIndicator(.visible)
+        }
+    }
 }
 
 
@@ -459,6 +490,7 @@ extension CustomPaywall {
                 "headline_text": "Choose without guessing",
                 "subheadline_text": "Expert guidance for serious wine lists.",
                 "cta_text": "Join Corkwise",
+                "benefit_text": "Unlimited on-demand expertise.",
                 "product_title_text": "Annual Membership",
                 "product_description_text": "Less than one disappointing bottle",
             ]

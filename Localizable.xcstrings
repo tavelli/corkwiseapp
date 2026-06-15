@@ -2684,29 +2684,6 @@
         }
       }
     },
-    "paywall.fullWineListAnalysis" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Full wine list analysis, rankings, and recommendations."
-          }
-        },
-        "en-AU" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Full wine list analysis, rankings, and recommendations."
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Full wine list analysis, rankings, and recommendations."
-          }
-        }
-      }
-    },
     "paywall.error.loadFailed" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2979,6 +2956,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Expert guidance for every wine list."
+          }
+        }
+      }
+    },
+    "paywall.fullWineListAnalysis" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlimited on-demand expertise."
+          }
+        },
+        "en-AU" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlimited on-demand expertise."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlimited on-demand expertise."
           }
         }
       }
