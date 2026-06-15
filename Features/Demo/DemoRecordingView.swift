@@ -19,7 +19,7 @@ struct DemoRecordingView: View {
                     initialElapsedSeconds: 15,
                     showsPageHeader: false,
                     showsCancelAction: false,
-                    scriptedScrollSequence: .demoRecording,
+                    scriptedScrollSequence: nil,
                     cancelAction: {}
                 )
 
@@ -72,6 +72,7 @@ private extension WineScanResult {
             pricingContextSummary: pricingContextSummary,
             recommendations: recommendations,
             categoryRecommendations: categoryRecommendations,
+            weakSpots: weakSpots,
             notes: notes,
             debugInfo: debugInfo
         )
@@ -112,5 +113,6 @@ private enum DemoRecordingError: LocalizedError {
 
 #Preview {
     DemoRecordingView()
+        .environment(AppState())
 }
 #endif

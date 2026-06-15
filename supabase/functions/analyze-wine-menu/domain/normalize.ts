@@ -1,6 +1,20 @@
-import {type PurchaseMode, RequestError, type WineScanResult} from "./types.ts";
+import {
+  type PurchaseMode,
+  RequestError,
+  type WineScanResult,
+} from "./types.ts";
 
 const MINIMUM_MARKUP_SAMPLE_SIZE = 3;
+const MAX_WEAK_SPOTS = 3;
+const MAX_WEAK_SPOT_REASONS = 4;
+const MAX_WEAK_SPOT_EXAMPLES = 4;
+const ALLOWED_CATEGORY_RECOMMENDATION_KEYS = new Set([
+  "best_value",
+  "worth_the_splurge",
+  "crowd_pleaser",
+  "hidden_gem",
+  "try_something_new",
+]);
 
 export function normalizeScanResult(
   input: unknown,
@@ -24,18 +38,23 @@ export function normalizeScanResult(
 
   const normalizedRecommendations = filterRecommendationsForPurchaseMode(
     recommendations.map((entry, index) =>
-      normalizeRecommendation(entry, index, purchaseMode),
+      normalizeRecommendation(entry, index, purchaseMode)
     ),
     purchaseMode,
   );
   const normalizedCategoryRecommendations =
     filterCategorySectionsForPurchaseMode(
       arrayOrEmpty(candidate.categoryRecommendations).map((entry) =>
-        normalizeCategorySection(entry, purchaseMode),
+        normalizeCategorySection(entry, purchaseMode)
+      ).filter((section) =>
+        ALLOWED_CATEGORY_RECOMMENDATION_KEYS.has(section.key)
       ),
       purchaseMode,
     );
   const normalizedNotes = stringArrayOrEmpty(candidate.notes);
+  const normalizedWeakSpots = arrayOrEmpty(candidate.weakSpots)
+    .slice(0, MAX_WEAK_SPOTS)
+    .map(normalizeWeakSpot);
   const summary = normalizeSummary(candidate.summary);
   const pricingContextSummary = normalizePricingContextSummary(
     candidate.visiblePricingSample,
@@ -49,6 +68,7 @@ export function normalizeScanResult(
     summary,
     recommendations: normalizedRecommendations,
     categoryRecommendations: normalizedCategoryRecommendations,
+    weakSpots: normalizedWeakSpots,
     notes: normalizedNotes,
   };
 
@@ -123,8 +143,9 @@ function normalizePricingContextSummary(
   });
 
   return {
-    medianEstimatedMarkup:
-      markups.length >= MINIMUM_MARKUP_SAMPLE_SIZE ? median(markups) : null,
+    medianEstimatedMarkup: markups.length >= MINIMUM_MARKUP_SAMPLE_SIZE
+      ? median(markups)
+      : null,
     markupSampleSize: markups.length,
   };
 }
@@ -213,8 +234,30 @@ function normalizeCategorySection(
     recommendations: arrayOrEmpty(candidate.recommendations)
       .slice(0, 2)
       .map((entry, index) =>
-        normalizeRecommendation(entry, index, purchaseMode),
+        normalizeRecommendation(entry, index, purchaseMode)
       ),
+  };
+}
+
+function normalizeWeakSpot(
+  input: unknown,
+): WineScanResult["weakSpots"][number] {
+  if (input == null || typeof input !== "object") {
+    throw genericAnalysisFailure();
+  }
+
+  const candidate = input as Record<string, unknown>;
+  return {
+    categoryHeader: requiredString(candidate.categoryHeader),
+    explanation: requiredString(candidate.explanation),
+    reasons: stringArrayOrEmpty(candidate.reasons).slice(
+      0,
+      MAX_WEAK_SPOT_REASONS,
+    ),
+    examples: stringArrayOrEmpty(candidate.examples).slice(
+      0,
+      MAX_WEAK_SPOT_EXAMPLES,
+    ),
   };
 }
 
@@ -225,7 +268,7 @@ function deriveDisplayName(input: {
   varietal: string | null;
   extractedText: string;
 }): string {
-  const {producer, region, varietal, extractedText} = input;
+  const { producer, region, varietal, extractedText } = input;
   const wineName = distinctPart(input.wineName, [producer, varietal]);
 
   if (wineName != null) {
@@ -316,8 +359,8 @@ function deriveMarkup(input: {
   menuPriceUnit: PurchaseMode;
   menuPrice: number | null;
   estimatedRetail: number | null;
-}): {value: number; display: string} | null {
-  const {menuPriceUnit, menuPrice, estimatedRetail} = input;
+}): { value: number; display: string } | null {
+  const { menuPriceUnit, menuPrice, estimatedRetail } = input;
 
   if (
     menuPrice == null ||

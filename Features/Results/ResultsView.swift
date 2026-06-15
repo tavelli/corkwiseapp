@@ -152,6 +152,16 @@ struct ResultsContentView: View {
                             )
                         }
 
+                        if result.weakSpots.isEmpty == false {
+                            LazyVStack(alignment: .leading, spacing: layout.cardSpacing) {
+                                ForEach(result.weakSpots) { weakSpot in
+                                    WeakSpotCardView(weakSpot: weakSpot)
+                                }
+                            }
+                                .frame(maxWidth: layout.featureContentMaxWidth)
+                                .frame(maxWidth: .infinity, alignment: .center)
+                        }
+
                         if result.notes.isEmpty == false {
                             VStack(alignment: .leading, spacing: 12) {
                                 Text(.resultsNotesTitle)
@@ -310,7 +320,6 @@ struct ResultsScriptedScrollSequence: Equatable {
             (.seconds(5), .highlyRecommendCard(index: 1), .top, 3),
             (.seconds(5), .category(key: "worth_the_splurge"), .top, 3),
             (.seconds(5), .category(key: "hidden_gem"), .top, 3),
-//           (.seconds(3), .category(key: "overpriced_here"), .top, 12),
         ]
 
         for step in steps {
@@ -390,6 +399,7 @@ private extension WineScanResult {
             pricingContextSummary: sample.pricingContextSummary,
             recommendations: sample.recommendations,
             categoryRecommendations: sample.categoryRecommendations,
+            weakSpots: sample.weakSpots,
             notes: sample.notes,
             debugInfo: sample.debugInfo
         )
@@ -437,6 +447,92 @@ private struct DebugScanInfoView: View {
     }
 }
 #endif
+
+private struct WeakSpotCardView: View {
+    let weakSpot: WeakSpot
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack(spacing: 6) {
+                Image(phosphor: .warningCircle)
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundStyle(Color.wineAccent)
+                    .frame(width: 18, height: 18)
+
+                Text(String(localized: .resultsWeakSpotsTitle).uppercased())
+                    .font(.caption.weight(.bold))
+                    .tracking(0.5)
+                    .foregroundStyle(Color.wineAccent)
+            }
+
+            WeakSpotContentView(weakSpot: weakSpot)
+        }
+        .padding(20)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.resultCardBackground)
+        .clipShape(.rect(cornerRadius: 22))
+        .overlay {
+            RoundedRectangle(cornerRadius: 22)
+                .stroke(Color.wineBorder.opacity(0.8), lineWidth: 1)
+        }
+    }
+}
+
+private struct WeakSpotContentView: View {
+    let weakSpot: WeakSpot
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(weakSpot.categoryHeader)
+                .font(.headline)
+                .foregroundStyle(Color.wineText)
+
+            Text(weakSpot.explanation)
+                .font(.subheadline)
+                .foregroundStyle(Color.wineText)
+                .lineSpacing(2)
+                .fixedSize(horizontal: false, vertical: true)
+
+            WineDataTagRow(tags: weakSpot.reasons)
+
+            if weakSpot.examples.isEmpty == false {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(.resultsWeakSpotsExamplesTitle)
+                        .font(.caption)
+                        .bold()
+                        .foregroundStyle(Color.wineText)
+
+                    VStack(alignment: .leading, spacing: 0) {
+                        ForEach(weakSpot.examples.indices, id: \.self) { index in
+                            WeakSpotExampleRowView(example: weakSpot.examples[index])
+                        }
+                    }
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+private struct WeakSpotExampleRowView: View {
+    let example: String
+
+    var body: some View {
+        HStack(alignment: .firstTextBaseline, spacing: 10) {
+            Image(systemName: "info.circle")
+                .font(.caption)
+                .foregroundStyle(Color.wineAccent)
+
+            Text(example)
+                .font(.caption)
+                .foregroundStyle(Color.wineText)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(.vertical, 4)
+    }
+}
 
 private struct MenuSnapshotView: View {
     let text: String
