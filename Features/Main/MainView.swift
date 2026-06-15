@@ -106,7 +106,7 @@ struct MainView: View {
         }
         .sheet(isPresented: $isShowingPaywall) {
             PaywallView(preferences: preferences, source: "main_scan_gate")
-                .presentationDetents([.height(500)])
+                .presentationDetents([.height(PaywallPresentationMetrics.detentHeight)])
                 .presentationDragIndicator(.visible)
                 .presentationBackground(Color(red: 0.09, green: 0.02, blue: 0.03))
         }
@@ -988,14 +988,6 @@ private struct MainPreviewData {
         .modelContainer(preview.container)
 }
 
-#Preview("Paywall Sheet") {
-    let preview = MainPreviewData.make()
-
-    MainView(preferences: preview.preferences, showsPaywallOnAppear: true)
-        .environment(AppState())
-        .environment(EntitlementManager())
-        .modelContainer(preview.container)
-}
 
 #Preview("Scan Failed") {
     let preview = MainPreviewData.make()
@@ -1056,7 +1048,7 @@ private struct MainPreviewData {
 
 #if DEBUG
 
-#Preview("Paywall Sheet - Loaded") {
+#Preview("Paywall") {
     let preview = MainPreviewData.make()
     let entitlementManager = MainPreviewData.loadedPaywallEntitlementManager()
 

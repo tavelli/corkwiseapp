@@ -2661,6 +2661,29 @@
         }
       }
     },
+    "paywall.autoRenewDisclaimer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auto-renews yearly. Cancel anytime."
+          }
+        },
+        "en-AU" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auto-renews yearly. Cancel anytime."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auto-renews yearly. Cancel anytime."
+          }
+        }
+      }
+    },
     "paywall.error.loadFailed" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2933,6 +2956,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Expert guidance for every wine list."
+          }
+        }
+      }
+    },
+    "paywall.fullWineListAnalysis" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlimited on-demand insights."
+          }
+        },
+        "en-AU" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlimited on-demand insights."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlimited on-demand insights."
           }
         }
       }
@@ -3259,6 +3305,52 @@
         }
       }
     },
+    "preferences.privacy.analytics.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Help improve Corkwise by sharing app usage analytics. Turn this off to opt out."
+          }
+        },
+        "en-AU" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Help improve Corkwise by sharing app usage analytics. Turn this off to opt out."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Help improve Corkwise by sharing app usage analytics. Turn this off to opt out."
+          }
+        }
+      }
+    },
+    "preferences.privacy.analytics.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share analytics"
+          }
+        },
+        "en-AU" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share analytics"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share analytics"
+          }
+        }
+      }
+    },
     "preferences.section.debug" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3324,6 +3416,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Preferred Styles"
+          }
+        }
+      }
+    },
+    "preferences.section.privacy" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privacy"
+          }
+        },
+        "en-AU" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privacy"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privacy"
           }
         }
       }

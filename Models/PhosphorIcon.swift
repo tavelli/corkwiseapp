@@ -5,6 +5,7 @@ enum PhosphorIcon: String, CaseIterable {
     case arrowsSplit = "arrows-split"
     case binoculars
     case chartBar = "chart-bar"
+    case checkCircle = "check-circle"
     case checkSquareFill = "check-square-fill"
     case compass
     case crown
