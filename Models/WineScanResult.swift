@@ -48,6 +48,7 @@ struct WineScanResult: Codable, Hashable {
     let pricingContextSummary: PricingContextSummary?
     let recommendations: [WineRecommendation]
     let categoryRecommendations: [RecommendationCategorySection]
+    let weakSpots: [WeakSpot]
     let notes: [String]
     let debugInfo: ScanDebugInfo?
 
@@ -62,6 +63,7 @@ struct WineScanResult: Codable, Hashable {
         case pricingContextSummary
         case recommendations
         case categoryRecommendations
+        case weakSpots
         case notes
         case debugInfo
     }
@@ -77,6 +79,7 @@ struct WineScanResult: Codable, Hashable {
         pricingContextSummary: PricingContextSummary? = nil,
         recommendations: [WineRecommendation],
         categoryRecommendations: [RecommendationCategorySection],
+        weakSpots: [WeakSpot] = [],
         notes: [String],
         debugInfo: ScanDebugInfo?
     ) {
@@ -90,6 +93,7 @@ struct WineScanResult: Codable, Hashable {
         self.pricingContextSummary = pricingContextSummary
         self.recommendations = recommendations
         self.categoryRecommendations = categoryRecommendations
+        self.weakSpots = weakSpots
         self.notes = notes
         self.debugInfo = debugInfo
     }
@@ -106,6 +110,7 @@ struct WineScanResult: Codable, Hashable {
         pricingContextSummary = try container.decodeIfPresent(PricingContextSummary.self, forKey: .pricingContextSummary)
         recommendations = try container.decode([WineRecommendation].self, forKey: .recommendations)
         categoryRecommendations = try container.decode([RecommendationCategorySection].self, forKey: .categoryRecommendations)
+        weakSpots = try container.decodeIfPresent([WeakSpot].self, forKey: .weakSpots) ?? []
         notes = try container.decode([String].self, forKey: .notes)
         debugInfo = try container.decodeIfPresent(ScanDebugInfo.self, forKey: .debugInfo)
     }
@@ -259,6 +264,42 @@ struct RecommendationCategorySection: Codable, Hashable {
     let key: String
     let title: String
     let recommendations: [WineRecommendation]
+}
+
+struct WeakSpot: Codable, Identifiable, Hashable {
+    var id: String { "\(categoryHeader)-\(explanation)" }
+
+    let categoryHeader: String
+    let explanation: String
+    let reasons: [String]
+    let examples: [String]
+
+    private enum CodingKeys: String, CodingKey {
+        case categoryHeader
+        case explanation
+        case reasons
+        case examples
+    }
+
+    init(
+        categoryHeader: String,
+        explanation: String,
+        reasons: [String] = [],
+        examples: [String]
+    ) {
+        self.categoryHeader = categoryHeader
+        self.explanation = explanation
+        self.reasons = reasons
+        self.examples = examples
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        categoryHeader = try container.decode(String.self, forKey: .categoryHeader)
+        explanation = try container.decode(String.self, forKey: .explanation)
+        reasons = try container.decodeIfPresent([String].self, forKey: .reasons) ?? []
+        examples = try container.decode([String].self, forKey: .examples)
+    }
 }
 
 struct ScanDebugInfo: Codable, Hashable {
@@ -418,26 +459,6 @@ extension WineScanResult {
                     ]
                 ),
                 RecommendationCategorySection(
-                    key: "overpriced_here",
-                    title: "Overpriced Here",
-                    recommendations: [
-                        WineRecommendation(
-                            rank: 3,
-                            wineName: "Ribera del Duero",
-                            displayName: "Ribera del Duero",
-                            producer: "Lopez Cristobal",
-                            region: "Ribera del Duero, Spain",
-                            vintage: 2019,
-                            varietal: "Tempranillo",
-                            menuPrice: 76,
-                            menuPriceUnit: .bottle,
-                            estimatedRetail: 38,
-                            scores: .sample,
-                            why: "A solid wine, but the menu price is less compelling than the more distinctive options around it."
-                        )
-                    ]
-                ),
-                RecommendationCategorySection(
                     key: "try_something_new",
                     title: "Try Something New",
                     recommendations: [
@@ -455,6 +476,21 @@ extension WineScanResult {
                             scores: .sample,
                             why: "A crisp, coastal white that is a more interesting move than the usual by-the-bottle defaults."
                         )
+                    ]
+                )
+            ],
+            weakSpots: [
+                WeakSpot(
+                    categoryHeader: "Familiar premium reds",
+                    explanation: "The safest labels lean more on recognition than on the strongest producer or regional stories available elsewhere on the list.",
+                    reasons: [
+                        "Recognition-driven",
+                        "Less distinctive",
+                        "Stronger picks nearby"
+                    ],
+                    examples: [
+                        "Napa Cabernet Reserve 2021",
+                        "California Red Blend 2022"
                     ]
                 )
             ],

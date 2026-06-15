@@ -1,5 +1,5 @@
-import {buildSystemPrompt} from "./prompt.ts";
-import type {AnalyzeWineMenuRequest} from "./types.ts";
+import { buildSystemPrompt } from "./prompt.ts";
+import type { AnalyzeWineMenuRequest } from "./types.ts";
 
 Deno.test("buildSystemPrompt renders xml prompt values", () => {
   const request: AnalyzeWineMenuRequest = {
@@ -32,6 +32,8 @@ Deno.test("buildSystemPrompt renders xml prompt values", () => {
   assertIncludes(prompt, "- Favorite varietals: Pinot Noir, Syrah");
   assertIncludes(prompt, "- Category Preference: reds");
   assertIncludes(prompt, "<notes_rules>");
+  assertIncludes(prompt, "<weak_spots>");
+  assertIncludes(prompt, "Populate the weakSpots array");
   // assertIncludes(prompt, "Use the notes array only for small extraction caveats");
   assertIncludes(
     prompt,

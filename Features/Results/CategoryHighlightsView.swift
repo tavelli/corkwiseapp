@@ -30,7 +30,6 @@ struct CategoryHighlightsView: View {
             "worth_the_splurge",
             "crowd_pleaser",
             "hidden_gem",
-            "overpriced_here",
             "try_something_new",
         ]
 
@@ -60,8 +59,6 @@ struct CategoryHighlightsView: View {
             return String(localized: .resultsCategoryCrowdPleaser)
         case "hidden_gem":
             return String(localized: .resultsCategoryHiddenGem)
-        case "overpriced_here":
-            return String(localized: .resultsCategoryOverpricedHere)
         case "try_something_new":
             return String(localized: .resultsCategoryTrySomethingNew)
         default:
@@ -79,8 +76,6 @@ struct CategoryHighlightsView: View {
             return .sealCheck
         case "hidden_gem":
             return .listMagnifyingGlass
-        case "overpriced_here":
-            return .warningCircle
         case "try_something_new":
             return .arrowsSplit
         default:

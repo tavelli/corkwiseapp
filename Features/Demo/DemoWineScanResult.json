@@ -195,34 +195,6 @@
       ]
     },
     {
-      "key": "overpriced_here",
-      "title": "Overpriced Here",
-      "recommendations": [
-        {
-          "why": "While a familiar name for fans of bold blends, this selection faces stiff competition on this list from producers offering more regional specificity and character.",
-          "rank": 1,
-          "region": "Napa",
-          "vintage": 2024,
-          "producer": "Prisoner Wine Co.",
-          "varietal": "Red Blend",
-          "wineName": "The Prisoner",
-          "menuPrice": 125,
-          "displayName": "The Prisoner",
-          "extractedText": "PRISONER WINE CO. Red Blend The Prisoner 2024 Napa 125",
-          "menuPriceUnit": "bottle",
-          "estimatedMarkup": 2.5,
-          "estimatedRetail": 50,
-          "scores": {
-            "markupFairness": 8,
-            "producerPedigree": 8,
-            "menuStandout": 8,
-            "crowdAppeal": 8,
-            "personalFit": 8
-          }
-        }
-      ]
-    },
-    {
       "key": "try_something_new",
       "title": "Try Something New",
       "recommendations": [
@@ -250,5 +222,6 @@
         }
       ]
     }
-  ]
+  ],
+  "weakSpots":[{"categoryHeader":"Napa Valley Cabernets & Blends","explanation":"These recognizable labels carry a massive fame-tax, making them far less compelling than the expertly curated Burgundy and Oregon sections.","reasons":["Fame-tax","Better alternatives "],"examples":["PRISONER WINE CO. Red Blend, 2024, Napa $125","CAKEBREAD Merlot, 2021, Napa Valley $158"]}]
 }

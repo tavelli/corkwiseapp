@@ -83,13 +83,28 @@ MUTUAL EXCLUSION RULE: A wine featured in the root-level recommendations array M
 - worth_the_splurge: Prioritize producerPedigree, rarity, maturity, and vintage quality. Crucially, this selection must be the most expensive of your recommended wines. Crowd appeal should carry little weight; an elite or singular bottle can be more important than a broadly safe one.
 - crowd_pleaser: Prioritize crowdAppeal heavily. Find a highly adaptable, texturally balanced wine that acts as a crowd-pleasing chameleon for a mixed table, avoiding anything polarizing.
 - hidden_gem: Prioritize menuStandout and insider list context over broad popularity. Look for a brilliant second label or entry-level cuvée from a serious estate, a perfectly mature older vintage hidden among young releases, or a stunning wine from an overlooked region. Crowd appeal should not dilute the sense of discovery.
-- overpriced_here: Prioritize low markupFairness plus high prominence, fame-tax, or weak quality-to-price logic. Strong crowd appeal or brand familiarity should not rescue a wine if nearby alternatives offer a better experience.
 - try_something_new: Prioritize contrast from the user's stated profile, with intentionally lower personalFit offset by strong producerPedigree, menuStandout, quality, or regional distinctiveness. Crowd appeal should carry low weight; this should feel like a smart calculated risk, not merely a safe alternative.
 
 Let the AI's semantic evaluation drive the selection, and let the 5-dimensional scores reflect and justify that choice on the frontend.
 
 CRITICAL OMISSION RULE: You must treat category omission as a success. Do not invent or hallucinate wines just to populate the JSON. If the provided menu does not have a wine that legitimately and strongly fits a category's strict archetype, you MUST omit that category object from the array entirely. A smaller, accurate JSON response is strictly required over a fully populated, hallucinated one.
 </category_selection>
+
+<weak_spots>
+Populate the weakSpots array with up to 2 tactical warnings about this specific list. Use weakSpots for poor value clusters, fame-tax bottles, overpriced crowd-pleasers, weak sections, or common traps where nearby alternatives on the same list offer a better ordering path.
+
+Each weakSpots object must include:
+- categoryHeader: A concise section-style label for the weak area.
+- explanation: Exactly one short, direct sentence explaining why this area is strategically weak. While mentioning markup or price premium is acceptable, the primary focus must be on the quality-to-price trade-off and the presence of superior, more distinctive alternative paths elsewhere on this specific list.
+- reasons: An array of up to 3 concise reason labels suitable for short UI chips.
+- examples: An array of up to 3 visible menu listing strings that illustrate the weak spot.
+
+OBJECTIVE ANALYSIS RULE: Focus entirely on the objective, internal economics and curation structural flaws of the wine list itself. Do not evaluate "fit for user," individual user preferences, personal taste profiling. A weak spot must represent a poor value or structural trap relative to other options on the same physical menu, regardless of who is reading it. 
+
+CRITICAL SOURCE TRUTH RULE: Every examples entry must be copied or tightly summarized from wine listings visibly present in the source material. Do not use famous benchmark wines, outside market examples, or general category names unless they are visibly represented on the provided list.
+
+EMPTY STATE RULE: If the list is well-curated and does not have a legitimate structural or value weak spot, return an empty weakSpots array. Do not invent flaws to fill the array.
+</weak_spots>
 
 <writing_playbook>
 Write high-conviction, tactical ordering advice. Adhere to these strict formatting constraints for ALL generated text:
@@ -108,7 +123,6 @@ For all "why" fields, adhere to these additional constraints:
 - For category 'worth_the_splurge': Justify the choice through extraordinary rarity, age, monumental producer prestige, or a profoundly elevated premium experience.
 - For category 'crowd_pleaser': Emphasize structural balance, food versatility, and its effortless ability to bridge conflicting palate preferences at a group dinner.
 - For category 'hidden_gem': Spotlight the insider knowledge that makes this special. Explain why its specific producer pedigree, unexpected age, or overlooked regional terroir makes it a brilliant, under-the-radar find.
-- For category 'overpriced_here': Provide a tactical warning to skip a popular, heavily marketed, or luxury bottle that carries an unjustifiable fame-tax on this menu. Keep the focus on better nearby choices or standard producer quality rather than quoting raw numbers. Only trigger if the wine has a low markupFairness score and high prominence.
 - For category 'try_something_new': Frame as a calculated, deliberate departure from their usual favorites. Explicitly acknowledge that it steps outside their stated profile, then justify the risk by highlighting its exceptional quality, unique regional expression, or why it is a brilliant pivot on this specific list.
 </why_field_rules>
 
