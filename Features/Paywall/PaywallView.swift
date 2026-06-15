@@ -78,7 +78,7 @@ private struct CustomPaywallContent: View {
 
     var body: some View {
         VStack(spacing: 14) {
-            Spacer(minLength: 46)
+            Spacer(minLength: 52)
 
             VStack(spacing: 12) {
                 VStack(spacing: 5) {
@@ -104,12 +104,14 @@ private struct CustomPaywallContent: View {
                     .foregroundStyle(Color(red: 0.90, green: 0.82, blue: 0.74))
                     .padding(.horizontal, 12)
             }
+            
+            PaywallBenefitRow(text: paywall.remoteConfig.benefitText)
+                .padding(.top, 10)
 
             ProductSelectionCard(product: paywall.product, remoteConfig: paywall.remoteConfig)
-                .padding(.top, 28)
+                .padding(.top, 24)
 
-            PaywallBenefitRow(text: paywall.remoteConfig.benefitText)
-                .padding(.top, 15)
+            
 
             VStack(spacing: 30) {
                 Button(action: purchaseAction) {
@@ -286,11 +288,18 @@ private struct ProductSelectionCard: View {
             return product.localizedTitle
         }
 
+        let displayPrice = roundedWholeDollarPrice(from: localizedPrice)
+
         guard let subscriptionPeriod = product.subscriptionPeriod else {
-            return localizedPrice
+            return displayPrice
         }
 
-        return "\(localizedPrice) / \(subscriptionUnitLabel(for: subscriptionPeriod))"
+        return "\(displayPrice) / \(subscriptionUnitLabel(for: subscriptionPeriod))"
+    }
+
+    private func roundedWholeDollarPrice(from localizedPrice: String) -> String {
+        guard localizedPrice.hasSuffix(".00") else { return localizedPrice }
+        return String(localizedPrice.dropLast(3))
     }
 
     private func subscriptionUnitLabel(for subscriptionPeriod: AdaptySubscriptionPeriod) -> String {
@@ -490,7 +499,7 @@ extension CustomPaywall {
                 "headline_text": "Choose without guessing",
                 "subheadline_text": "Expert guidance for serious wine lists.",
                 "cta_text": "Join Corkwise",
-                "benefit_text": "Unlimited on-demand expertise.",
+                "benefit_text": "Unlimited on-demand insights.",
                 "product_title_text": "Annual Membership",
                 "product_description_text": "Less than one disappointing bottle",
             ]
