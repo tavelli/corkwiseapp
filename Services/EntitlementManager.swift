@@ -56,6 +56,7 @@ final class EntitlementManager {
 
             let configuration = configurationBuilder.build()
             try await Adapty.activate(with: configuration)
+            try await Self.updateProfile(with: await Self.profileCustomAttributes(for: nil))
             isConfigured = true
             await refreshEntitlement(updatesLoadingState: false)
             await refreshScanAccess()
@@ -132,17 +133,15 @@ final class EntitlementManager {
     func loadPaywall(preferences: UserWinePreferences? = nil) async -> Bool {
         guard isConfigured else { return false }
 
-        let customAttributes = Self.paywallCustomAttributes(for: preferences)
+        let customAttributes = await Self.profileCustomAttributes(for: preferences)
         if paywall != nil, loadedPaywallCustomAttributes == customAttributes {
             return true
         }
 
         purchaseErrorMessage = nil
-
+        
         do {
-            if let customAttributes {
-                try await Self.updateProfile(with: customAttributes)
-            }
+            try await Self.updateProfile(with: customAttributes)
 
             let placementID = AppConfiguration.shared.adaptyPaywallPlacementID
             let paywall = try await Adapty.getPaywall(
@@ -334,13 +333,17 @@ final class EntitlementManager {
         }
     }
 
-    private static func paywallCustomAttributes(for preferences: UserWinePreferences?) -> [String: String]? {
-        guard let preferences else { return nil }
-
-        return [
-            "ONBOARDING_CHOICE_STYLE": preferences.choiceStyleValue.rawValue,
-            "ONBOARDING_PURCHASE_PREFERENCE": preferences.usualPurchasePreferenceValue.rawValue,
+    private static func profileCustomAttributes(for preferences: UserWinePreferences?) async -> [String: String] {
+        var customAttributes = [
+            "BUILD_CONFIG": await BuildChannel.current(),
         ]
+
+        if let preferences {
+            customAttributes["ONBOARDING_CHOICE_STYLE"] = preferences.choiceStyleValue.rawValue
+            customAttributes["ONBOARDING_PURCHASE_PREFERENCE"] = preferences.usualPurchasePreferenceValue.rawValue
+        }
+
+        return customAttributes
     }
 
     private static func updateProfile(with customAttributes: [String: String]) async throws {
