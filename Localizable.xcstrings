@@ -1954,19 +1954,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comparing value, quality & fit"
+            "value" : "Ranking the options"
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comparing value, quality & fit"
+            "value" : "Ranking the options"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comparing value, quality & fit"
+            "value" : "Ranking the options"
           }
         }
       }
@@ -1977,19 +1977,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Identifying wines"
+            "value" : "Scoring each bottle"
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Identifying wines"
+            "value" : "Scoring each bottle"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Identifying wines"
+            "value" : "Scoring each bottle"
           }
         }
       }
@@ -2000,19 +2000,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Curating recommendations"
+            "value" : "Writing recommendations"
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Curating recommendations"
+            "value" : "Writing recommendations"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Curating recommendations"
+            "value" : "Writing recommendations"
           }
         }
       }
@@ -2023,19 +2023,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preparing your list"
+            "value" : "Reading the wine list"
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preparing your list"
+            "value" : "Reading the wine list"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preparing your list"
+            "value" : "Reading the wine list"
           }
         }
       }
@@ -4535,19 +4535,42 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Curating recommendations"
+            "value" : "Writing recommendations"
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Curating recommendations"
+            "value" : "Writing recommendations"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Curating recommendations"
+            "value" : "Writing recommendations"
+          }
+        }
+      }
+    },
+    "scanProgress.step.curatingRecommendations.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turning the rankings into clear picks and guidance."
+          }
+        },
+        "en-AU" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turning the rankings into clear picks and guidance."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turning the rankings into clear picks and guidance."
           }
         }
       }
@@ -4558,19 +4581,42 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comparing value, quality & fit"
+            "value" : "Ranking the options"
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comparing value, quality & fit"
+            "value" : "Ranking the options"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comparing value, quality & fit"
+            "value" : "Ranking the options"
+          }
+        }
+      }
+    },
+    "scanProgress.step.evaluatingQualityValue.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weighing each bottle against the full list."
+          }
+        },
+        "en-AU" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weighing each bottle against the full list."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weighing each bottle against the full list."
           }
         }
       }
@@ -4581,19 +4627,42 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Identifying wines"
+            "value" : "Scoring each bottle"
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Identifying wines"
+            "value" : "Scoring each bottle"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Identifying wines"
+            "value" : "Scoring each bottle"
+          }
+        }
+      }
+    },
+    "scanProgress.step.readingWineList.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Evaluating value, producer strength, list context, and fit."
+          }
+        },
+        "en-AU" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Evaluating value, producer strength, list context, and fit."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Evaluating value, producer strength, list context, and fit."
           }
         }
       }
@@ -4604,19 +4673,42 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preparing your list"
+            "value" : "Reading the wine list"
           }
         },
         "en-AU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preparing your list"
+            "value" : "Reading the wine list"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preparing your list"
+            "value" : "Reading the wine list"
+          }
+        }
+      }
+    },
+    "scanProgress.step.scanningMenu.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Capturing wines, vintages, regions, and prices."
+          }
+        },
+        "en-AU" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Capturing wines, vintages, regions, and prices."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Capturing wines, vintages, regions, and prices."
           }
         }
       }
@@ -4640,6 +4732,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Analysing Wine List"
+          }
+        }
+      }
+    },
+    "scanProgress.title.findingWorthOrdering" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finding what’s worth ordering"
+          }
+        },
+        "en-AU" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finding what’s worth ordering"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finding what’s worth ordering"
           }
         }
       }

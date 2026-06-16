@@ -124,7 +124,6 @@ struct ScanProgressExperienceView: View {
                     progress: progress,
                     elapsedSeconds: elapsedSeconds,
                     isCompleting: isCompleting,
-                    purchaseMode: purchaseMode,
                     isCancelVisible: isCancelVisible,
                     cancelAction: cancelAction
                 )
@@ -247,15 +246,26 @@ private struct ScanProgressModal: View {
     let progress: Double
     let elapsedSeconds: TimeInterval
     let isCompleting: Bool
-    let purchaseMode: PurchaseMode
     let isCancelVisible: Bool
     let cancelAction: () -> Void
 
     private let steps = [
-        String(localized: .scanProgressStepScanningMenu),
-        String(localized: .scanProgressStepReadingWineList),
-        String(localized: .scanProgressStepEvaluatingQualityValue),
-        String(localized: .scanProgressStepCuratingRecommendations),
+        ScanProgressStep(
+            title: String(localized: .scanProgressStepScanningMenu),
+            description: String(localized: .scanProgressStepScanningMenuDescription)
+        ),
+        ScanProgressStep(
+            title: String(localized: .scanProgressStepReadingWineList),
+            description: String(localized: .scanProgressStepReadingWineListDescription)
+        ),
+        ScanProgressStep(
+            title: String(localized: .scanProgressStepEvaluatingQualityValue),
+            description: String(localized: .scanProgressStepEvaluatingQualityValueDescription)
+        ),
+        ScanProgressStep(
+            title: String(localized: .scanProgressStepCuratingRecommendations),
+            description: String(localized: .scanProgressStepCuratingRecommendationsDescription)
+        ),
     ]
 
     private var activeStepIndex: Int {
@@ -274,12 +284,7 @@ private struct ScanProgressModal: View {
     }
 
     private var titleText: String {
-        switch purchaseMode {
-        case .glass:
-            return String(localized: .scanProgressTitleBestPours)
-        case .bottle:
-            return String(localized: .scanProgressTitleBestBottles)
-        }
+        String(localized: .scanProgressTitleFindingWorthOrdering)
     }
 
     private var footerText: String? {
@@ -289,53 +294,71 @@ private struct ScanProgressModal: View {
 
     var body: some View {
         GeometryReader { proxy in
-            VStack(spacing: 24) {
+            VStack(spacing: 20) {
                 Text(titleText)
-                    .font(.system(size: 20, weight: .medium, design: .rounded))
+                    .font(.title)
                     .foregroundStyle(Color.wineText)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.72)
 
-                VStack(spacing: 18) {
-                    ForEach(Array(steps.enumerated()), id: \.offset) { index, title in
+                VStack(spacing: 0) {
+                    ForEach(steps.enumerated(), id: \.offset) { index, step in
                         ScanProgressStepRow(
-                            title: title,
-                            state: state(for: index)
+                            step: step,
+                            state: state(for: index),
+                            showsDivider: index < steps.count - 1
                         )
                     }
                 }
-                .padding(.bottom, 2)
 
                 VStack(spacing: 11) {
                     ScanProgressBar(progress: progress)
 
-                    HStack {
-                        if let footerText {
-                            Text(footerText)
-                                .foregroundStyle(Color.wineMutedText.opacity(0.92))
-                        }
-                        Spacer()
-                        Button(String(localized: .commonActionCancel), action: cancelAction)
-                            .font(.caption.weight(.medium))
-                            .foregroundStyle(Color.wineMutedText.opacity(0.68))
-                            .buttonStyle(.plain)
-                            .opacity(isCancelVisible ? 1 : 0)
-                            .allowsHitTesting(isCancelVisible)
-                            .animation(.easeOut(duration: 0.28), value: isCancelVisible)
+                    if let footerText {
+                        Text(footerText)
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(Color.wineMutedText.opacity(0.92))
+                            .frame(maxWidth: .infinity, alignment: .leading)
                     }
-                    .font(.caption.weight(.semibold))
                 }
+                .padding(.top, 10)
             }
-            .padding(22)
-            .frame(width: min(proxy.size.width - 48, 336))
-            .background(Color(red: 0.998, green: 0.992, blue: 0.985))
-            .clipShape(.rect(cornerRadius: 22))
+            .padding(.horizontal, modalHorizontalPadding(for: proxy.size.width))
+            .padding(.vertical, modalVerticalPadding(for: proxy.size.width))
+            .frame(width: min(proxy.size.width - 36, 560))
+            .background(Color.wineCardBackground)
+            .clipShape(.rect(cornerRadius: 36))
             .overlay {
-                RoundedRectangle(cornerRadius: 22)
+                RoundedRectangle(cornerRadius: 36)
                     .stroke(Color.wineBorder.opacity(0.58), lineWidth: 1)
+            }
+            .overlay(alignment: .topTrailing) {
+                Button(String(localized: .commonActionCancel), systemImage: "xmark", action: cancelAction)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(Color.wineMutedText.opacity(0.52))
+                    .labelStyle(.iconOnly)
+                    .frame(width: 44, height: 44)
+                    .contentShape(.rect)
+                    .buttonStyle(.plain)
+                    .opacity(isCancelVisible ? 1 : 0)
+                    .allowsHitTesting(isCancelVisible)
+                    .animation(.easeOut(duration: 0.28), value: isCancelVisible)
+                    .padding(.top, 14)
+                    .padding(.trailing, 14)
             }
             .shadow(color: Color.black.opacity(0.30), radius: 34, y: 18)
             .shadow(color: Color.wineDeep.opacity(0.08), radius: 10, y: 4)
             .position(x: proxy.size.width / 2, y: proxy.size.height / 2)
         }
+    }
+
+    private func modalHorizontalPadding(for width: CGFloat) -> CGFloat {
+        width < 430 ? 26 : 54
+    }
+
+    private func modalVerticalPadding(for width: CGFloat) -> CGFloat {
+        width < 430 ? 34 : 52
     }
 
     private func state(for index: Int) -> ScanProgressStepRow.State {
@@ -351,6 +374,11 @@ private struct ScanProgressModal: View {
     }
 }
 
+private struct ScanProgressStep {
+    let title: String
+    let description: String
+}
+
 private struct ScanProgressBar: View {
     let progress: Double
 
@@ -358,14 +386,14 @@ private struct ScanProgressBar: View {
         GeometryReader { proxy in
             ZStack(alignment: .leading) {
                 Capsule()
-                    .fill(Color.wineMutedText.opacity(0.28))
+                    .fill(Color.wineMutedText.opacity(0.20))
 
                 Capsule()
                     .fill(Color.wineAccent)
                     .frame(width: max(proxy.size.width * progress, 6))
             }
         }
-        .frame(height: 12)
+        .frame(height: 6)
         .animation(.easeOut(duration: 0.22), value: progress)
     }
 }
@@ -377,24 +405,57 @@ private struct ScanProgressStepRow: View {
         case completed
     }
 
-    let title: String
+    let step: ScanProgressStep
     let state: State
+    let showsDivider: Bool
 
     var body: some View {
-        HStack(spacing: 11) {
+        HStack(alignment: rowAlignment, spacing: 18) {
             indicator
-                .frame(width: 20, height: 20)
+                .frame(width: 30, height: 30)
                 .animation(.easeInOut(duration: 0.20), value: state)
 
-            Text(title)
-                .font(.subheadline.weight(.medium))
-                .foregroundStyle(textColor)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            VStack(alignment: .leading, spacing: 6) {
+                Text(step.title)
+                    .font(titleFont)
+                    .foregroundStyle(textColor)
+                    .lineLimit(2)
+                    .frame(minHeight: titleMinHeight, alignment: .leading)
+
+                if state == .active {
+                    Text(step.description)
+                        .font(.body)
+                        .foregroundStyle(Color.wineMutedText)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .transition(.opacity.combined(with: .move(edge: .top)))
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(.vertical, state == .active ? 16 : 10)
+        .overlay(alignment: .bottom) {
+            if showsDivider {
+                Rectangle()
+                    .fill(Color.wineDivider.opacity(0.70))
+                    .frame(height: 1)
+                    .padding(.leading, 48)
+            }
         }
         .opacity(rowOpacity)
         .offset(y: rowOffset)
-        .scaleEffect(state == .completed ? 0.995 : 1, anchor: .leading)
         .animation(.easeOut(duration: 0.26), value: state)
+    }
+
+    private var titleFont: Font {
+        state == .active ? .title3.bold() : .body
+    }
+
+    private var rowAlignment: VerticalAlignment {
+        state == .active ? .top : .center
+    }
+
+    private var titleMinHeight: CGFloat {
+        state == .active ? 30 : 0
     }
 
     private var textColor: Color {
@@ -404,7 +465,7 @@ private struct ScanProgressStepRow: View {
         case .active:
             return Color.wineText
         case .completed:
-            return Color.wineText.opacity(0.72)
+            return Color.wineText.opacity(0.92)
         }
     }
 
@@ -434,7 +495,7 @@ private struct ScanProgressStepRow: View {
             }
 
             if state == .completed {
-                Image(systemName: "checkmark.circle.fill")
+                Image(systemName: "checkmark.circle")
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundStyle(Color.wineAccent)
                     .transition(.opacity.combined(with: .scale(scale: 0.76)))
