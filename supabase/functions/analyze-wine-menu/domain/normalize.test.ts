@@ -9,7 +9,7 @@ Deno.test("normalizeScanResult derives bottle markup", () => {
       recommendations: [
         {
           rank: 1,
-          wineName: "Estate Pinot Noir",
+          wineName: "Estate Selection() ( ) (     )",
           extractedText: "Producer Estate Pinot Noir",
           producer: "Producer",
           region: "Willamette Valley",
@@ -38,6 +38,10 @@ Deno.test("normalizeScanResult derives bottle markup", () => {
   }
 
   const [recommendation] = result.recommendations;
+  if (recommendation.displayName !== "Estate Selection") {
+    throw new Error(`Unexpected display name: ${recommendation.displayName}`);
+  }
+
   if (recommendation.estimatedMarkup !== 2) {
     throw new Error(
       `Expected 2x markup, got ${recommendation.estimatedMarkup}`,

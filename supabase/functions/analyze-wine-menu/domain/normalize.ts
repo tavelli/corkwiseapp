@@ -309,6 +309,7 @@ function distinctPart(
         candidate.replace(new RegExp(`\\b${escapeRegExp(part)}\\b`, "gi"), " "),
       value,
     )
+    .replace(/\(\s*\)/g, " ")
     .trim()
     .replace(/\s+/g, " ");
 
