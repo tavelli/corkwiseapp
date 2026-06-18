@@ -9,7 +9,7 @@ Deno.test("normalizeScanResult derives bottle markup", () => {
       recommendations: [
         {
           rank: 1,
-          wineName: "Estate Pinot Noir",
+          wineName: "Estate Selection() ( ) (     )",
           extractedText: "Producer Estate Pinot Noir",
           producer: "Producer",
           region: "Willamette Valley",
@@ -38,6 +38,10 @@ Deno.test("normalizeScanResult derives bottle markup", () => {
   }
 
   const [recommendation] = result.recommendations;
+  if (recommendation.displayName !== "Estate Selection") {
+    throw new Error(`Unexpected display name: ${recommendation.displayName}`);
+  }
+
   if (recommendation.estimatedMarkup !== 2) {
     throw new Error(
       `Expected 2x markup, got ${recommendation.estimatedMarkup}`,
@@ -264,6 +268,69 @@ Deno.test("normalizeScanResult drops overpriced category recommendations", () =>
     );
   }
 });
+
+Deno.test(
+  "normalizeScanResult drops disabled categories and preserves active categories",
+  () => {
+    const recommendation = {
+      rank: 1,
+      wineName: "Estate Pinot Noir",
+      extractedText: "Producer Estate Pinot Noir bottle 72",
+      producer: "Producer",
+      region: "Willamette Valley",
+      vintage: 2021,
+      varietal: "Pinot Noir",
+      menuPrice: 72,
+      menuPriceUnit: "bottle",
+      estimatedRetail: 36,
+      scores: {
+        markupFairness: 6,
+        producerPedigree: 5,
+        menuStandout: 8,
+        crowdAppeal: 5,
+        personalFit: 4,
+      },
+      why: "A benchmark bottle with a strong sense of place.",
+    };
+    const result = normalizeScanResult(
+      {
+        summary: {
+          headline: "Best values on the list",
+        },
+        recommendations: [recommendation],
+        categoryRecommendations: [
+          {
+            key: "best_value",
+            title: "Best Value",
+            recommendations: [recommendation],
+          },
+          {
+            key: "crowd_pleaser",
+            title: "Classic Choice",
+            recommendations: [recommendation],
+          },
+          {
+            key: "hidden_gem",
+            title: "Hidden Find",
+            recommendations: [recommendation],
+          },
+        ],
+      },
+      "bottle",
+    );
+
+    const categoryKeys = result.categoryRecommendations.map(({ key }) => key);
+
+    if (
+      categoryKeys.length !== 1 ||
+      categoryKeys[0] !== "best_value"
+    ) {
+      throw new Error(
+        `Expected only best_value category, got ${categoryKeys.join(", ")}`,
+      );
+    }
+  },
+);
 
 Deno.test(
   "normalizeScanResult filters bottle recommendations when user selected glass",

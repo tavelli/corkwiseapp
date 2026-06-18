@@ -34,6 +34,8 @@ Deno.test("buildSystemPrompt renders xml prompt values", () => {
   assertIncludes(prompt, "<notes_rules>");
   assertIncludes(prompt, "<weak_spots>");
   assertIncludes(prompt, "Populate the weakSpots array");
+  assertNotIncludes(prompt, "crowd_pleaser");
+  assertNotIncludes(prompt, "hidden_gem");
   // assertIncludes(prompt, "Use the notes array only for small extraction caveats");
   assertIncludes(
     prompt,
@@ -48,5 +50,11 @@ Deno.test("buildSystemPrompt renders xml prompt values", () => {
 function assertIncludes(value: string, expected: string) {
   if (!value.includes(expected)) {
     throw new Error(`Expected prompt to include: ${expected}`);
+  }
+}
+
+function assertNotIncludes(value: string, unexpected: string) {
+  if (value.includes(unexpected)) {
+    throw new Error(`Expected prompt not to include: ${unexpected}`);
   }
 }
