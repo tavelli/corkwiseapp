@@ -24,10 +24,12 @@ This app expects a public Supabase Edge Function at:
    - `MODEL_PROVIDER` as `openai` or `gemini`
    - `OPENAI_API_KEY` when using OpenAI
    - `OPENAI_MODEL` (optional, defaults to `gpt-4o`)
+   - `OPENAI_FALLBACK_MODELS` (optional comma-separated models to try on OpenAI rate limits)
    - `OPENAI_REASONING_EFFORT` (optional, set to `off` to disable)
    - `OPENAI_TEXT_VERBOSITY` (optional, set to `off` to disable)
    - `GEMINI_API_KEY` when using Gemini
    - `GEMINI_MODEL` (optional, defaults to `gemini-3-flash-preview`)
+   - `GEMINI_FALLBACK_MODELS` (optional comma-separated models to try on Gemini rate limits)
    - `GEMINI_THINKING_LEVEL` (optional, supports `low`, `medium`, or `high`; Gemini 3+ models only)
    - `FREE_SCAN_LIMIT=1` to allow one unpaid scan before subscription is required
    - `ADAPTY_SECRET_API_KEY` for backend entitlement checks
@@ -71,6 +73,7 @@ The Edge Function keeps one stable app-facing endpoint and swaps model providers
 
 - `MODEL_PROVIDER=openai` uses `providers/openai.ts`
 - `MODEL_PROVIDER=gemini` uses `providers/gemini.ts`
+- Provider fallback stays within the active provider. Configure `OPENAI_FALLBACK_MODELS` or `GEMINI_FALLBACK_MODELS` to opt in to secondary models after upstream HTTP 429 rate limits.
 - Both providers normalize into the same `WineScanResult` response shape before returning to iOS
 - Debug token cost estimates come from provider-local pricing constants in `providers/openai.ts` and `providers/gemini.ts`
 

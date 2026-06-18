@@ -3,6 +3,7 @@ import { modelResponseSchema } from "../domain/schema.ts";
 import {
   type AnalyzeWineMenuRequest,
   type ProviderAnalysisResult,
+  ProviderRateLimitError,
   RequestError,
   type TokenUsage,
   type WineModelProvider,
@@ -13,6 +14,12 @@ const OPENAI_MODEL = Deno.env.get("OPENAI_MODEL") ?? "gpt-4o";
 const OPENAI_REASONING_EFFORT = readOptionalEnv("OPENAI_REASONING_EFFORT");
 const OPENAI_TEXT_VERBOSITY = readOptionalEnv("OPENAI_TEXT_VERBOSITY");
 const OPENAI_TIMEOUT_MS = 90_000;
+
+type OpenAIProviderOptions = {
+  model?: string;
+  apiKey?: string;
+  fetch?: typeof fetch;
+};
 
 type ModelPricing = {
   inputPricePer1MTokens: number;
@@ -43,10 +50,20 @@ const OPENAI_PRICING_BY_MODEL: Record<string, ModelPricing> = {
 };
 
 export class OpenAIProvider implements WineModelProvider {
+  readonly model: string;
+  private readonly apiKey: string | undefined;
+  private readonly fetch: typeof fetch;
+
+  constructor(options: OpenAIProviderOptions = {}) {
+    this.model = options.model ?? OPENAI_MODEL;
+    this.apiKey = options.apiKey ?? OPENAI_API_KEY;
+    this.fetch = options.fetch ?? fetch;
+  }
+
   async analyzeMenu(
     requestBody: AnalyzeWineMenuRequest,
   ): Promise<ProviderAnalysisResult> {
-    if (OPENAI_API_KEY == null || OPENAI_API_KEY.length === 0) {
+    if (this.apiKey == null || this.apiKey.length === 0) {
       throw new RequestError(
         500,
         "analysis_failed",
@@ -61,7 +78,7 @@ export class OpenAIProvider implements WineModelProvider {
 
     try {
       console.log("calling OpenAI", {
-        model: OPENAI_MODEL,
+        model: this.model,
         reasoningEffort: OPENAI_REASONING_EFFORT ?? "disabled",
         textVerbosity: OPENAI_TEXT_VERBOSITY ?? "disabled",
         timeoutMs: OPENAI_TIMEOUT_MS,
@@ -78,7 +95,7 @@ export class OpenAIProvider implements WineModelProvider {
       }
 
       const requestPayload: Record<string, unknown> = {
-        model: OPENAI_MODEL,
+        model: this.model,
         input: [
           {
             role: "system",
@@ -121,10 +138,10 @@ export class OpenAIProvider implements WineModelProvider {
         text.verbosity = OPENAI_TEXT_VERBOSITY;
       }
 
-      const response = await fetch("https://api.openai.com/v1/responses", {
+      const response = await this.fetch("https://api.openai.com/v1/responses", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${OPENAI_API_KEY}`,
+          Authorization: `Bearer ${this.apiKey}`,
           "Content-Type": "application/json",
         },
         signal: controller.signal,
@@ -138,6 +155,9 @@ export class OpenAIProvider implements WineModelProvider {
           response.status,
           bodyText.slice(0, 400),
         );
+        if (response.status === 429) {
+          throw new ProviderRateLimitError("openai", this.model);
+        }
         throw upstreamAnalysisFailure();
       }
 
@@ -156,10 +176,10 @@ export class OpenAIProvider implements WineModelProvider {
         return {
           payload: JSON.parse(outputText),
           provider: "openai",
-          model: OPENAI_MODEL,
+          model: this.model,
           apiDurationMilliseconds: Date.now() - startedAt,
           usage,
-          totalCostUsd: calculateTotalCostUsd(usage, OPENAI_MODEL),
+          totalCostUsd: calculateTotalCostUsd(usage, this.model),
         };
       } catch {
         console.error(
@@ -169,6 +189,10 @@ export class OpenAIProvider implements WineModelProvider {
         throw upstreamAnalysisFailure();
       }
     } catch (error) {
+      if (error instanceof ProviderRateLimitError) {
+        throw error;
+      }
+
       if (error instanceof RequestError) {
         throw error;
       }

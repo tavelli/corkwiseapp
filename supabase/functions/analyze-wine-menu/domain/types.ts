@@ -152,6 +152,17 @@ export interface WineModelProvider {
   ): Promise<ProviderAnalysisResult>;
 }
 
+export class ProviderRateLimitError extends Error {
+  provider: AnalysisProviderName;
+  model: string;
+
+  constructor(provider: AnalysisProviderName, model: string) {
+    super(`${provider} model '${model}' was rate limited.`);
+    this.provider = provider;
+    this.model = model;
+  }
+}
+
 export class RequestError extends Error {
   status: number;
   responseBody: WineAnalysisErrorResponse;

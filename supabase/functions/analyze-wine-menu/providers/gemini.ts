@@ -1,8 +1,9 @@
-import {buildSystemPrompt} from "../domain/prompt.ts";
-import {modelResponseSchema} from "../domain/schema.ts";
+import { buildSystemPrompt } from "../domain/prompt.ts";
+import { modelResponseSchema } from "../domain/schema.ts";
 import {
   type AnalyzeWineMenuRequest,
   type ProviderAnalysisResult,
+  ProviderRateLimitError,
   RequestError,
   type TokenUsage,
   type WineModelProvider,
@@ -12,6 +13,12 @@ const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
 const GEMINI_MODEL = Deno.env.get("GEMINI_MODEL") ?? "gemini-3-flash-preview";
 const GEMINI_THINKING_LEVEL = Deno.env.get("GEMINI_THINKING_LEVEL")?.trim();
 const GEMINI_TIMEOUT_MS = 90_000;
+
+type GeminiProviderOptions = {
+  model?: string;
+  apiKey?: string;
+  fetch?: typeof fetch;
+};
 
 type ModelPricing = {
   inputPricePer1MTokens: number;
@@ -34,10 +41,20 @@ const GEMINI_PRICING_BY_MODEL: Record<string, ModelPricing> = {
 };
 
 export class GeminiProvider implements WineModelProvider {
+  readonly model: string;
+  private readonly apiKey: string | undefined;
+  private readonly fetch: typeof fetch;
+
+  constructor(options: GeminiProviderOptions = {}) {
+    this.model = options.model ?? GEMINI_MODEL;
+    this.apiKey = options.apiKey ?? GEMINI_API_KEY;
+    this.fetch = options.fetch ?? fetch;
+  }
+
   async analyzeMenu(
     requestBody: AnalyzeWineMenuRequest,
   ): Promise<ProviderAnalysisResult> {
-    if (GEMINI_API_KEY == null || GEMINI_API_KEY.length === 0) {
+    if (this.apiKey == null || this.apiKey.length === 0) {
       throw new RequestError(
         500,
         "analysis_failed",
@@ -93,18 +110,18 @@ export class GeminiProvider implements WineModelProvider {
       }
 
       console.log("calling Gemini", {
-        model: GEMINI_MODEL,
+        model: this.model,
         thinkingLevel: GEMINI_THINKING_LEVEL ?? "disabled",
         timeoutMs: GEMINI_TIMEOUT_MS,
         sourceKind: requestBody.source.kind,
       });
 
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`,
+      const response = await this.fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${this.model}:generateContent`,
         {
           method: "POST",
           headers: {
-            "x-goog-api-key": GEMINI_API_KEY,
+            "x-goog-api-key": this.apiKey,
             "Content-Type": "application/json",
           },
           signal: controller.signal,
@@ -119,6 +136,9 @@ export class GeminiProvider implements WineModelProvider {
           response.status,
           bodyText.slice(0, 400),
         );
+        if (response.status === 429) {
+          throw new ProviderRateLimitError("gemini", this.model);
+        }
         throw upstreamAnalysisFailure();
       }
 
@@ -137,10 +157,10 @@ export class GeminiProvider implements WineModelProvider {
         return {
           payload: JSON.parse(outputText),
           provider: "gemini",
-          model: GEMINI_MODEL,
+          model: this.model,
           apiDurationMilliseconds: Date.now() - startedAt,
           usage,
-          totalCostUsd: calculateTotalCostUsd(usage, GEMINI_MODEL),
+          totalCostUsd: calculateTotalCostUsd(usage, this.model),
         };
       } catch {
         console.error(
@@ -150,6 +170,10 @@ export class GeminiProvider implements WineModelProvider {
         throw upstreamAnalysisFailure();
       }
     } catch (error) {
+      if (error instanceof ProviderRateLimitError) {
+        throw error;
+      }
+
       if (error instanceof RequestError) {
         throw error;
       }
@@ -209,15 +233,15 @@ function menuInstructionPart(
 ): Record<string, unknown> {
   if (requestBody.source.kind === "url") {
     return {
-      text: "Analyze the restaurant wine list available at the provided URL and return only the requested JSON.",
+      text:
+        "Analyze the restaurant wine list available at the provided URL and return only the requested JSON.",
     };
   }
 
   return {
-    text:
-      requestBody.source.attachments.length > 1
-        ? "Analyze these ordered restaurant wine list page photos as one continuous wine list and return only the requested JSON."
-        : "Analyze this restaurant wine list attachment and return only the requested JSON.",
+    text: requestBody.source.attachments.length > 1
+      ? "Analyze these ordered restaurant wine list page photos as one continuous wine list and return only the requested JSON."
+      : "Analyze this restaurant wine list attachment and return only the requested JSON.",
   };
 }
 
@@ -232,7 +256,7 @@ function menuSourceParts(
     ];
   }
 
-  const {attachments} = requestBody.source;
+  const { attachments } = requestBody.source;
   if (attachments.length > 1) {
     return attachments.flatMap((attachment, index) => [
       {
