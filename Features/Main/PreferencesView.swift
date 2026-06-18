@@ -247,19 +247,22 @@ private struct PreferenceOptionRow: View {
             VStack(spacing: 0) {
                 HStack {
                     Text(title)
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(isSelected ? Color.wineAccent : Color.wineText)
+                        .font(isSelected ? .body.bold() : .body)
+                        .foregroundStyle(isSelected ? Color.wineDeep : Color.wineText)
 
                     Spacer()
 
-                    Image(systemName: isSelected ? "checkmark.square.fill" : "square")
-                        .foregroundStyle(isSelected ? Color.wineAccent : Color.wineMutedText.opacity(0.45))
+                    if isSelected {
+                        Image(systemName: "checkmark")
+                            .font(.body.bold())
+                            .foregroundStyle(Color.wineDeep)
+                            .accessibilityHidden(true)
+                    }
                 }
                 .padding(.horizontal)
                 .padding(.vertical, 14)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .contentShape(.rect)
-                .background(isSelected ? Color.wineSoftPeach.opacity(0.24) : Color.clear)
 
                 if isLast == false {
                     Divider()
@@ -268,6 +271,7 @@ private struct PreferenceOptionRow: View {
             }
         }
         .buttonStyle(.plain)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }
 

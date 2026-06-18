@@ -53,9 +53,9 @@ private struct DemoCategoryCard: View {
     enum Category: CaseIterable, Identifiable {
         case bestValue
         case worthTheSplurge
-        case crowdPleaser
-        case hiddenGem
-         case trySomethingNew
+//        case crowdPleaser
+//        case hiddenGem
+        case trySomethingNew
 
         var id: Self { self }
 
@@ -65,10 +65,10 @@ private struct DemoCategoryCard: View {
                 return String(localized: .resultsCategoryBestValue)
             case .worthTheSplurge:
                 return String(localized: .resultsCategoryWorthTheSplurge)
-            case .crowdPleaser:
-                return String(localized: .resultsCategoryCrowdPleaser)
-            case .hiddenGem:
-                return String(localized: .resultsCategoryHiddenGem)
+//            case .crowdPleaser:
+//                return String(localized: .resultsCategoryCrowdPleaser)
+//            case .hiddenGem:
+                // return String(localized: .resultsCategoryHiddenGem)
                 
             case .trySomethingNew:
                 return String(localized: .resultsCategoryTrySomethingNew)
@@ -82,10 +82,10 @@ private struct DemoCategoryCard: View {
                 return .chartBar
             case .worthTheSplurge:
                 return .medal
-            case .crowdPleaser:
-                return .sealCheck
-            case .hiddenGem:
-                return .listMagnifyingGlass
+//            case .crowdPleaser:
+//                return .sealCheck
+//            case .hiddenGem:
+                // return .listMagnifyingGlass
             case .trySomethingNew:
                 return .arrowsSplit
             }
