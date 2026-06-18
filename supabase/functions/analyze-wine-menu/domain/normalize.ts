@@ -11,8 +11,6 @@ const MAX_WEAK_SPOT_EXAMPLES = 4;
 const ALLOWED_CATEGORY_RECOMMENDATION_KEYS = new Set([
   "best_value",
   "worth_the_splurge",
-  "crowd_pleaser",
-  "hidden_gem",
   "try_something_new",
 ]);
 

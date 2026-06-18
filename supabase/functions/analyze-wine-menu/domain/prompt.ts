@@ -4,7 +4,7 @@ const SYSTEM_PROMPT_TEMPLATE = await Deno.readTextFile(
   new URL("./prompt.xml", import.meta.url),
 );
 
-export const PROMPT_VERSION = "2026-06-15";
+export const PROMPT_VERSION = "2026-06-17";
 
 export function buildSystemPrompt(
   requestBody: AnalyzeWineMenuRequest,
